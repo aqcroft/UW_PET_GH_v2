@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UW Earnings Potential Tool</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
         @keyframes slideDown {
             0% { opacity: 0; transform: scale(0.95); }
@@ -37,11 +40,35 @@
         .animate-pulseGlow { animation: pulseGlow 1.5s ease-in-out 3; }
     </style>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 p-4 md:p-8">
-    <div id="app"></div>
+<body>
+    <div id="root"></div>
 
     <script type="text/babel">
         const { useState, useEffect } = React;
+
+        const RefreshCw = ({ className }) => (
+            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+        );
+
+        const TrendingUp = ({ className }) => (
+            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+            </svg>
+        );
+
+        const Lock = ({ className }) => (
+            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+        );
+
+        const Unlock = ({ className }) => (
+            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+            </svg>
+        );
 
         const UWTracker = () => {
             const [mode, setMode] = useState('opportunity');
@@ -83,7 +110,6 @@
                     { type: null, services: 0, isPartner: false }
                 ]
             });
-            
             const currentData = mode === 'opportunity' ? opportunityData : trackData;
             const setCurrentData = mode === 'opportunity' ? setOpportunityData : setTrackData;
             const { selectedCircle, showPartnerPrompt, showPartnerPopup, showIncomeStreamsPopup, previouslyQualified, qdExpanded, qd6Expanded, qdPulsed, qd6Pulsed, customers } = currentData;
@@ -254,30 +280,6 @@
                 setShowResetConfirm(false);
             };
 
-            const RefreshCw = ({ className }) => (
-                <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-            );
-
-            const TrendingUp = ({ className }) => (
-                <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                </svg>
-            );
-
-            const Lock = ({ className }) => (
-                <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-            );
-
-            const Unlock = ({ className }) => (
-                <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
-                </svg>
-            );
-
             const renderCircle = (customer, index) => (
                 <div key={index} className="flex flex-col items-center relative">
                     <div 
@@ -335,7 +337,6 @@
                     </div>
                 </div>
             );
-
             return (
                 <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 p-4 md:p-8">
                     {showCelebration && (
@@ -507,6 +508,7 @@
                                         <span className="text-xl font-bold text-orange-600">£{totalHAB.toLocaleString()}</span>
                                     </div>
                                 )}
+                                
                                 <div className={`flex justify-between items-center py-3 px-4 rounded-lg transition-all ${qualifiesForFastStart ? 'bg-green-50 border-2 border-green-300' : 'bg-gray-50 border-2 border-gray-200'}`}>
                                     <div className="flex items-center gap-2">
                                         <TrendingUp className={`w-5 h-5 ${qualifiesForFastStart ? 'text-green-600' : 'text-gray-400'}`} />
@@ -515,4 +517,376 @@
                                     <span className={`text-xl font-bold ${qualifiesForFastStart ? 'text-green-600' : 'text-gray-400'}`}>£{fastStartBonus.toLocaleString()}</span>
                                 </div>
 
-                                <div
+                                <div className="flex justify-between items-center py-4 px-4 rounded-lg shadow-md text-white relative overflow-hidden">
+                                    <div className="absolute inset-0" style={{ background: qualifiesForFastStart ? `linear-gradient(to right, rgb(147, 51, 234) 0%, rgb(147, 51, 234) ${(totalCB / grandTotal) * 100}%, rgb(198, 83, 140) ${(totalCB / grandTotal) * 100}%, rgb(249, 115, 22) ${((totalCB + totalHAB) / grandTotal) * 100}%, rgb(142, 156, 69) ${((totalCB + totalHAB) / grandTotal) * 100}%, rgb(34, 197, 94) ${((totalCB + totalHAB) / grandTotal) * 100}%, rgb(34, 197, 94) 100%)` : totalHAB > 0 ? `linear-gradient(to right, rgb(147, 51, 234) 0%, rgb(147, 51, 234) ${(totalCB / grandTotal) * 100}%, rgb(198, 83, 140) ${(totalCB / grandTotal) * 100}%, rgb(249, 115, 22) ${(totalCB / grandTotal) * 100}%, rgb(249, 115, 22) 100%)` : 'rgb(147, 51, 234)' }}></div>
+                                    <div className="flex items-center gap-2 relative z-10">
+                                        <span className="font-bold text-lg">TOTAL EARNINGS:</span>
+                                    </div>
+                                    <span className="text-2xl font-bold relative z-10">£{grandTotal.toLocaleString()}</span>
+                                </div>
+
+                                {tenantCount > 0 && (
+                                    <div className="flex justify-between items-center py-3 px-4 rounded-lg border-4 bg-blue-50 border-blue-600 transition-all">
+                                        <div className="flex items-center gap-2">
+                                            <RefreshCw className="w-5 h-5 text-blue-600" />
+                                            <span className="font-semibold text-gray-700">Recurring Income:</span>
+                                        </div>
+                                        <div className="text-right">
+                                            <span className="text-xl font-bold text-blue-600">£{residualIncome.toFixed(2)}/m</span>
+                                            <span className="block text-xs text-blue-500">(£{(residualIncome * 12).toLocaleString()}/yr)</span>
+                                        </div>
+                                    </div>
+                                )}
+                                {mode === 'opportunity' && (
+                                    <div className={`rounded-lg border-2 py-3 px-4 transition-all ${qualifiesForFastStart ? 'bg-gradient-to-r from-purple-600 to-pink-600 border-purple-700' : 'bg-gray-100 border-gray-300'}`}>
+                                        <div className="flex items-center gap-3 mb-3">
+                                            {qualifiesForFastStart ? <div className="text-2xl">🔓</div> : <Lock className="w-5 h-5 text-gray-400 flex-shrink-0" />}
+                                            <div className={`text-base font-bold ${qualifiesForFastStart ? 'text-white' : 'text-gray-400'}`}>New Revenue Streams Unlocked!</div>
+                                        </div>
+                                        <div className={`text-sm ${qualifiesForFastStart ? 'text-white' : 'text-gray-400'} space-y-1`}>
+                                            <div className="flex justify-between">
+                                                <span>Supporting Bonuses</span>
+                                                <span className="font-bold">{qualifiesForFastStart ? `£${Math.round(totalCB / 2).toLocaleString()}` : '—'}</span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <span>Mentoring Bonus</span>
+                                                <span className="font-bold">{qualifiesForFastStart ? '£100' : '—'}</span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <span>Fast Start Mentoring</span>
+                                                <span className="font-bold">{qualifiesForFastStart ? '£300' : '—'}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {mode === 'track' && qualifiesForFastStart && (
+                                    <div className="rounded-lg border-2 py-3 px-4 bg-gradient-to-r from-purple-600 to-pink-600 border-purple-700">
+                                        <div className="flex items-center gap-3 mb-3">
+                                            <div className="text-2xl">🔓</div>
+                                            <div className="text-base font-bold text-white">Supporting New Partners - Worked Example</div>
+                                        </div>
+                                        <p className="text-sm text-white mb-3">Once you have 6 customers, supporting new partners to achieve their QD* Fast Start Bonus can benefit both you and them.</p>
+                                        <div className="text-sm text-white space-y-2">
+                                            <div className="flex justify-between items-center">
+                                                <span>Their total earnings (just like you, above)</span>
+                                                <span className="font-bold">£{grandTotal.toLocaleString()}</span>
+                                            </div>
+                                            <div className="flex justify-between items-center font-bold text-yellow-200">
+                                                <span>Your supporting and Mentoring earnings (in this example)</span>
+                                                <span>£{(Math.round(totalCB / 2) + 400).toLocaleString()}</span>
+                                            </div>
+                                            <div className="ml-4 space-y-1 text-white">
+                                                <div className="flex items-center justify-between gap-2">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-base">🤝</span>
+                                                        <span>Supporting Bonuses</span>
+                                                    </div>
+                                                    <span className="font-bold">£{Math.round(totalCB / 2).toLocaleString()}</span>
+                                                </div>
+                                                <div className="flex items-center justify-between gap-2">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-base">🎓</span>
+                                                        <span>Mentoring Bonus</span>
+                                                    </div>
+                                                    <span className="font-bold">£100</span>
+                                                </div>
+                                                <div className="flex items-center justify-between gap-2">
+                                                    <div className="flex items-center gap-2">
+                                                        <TrendingUp className="w-4 h-4" />
+                                                        <span>Fast Start Mentoring</span>
+                                                    </div>
+                                                    <span className="font-bold">£300</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="mt-4">
+                            <button onClick={() => setShowResetConfirm(true)} className="w-full py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-lg transition-colors">Reset Tracker</button>
+                        </div>
+                    </div>
+
+                    {selectedCircle !== null && (
+                        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 p-4" onClick={() => setCurrentData({ ...currentData, selectedCircle: null })}>
+                            <div className="bg-white rounded-xl p-6 shadow-2xl max-w-sm w-full animate-slideDown" onClick={(e) => e.stopPropagation()}>
+                                <p className="text-sm font-semibold text-gray-900 mb-4 text-center">Customer {selectedCircle + 1}: Homeowner with<br className="sm:hidden" /> how many services?</p>
+                                <div className="grid grid-cols-4 gap-2 mb-3">
+                                    {[1, 2, 3, 4].map(num => {
+                                        const cbAmount = num === 1 ? 50 : num === 2 ? 100 : num === 3 ? 250 : 300;
+                                        return (
+                                            <button key={num} onClick={() => setCustomerType('homeowner', num)} className={`py-4 px-2 border-2 rounded-lg font-medium transition-all ${customers[selectedCircle].type === 'homeowner' && customers[selectedCircle].services === num ? 'bg-purple-600 text-white border-purple-600' : 'bg-purple-50 border-purple-300 text-purple-700 hover:border-purple-600 hover:bg-purple-100'}`}>
+                                                <div className="text-base font-bold">{num}</div>
+                                                <div className="text-xs mt-1">(£{cbAmount})</div>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                                <p className="text-center text-sm text-gray-500 mb-3">or</p>
+                                <button onClick={() => setCustomerType('renting')} className={`w-full py-3 px-3 border-2 rounded-lg font-medium transition-all mb-3 ${customers[selectedCircle].type === 'renting' ? 'bg-blue-600 text-white border-blue-600' : 'bg-blue-50 border-blue-300 text-blue-700 hover:border-blue-600 hover:bg-blue-100'}`}>
+                                    <div className="text-base font-bold">Tenant/Renting</div>
+                                    <div className="text-xs font-normal">(No customer bonus, just recurring income)</div>
+                                </button>
+                                {customers[selectedCircle].type !== null && (
+                                    <button onClick={removeCustomer} className="w-full py-3 px-3 border-2 border-red-300 bg-red-50 text-red-700 rounded-lg font-medium hover:border-red-600 hover:bg-red-100 transition-all">Remove Customer</button>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
+                    {showResetConfirm && (
+                        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 p-4">
+                            <div className="bg-white rounded-xl p-6 shadow-2xl max-w-sm w-full animate-slideDown">
+                                <p className="text-lg font-semibold text-gray-900 mb-4 text-center">Are you sure?</p>
+                                <p className="text-sm text-gray-600 mb-6 text-center">This will reset all customer data and cannot be undone.</p>
+                                <div className="flex gap-3">
+                                    <button onClick={() => setShowResetConfirm(false)} className="flex-1 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-lg transition-colors">No</button>
+                                    <button onClick={resetTracking} className="flex-1 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg transition-colors">Yes, Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {qdExpanded && (
+                        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4" onClick={() => setCurrentData({ ...currentData, qdExpanded: false })}>
+                            <div className="bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg p-6 text-white shadow-2xl max-w-md w-full animate-slideDown relative" onClick={(e) => e.stopPropagation()}>
+                                <button
+                                    onClick={() => setCurrentData({ ...currentData, qdExpanded: false })}
+                                    className="absolute top-3 right-3 w-8 h-8 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full flex items-center justify-center transition-colors"
+                                >
+                                    <span className="text-white font-bold text-xl">×</span>
+                                </button>
+                                <div className="flex items-start gap-3">
+                                    <div className="text-3xl">🔓</div>
+                                    <div className="flex-1">
+                                        <p className="text-lg font-bold mb-3">QD - Group Residual Income Unlocked!</p>
+                                        <div className="flex items-start gap-2 text-base text-purple-100">
+                                            <RefreshCw className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                                            <p>Earn £0.30-£0.50 per customer introduced by partners in your team</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {qd6Expanded && !showIncomeStreamsPopup && !showPartnerPopup && (
+                        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
+                            <div className="bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg p-6 text-white shadow-2xl max-w-md w-full animate-slideDown relative">
+                                <button
+                                    onClick={() => setCurrentData({ ...currentData, qd6Expanded: false, showIncomeStreamsPopup: false, showPartnerPopup: false })}
+                                    className="absolute top-3 right-3 w-8 h-8 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full flex items-center justify-center transition-colors"
+                                >
+                                    <span className="text-white font-bold text-xl">×</span>
+                                </button>
+                                <div className="flex items-start gap-3">
+                                    <div className="text-3xl">🔓</div>
+                                    <div className="flex-1">
+                                        <p className="text-lg font-bold mb-3">Major Milestone!</p>
+                                        <div className="bg-white bg-opacity-10 rounded-lg p-3 mb-3">
+                                            <div className="flex items-center justify-between mb-2">
+                                                <p className="text-base text-purple-100">Three income streams unlocked:</p>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setCurrentData({ ...currentData, showIncomeStreamsPopup: true, showPartnerPopup: false });
+                                                    }}
+                                                    className="px-3 py-1 bg-white bg-opacity-20 hover:bg-opacity-30 text-white font-semibold rounded-lg transition-colors text-xs"
+                                                >
+                                                    See more
+                                                </button>
+                                            </div>
+                                            <ul className="text-sm text-purple-100 space-y-1 ml-4">
+                                                <li className="flex items-center gap-2">
+                                                    <RefreshCw className="w-4 h-4 flex-shrink-0" />
+                                                    <span>Personal Residual Income</span>
+                                                </li>
+                                                <li className="flex items-center gap-2">
+                                                    <span className="text-base flex-shrink-0">🤝</span>
+                                                    <span>Supporting Bonuses</span>
+                                                </li>
+                                                <li className="flex items-center gap-2">
+                                                    <span className="text-base flex-shrink-0">🎓</span>
+                                                    <span>Mentoring Bonuses</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div className="flex items-center justify-between bg-white bg-opacity-10 rounded-lg p-3">
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-6 h-6 rounded-full bg-yellow-400 border-2 border-yellow-600 flex items-center justify-center">
+                                                    <span className="text-xs font-bold text-yellow-900">P</span>
+                                                </div>
+                                                <p className="text-base font-semibold text-yellow-200">Upgrade one customer to partner</p>
+                                            </div>
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setCurrentData({ ...currentData, showPartnerPopup: true, showIncomeStreamsPopup: false });
+                                                }}
+                                                className="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-yellow-900 font-bold rounded-lg transition-colors text-sm"
+                                            >
+                                                See how
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {qd6Expanded && showIncomeStreamsPopup && (
+                        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[100] p-4">
+                            <div className="bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg p-6 text-white shadow-2xl max-w-lg w-full animate-slideDown relative max-h-[90vh] overflow-y-auto">
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setCurrentData({ ...currentData, showIncomeStreamsPopup: false });
+                                    }}
+                                    className="absolute top-3 right-3 w-8 h-8 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full flex items-center justify-center transition-colors"
+                                >
+                                    <span className="text-white font-bold text-xl">×</span>
+                                </button>
+                                <div className="pr-8">
+                                    <p className="text-xl font-bold mb-4">Three new income streams unlocked!</p>
+                                    
+                                    <div className="mb-4">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <RefreshCw className="w-5 h-5 text-purple-100" />
+                                            <p className="text-lg font-bold">Personal residual income (PRI)</p>
+                                        </div>
+                                        <p className="text-sm text-purple-100 mb-2">A recurring percentage profit share of the customer's bill after a set period of time. Multiservice customers pay more residual income, typically:</p>
+                                        <ul className="text-sm text-purple-100 ml-4 space-y-1">
+                                            <li>• Tenants £2-3 a month</li>
+                                            <li>• Homeowners £3-5 a month</li>
+                                        </ul>
+                                    </div>
+
+                                    <div className="mb-4">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <span className="text-xl">🤝</span>
+                                            <p className="text-lg font-bold">Supporting Customer Bonus up to £150 per customer</p>
+                                        </div>
+                                        <p className="text-sm text-purple-100 mb-2">When supporting partners in your team to introduce homeowners you will earn 50% Customer Bonus</p>
+                                        <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm text-purple-100 ml-4">
+                                            <div>• 1 service £25</div>
+                                            <div>• 3 services £125</div>
+                                            <div>• 2 services £50</div>
+                                            <div>• 4 services £150</div>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <span className="text-xl">🎓</span>
+                                            <TrendingUp className="w-5 h-5 text-purple-100" />
+                                            <p className="text-lg font-bold">Mentoring / Fast Start Bonus up to £400 per Partner</p>
+                                        </div>
+                                        <div className="flex items-start gap-2 text-sm text-purple-100 mb-2">
+                                            <span className="text-base flex-shrink-0">🎓</span>
+                                            <p>When a partner you have introduced achieves QD* (6 customers, one partner) you earn £100 Mentoring Bonus</p>
+                                        </div>
+                                        <div className="flex items-start gap-2 text-sm text-purple-100">
+                                            <TrendingUp className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                                            <p>When they achieve QD* within 30 days you <span className="font-semibold">also</span> earn £300 Fast Start Mentoring (total £400)</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {qd6Expanded && showPartnerPopup && (
+                        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[100] p-4">
+                            <div className="bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-lg p-6 shadow-2xl max-w-md w-full animate-slideDown relative">
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setCurrentData({ ...currentData, showPartnerPopup: false });
+                                    }}
+                                    className="absolute top-3 right-3 w-8 h-8 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full flex items-center justify-center transition-colors"
+                                >
+                                    <span className="text-yellow-900 font-bold text-xl">×</span>
+                                </button>
+                                <div className="flex items-center justify-center gap-3">
+                                    <div className="w-8 h-8 rounded-full bg-gray-200 border-2 border-gray-400 flex items-center justify-center">
+                                        <span className="text-sm font-bold text-gray-500">P</span>
+                                    </div>
+                                    <span className="text-2xl text-yellow-900">→</span>
+                                    <div className="w-8 h-8 rounded-full bg-yellow-400 border-2 border-yellow-600 flex items-center justify-center">
+                                        <span className="text-sm font-bold text-yellow-900">P</span>
+                                    </div>
+                                    <p className="text-lg font-bold text-yellow-900">Upgrade just one customer to partner: just press it!</p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    {showCelebration && (
+                        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40 p-4">
+                            <div className="bg-white rounded-2xl p-8 max-w-md text-center animate-bounceOnce">
+                                <div className="text-6xl mb-4">🎉</div>
+                                <h2 className="text-3xl font-bold text-purple-600 mb-4">Congratulations!</h2>
+                                <p className="text-xl text-gray-700 mb-2">You have qualified for the</p>
+                                <p className="text-4xl font-bold text-green-600 mb-4">£500 Fast Start Bonus!</p>
+                            </div>
+                        </div>
+                    )}
+
+                    {showWIP1 && (
+                        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4" onClick={() => setShowWIP1(false)}>
+                            <div className="bg-white rounded-xl p-6 shadow-2xl max-w-md w-full animate-slideDown relative" onClick={(e) => e.stopPropagation()}>
+                                <button
+                                    onClick={() => setShowWIP1(false)}
+                                    className="absolute top-3 right-3 w-8 h-8 bg-teal-100 hover:bg-teal-200 rounded-full flex items-center justify-center transition-colors border-2 border-teal-300"
+                                >
+                                    <span className="text-teal-900 font-bold text-xl">×</span>
+                                </button>
+                                <div className="text-center">
+                                    <p className="text-lg font-bold text-teal-900 mb-1">Work In Progress 1: "You" On/Off</p>
+                                    <p className="text-sm text-teal-700 mb-4">Suggestion (kinda!) by David P</p>
+                                    <div className="bg-teal-500 rounded-lg p-4 border-2 border-teal-600">
+                                        <p className="text-base text-white mb-2">This tool will toggle "You" customer On/Off</p>
+                                        <p className="text-2xl mb-1">ℹ️</p>
+                                        <p className="text-sm text-white">hopefully self explanatory!</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {showWIP2 && (
+                        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4" onClick={() => setShowWIP2(false)}>
+                            <div className="bg-white rounded-xl p-6 shadow-2xl max-w-md w-full animate-slideDown relative" onClick={(e) => e.stopPropagation()}>
+                                <button
+                                    onClick={() => setShowWIP2(false)}
+                                    className="absolute top-3 right-3 w-8 h-8 bg-teal-100 hover:bg-teal-200 rounded-full flex items-center justify-center transition-colors border-2 border-teal-300"
+                                >
+                                    <span className="text-teal-900 font-bold text-xl">×</span>
+                                </button>
+                                <div className="text-center">
+                                    <p className="text-lg font-bold text-teal-900 mb-1">Work In Progress 2: "CB Picker" On/Off</p>
+                                    <p className="text-sm text-teal-700 mb-4">suggestion by Moira J</p>
+                                    <div className="bg-teal-500 rounded-lg p-4 border-2 border-teal-600">
+                                        <p className="text-base text-white mb-2">This tool will toggle "CB Picker" On/Off</p>
+                                        <p className="text-2xl mb-2">ℹ️</p>
+                                        <p className="text-sm text-white mb-3">Enable less confident partners to manually select individual services to automatically calculate the number of qualifying services (particularly useful if partners are less sure which service combo counts as a service)</p>
+                                        <div className="bg-yellow-50 border-2 border-yellow-300 rounded-lg p-3 mt-3">
+                                            <p className="text-xs font-bold text-gray-700 mb-1">NB: Tool Placement Notes</p>
+                                            <p className="text-xs text-gray-600">When launched, this will sit on the existing modified (expanded) customer picker pop-up and will show 4 (maybe 5) buttons: Energy, Broadband, Mobile 1, Mobile 2, Insurance. In this mode when services are manually selected/auto calculated, homeowner/tenant renting status will subsequently need to be selected before the customer status is confirmed (separate button on the pop-up).</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<UWTracker />);
+    </script>
+</body>
+</html>
