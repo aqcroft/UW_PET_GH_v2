@@ -17,21 +17,10 @@
   .animate-bounceOnce { animation: bounceOnce 0.6s ease-in-out; }
   * { box-sizing: border-box; }
 
-  /* Landscape: 2-col accordion, wider popup */
   @media (orientation: landscape) and (max-height: 500px) {
-    .popup-inner {
-      max-width: 58rem !important;
-      height: 92vh !important;
-    }
-    .accordion-list {
-      display: grid !important;
-      grid-template-columns: 1fr 1fr !important;
-      gap: 0.4rem !important;
-      align-items: start !important;
-    }
-    .accordion-list > div {
-      overflow: visible !important;
-    }
+    .popup-inner { max-width: 58rem !important; height: 92vh !important; }
+    .accordion-list { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 0.4rem !important; align-items: start !important; }
+    .accordion-list > div { overflow: visible !important; }
   }
 </style>
 </head>
@@ -40,7 +29,6 @@
 <script type="text/babel">
 const { useState, useRef, useCallback } = React;
 
-/* ── SVG Icons ── */
 const defaultIconStyle = { width:'1rem', height:'1rem', flexShrink:0 };
 const TrendingUp = ({ style }) => (
   <svg style={style||defaultIconStyle} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -83,8 +71,9 @@ const SM  = { width:'1rem',    height:'1rem',    flexShrink:0 };
 const MD  = { width:'1.25rem', height:'1.25rem', flexShrink:0 };
 const XS  = { width:'0.875rem',height:'0.875rem',flexShrink:0 };
 
-const RcwSM = ({ color }) => (
-  <svg style={{...SM, color: color||'#6b7280'}} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+/* Reusable recurring SVG icon */
+const RcwIcon = ({ style }) => (
+  <svg style={style||{...SM,color:'currentColor'}} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
   </svg>
 );
@@ -94,7 +83,9 @@ const closing = { fontStyle:'italic', fontWeight:'700', color:'#111827', margin:
 
 const sections = [
   {
-    id: 'cb', icon: '💷', title: 'Customer Bonus',
+    id: 'cb',
+    icon: <span style={{fontSize:'1.1rem'}}>💷</span>,
+    title: 'Customer Bonus',
     summary: 'Upfront payment when we introduce a homeowner customer.',
     detail: (
       <div style={{fontSize:'0.875rem',color:'#374151'}}>
@@ -108,7 +99,9 @@ const sections = [
     ),
   },
   {
-    id: 'hab', icon: '🔥', title: 'High Activity Bonus',
+    id: 'hab',
+    icon: <span style={{fontSize:'1.1rem'}}>🔥</span>,
+    title: 'High Activity Bonus',
     summary: 'Extra reward for multiple 3+ service homeowners in one calendar month.',
     detail: (
       <div style={{fontSize:'0.875rem',color:'#374151'}}>
@@ -122,14 +115,19 @@ const sections = [
     ),
   },
   {
-    id: 'ri', icon: '♻️', title: 'Recurring Income',
+    id: 'ri',
+    /* collapsed header icon = SVG recurring icon */
+    icon: <RcwIcon style={{...SM, color:'#6b7280'}} />,
+    title: 'Recurring Income',
     summary: "Ongoing monthly income from our customers — and our team's customers.",
     detail: (
       <div style={{fontSize:'0.875rem',color:'#374151'}}>
         <p style={{marginBottom:'0.5rem'}}>A profit share of customers' bills, growing as they add services.</p>
         <div style={{...box, marginBottom:'0.35rem'}}>
           <p style={{margin:'0 0 0.35rem 0',display:'flex',alignItems:'center',gap:'0.3rem'}}>
-            👤 <strong>Personal Customers</strong> <RcwSM color="#7c3aed" />
+            <span>👤</span>
+            <RcwIcon style={{...XS, color:'#7c3aed'}} />
+            <strong>Personal Customers</strong>
             <span style={{fontWeight:'400',fontStyle:'italic',color:'#6b7280',fontSize:'0.8rem'}}>— % of bill</span>
           </p>
           <div>• Tenant — £2–£3 /m <span style={{color:'#6b7280',fontSize:'0.72rem'}}>(after first bill paid)</span></div>
@@ -137,17 +135,21 @@ const sections = [
         </div>
         <div style={box}>
           <p style={{margin:'0 0 0.35rem 0',display:'flex',alignItems:'center',gap:'0.3rem'}}>
-            👥 <strong>Team Customers</strong> <RcwSM color="#7c3aed" />
+            <span>👥</span>
+            <RcwIcon style={{...XS, color:'#7c3aed'}} />
+            <strong>Team Customers</strong>
             <span style={{fontWeight:'400',fontStyle:'italic',color:'#6b7280',fontSize:'0.8rem'}}>— pence per service</span>
           </p>
-          <div>• Typically £0.30–£0.50 per customer /m</div>
+          <div>• Typically 30p–50p per customer /m</div>
         </div>
         <p style={{...closing, marginTop:'0.35rem'}}>✨ Grows steadily as our customers and team expand.</p>
       </div>
     ),
   },
   {
-    id: 'scb', icon: '🤝', title: 'Supporting Customer Bonus',
+    id: 'scb',
+    icon: <span style={{fontSize:'1.1rem'}}>🤝</span>,
+    title: 'Supporting Customer Bonus',
     summary: 'Upfront payment when we support a Partner to introduce a homeowner.',
     detail: (
       <div style={{fontSize:'0.875rem',color:'#374151'}}>
@@ -165,11 +167,13 @@ const sections = [
     ),
   },
   {
-    id: 'mb', icon: '🎓', title: 'Mentoring Bonus',
-    summary: 'Up to £400 when a Partner we introduce reaches QD*.',
+    id: 'mb',
+    icon: <span style={{fontSize:'1.1rem'}}>🎓</span>,
+    title: 'Mentoring Bonus',
+    summary: 'Up to £400 when a Partner we introduce reaches QD.',
     detail: (
       <div style={{fontSize:'0.875rem',color:'#374151'}}>
-        <p style={{marginBottom:'0.25rem'}}>When a Partner reaches <strong>QD*</strong>:</p>
+        <p style={{marginBottom:'0.25rem'}}>When a Partner reaches <strong>QD</strong>:</p>
         <p style={{fontSize:'0.75rem',color:'#6b7280',margin:'0 0 0.5rem 0'}}>(6 personal customers + 1 Partner introduced)</p>
         <div style={box}>
           <div>🎓 Mentoring Bonus — £100</div>
@@ -186,13 +190,11 @@ const sections = [
 
 const HowPaidPopup = ({ onClose }) => {
   const [openId, setOpenId] = useState(null);
-  /* one ref per section header button */
   const headerRefs = useRef({});
 
   const toggle = useCallback((id) => {
     const opening = openId !== id;
     setOpenId(opening ? id : null);
-    /* if we're opening a section, snap its header to the top of the scroll area */
     if (opening && headerRefs.current[id]) {
       headerRefs.current[id].scrollIntoView({ behavior: 'instant', block: 'start' });
     }
@@ -205,31 +207,21 @@ const HowPaidPopup = ({ onClose }) => {
     >
       <div
         className="popup-inner"
-        style={{
-          background:'white',
-          borderRadius:'0.75rem',
-          boxShadow:'0 20px 50px rgba(0,0,0,0.3)',
-          maxWidth:'28rem',
-          width:'100%',
-          display:'flex',
-          flexDirection:'column',
-          /* FIXED height — no resize when accordion opens */
-          height:'85vh',
-        }}
+        style={{background:'white',borderRadius:'0.75rem',boxShadow:'0 20px 50px rgba(0,0,0,0.3)',maxWidth:'28rem',width:'100%',display:'flex',flexDirection:'column',height:'85vh'}}
         onClick={e=>e.stopPropagation()}
       >
         {/* Header */}
         <div style={{padding:'1rem 1rem 0.6rem',borderBottom:'1px solid #f3f4f6',display:'flex',alignItems:'flex-start',justifyContent:'space-between',flexShrink:0}}>
           <div>
             <h3 style={{fontSize:'1.05rem',fontWeight:'700',color:'#111827',margin:0}}>How Are UW Partners Paid?</h3>
-            <p style={{fontSize:'0.75rem',color:'#6b7280',marginTop:'0.2rem',marginBottom:0}}>We earn upfront for activity today — and recurring income over time.</p>
+            <p style={{fontSize:'0.75rem',color:'#6b7280',marginTop:'0.2rem',marginBottom:0}}>We earn upfront income — and recurring income over time.</p>
           </div>
           <button onClick={onClose} style={{marginLeft:'0.75rem',width:'1.75rem',height:'1.75rem',borderRadius:'50%',background:'#f3f4f6',border:'none',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
             <X style={{...XS, color:'#4b5563'}} />
           </button>
         </div>
 
-        {/* Accordion list — scrollable, fixed frame */}
+        {/* Accordion list */}
         <div className="accordion-list" style={{overflowY:'auto',flex:1,padding:'0.6rem',display:'flex',flexDirection:'column',gap:'0.4rem'}}>
           {sections.map(s => (
             <div key={s.id} style={{border:'1px solid #e5e7eb',borderRadius:'0.6rem',overflow:'hidden',background:'white'}}>
@@ -238,7 +230,8 @@ const HowPaidPopup = ({ onClose }) => {
                 style={{width:'100%',display:'flex',alignItems:'center',gap:'0.6rem',padding:'0.6rem 0.75rem',textAlign:'left',background:'none',border:'none',cursor:'pointer'}}
                 onClick={()=>toggle(s.id)}
               >
-                <span style={{fontSize:'1.1rem',flexShrink:0}}>{s.icon}</span>
+                {/* icon is now a React element, not a string */}
+                <span style={{flexShrink:0,display:'flex',alignItems:'center'}}>{s.icon}</span>
                 <div style={{flex:1,minWidth:0}}>
                   <p style={{fontWeight:'600',fontSize:'0.85rem',color:'#111827',margin:'0 0 0.1rem 0'}}>{s.title}</p>
                   <p style={{fontSize:'0.78rem',color:'#6b7280',margin:0,lineHeight:'1.4',whiteSpace:'normal'}}>{s.summary}</p>
@@ -256,11 +249,7 @@ const HowPaidPopup = ({ onClose }) => {
             </div>
           ))}
         </div>
-
-        {/* Footer */}
-        <div style={{padding:'0.5rem 1rem',flexShrink:0,borderTop:'1px solid #f3f4f6'}}>
-          <p style={{fontSize:'0.65rem',color:'#9ca3af',textAlign:'center',margin:0}}>*QD = Qualified Distributor</p>
-        </div>
+        {/* Footer removed */}
       </div>
     </div>
   );
@@ -428,6 +417,9 @@ const UWTracker = () => {
     return { border: '#7c3aed', text: '#6d28d9', bg: '#f5f3ff' };
   };
 
+  /* colour for locked banner items — grey when locked, pink when unlocked */
+  const bannerCol = qualifiesForFastStart ? '#fbcfe8' : '#9ca3af';
+
   return (
     <div style={{minHeight:'100vh',background:'linear-gradient(135deg, #fdf2f8, #f5f3ff)',padding:'1rem'}}>
       {showCelebration && (
@@ -575,11 +567,17 @@ const UWTracker = () => {
                     }
                     <span style={{fontWeight:'700',fontSize:'1rem',color:qualifiesForFastStart?'white':'#9ca3af'}}>New Revenue Streams Unlocked</span>
                   </div>
-                  <div style={{fontSize:'0.875rem',color:qualifiesForFastStart?'#fbcfe8':'#9ca3af',display:'flex',flexDirection:'column',gap:'0.25rem'}}>
-                    <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}><span>🤝</span><span>Supporting Bonuses</span></div>
-                    <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}><span>🎓</span><span>Mentoring Bonus</span></div>
+                  <div style={{fontSize:'0.875rem',color:bannerCol,display:'flex',flexDirection:'column',gap:'0.25rem'}}>
                     <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}>
-                      <TrendingUp style={{...SM, color:qualifiesForFastStart?'#fbcfe8':'#9ca3af'}} />
+                      <span style={{filter:qualifiesForFastStart?'none':'grayscale(1)',opacity:qualifiesForFastStart?1:0.5}}>🤝</span>
+                      <span>Supporting Bonuses</span>
+                    </div>
+                    <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}>
+                      <span style={{filter:qualifiesForFastStart?'none':'grayscale(1)',opacity:qualifiesForFastStart?1:0.5}}>🎓</span>
+                      <span>Mentoring Bonus</span>
+                    </div>
+                    <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}>
+                      <TrendingUp style={{...SM, color:bannerCol}} />
                       <span>Fast Start Mentoring Bonus</span>
                     </div>
                   </div>
@@ -588,7 +586,7 @@ const UWTracker = () => {
               ) : (
                 <div style={{padding:'1rem',background:'linear-gradient(to right,#7c3aed,#db2777)'}}>
                   <p style={{color:'white',fontWeight:'700',fontSize:'0.875rem',marginBottom:'0.25rem',marginTop:0}}>🔓 New Revenue Streams Unlocked — Worked Example</p>
-                  <p style={{color:'#fbcfe8',fontSize:'0.75rem',marginBottom:'0.75rem'}}>For each Partner you recruit and support to their QD* Fast Start Bonus:</p>
+                  <p style={{color:'#fbcfe8',fontSize:'0.75rem',marginBottom:'0.75rem'}}>For each Partner you recruit and support to their QD Fast Start Bonus:</p>
                   <div style={{background:'rgba(255,255,255,0.15)',borderRadius:'0.5rem',padding:'0.75rem',marginBottom:'0.75rem'}}>
                     <div style={{display:'flex',justifyContent:'space-between',color:'white',fontSize:'0.875rem',marginBottom:'0.25rem'}}>
                       <span>They earn (just like you, above)</span>
