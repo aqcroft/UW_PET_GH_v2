@@ -95,9 +95,10 @@ const scbSummary = (isOpen) => (
   </span>
 );
 
+/* br ensures the unlock line always starts fresh — no orphan emoji on desktop */
 const mbSummary = (isOpen) => (
   <span>
-    Up to £400 when a Partner we introduce reaches QD*.{' '}
+    Up to £400 when a Partner we introduce reaches QD*.<br/>
     <span style={{
       fontStyle: 'italic',
       fontSize: '0.72rem',
@@ -211,7 +212,7 @@ const sections = [
             <TrendingUp style={{...XS,color:'#374151'}} />
             <span>30 days Fast Start Mentoring Bonus — £300</span>
           </div>
-          <div style={{borderTop:'1px solid #c4b5fd',marginTop:'0.5rem',paddingTop:'0.5rem',paddingLeft:'1.5rem',fontWeight:'700'}}>
+          <div style={{borderTop:'1px solid #c4b5fd',marginTop:'0.5rem',paddingTop:'0.5rem',paddingLeft:'1.5rem'}}>
             Total — £400 per Partner
           </div>
         </div>
