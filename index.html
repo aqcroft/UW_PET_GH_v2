@@ -154,22 +154,22 @@ const sections = [
         <div style={{...box, marginBottom:'0.5rem'}}>
           <p style={{margin:'0 0 0 0',display:'flex',alignItems:'center',gap:'0.3rem'}}>
             <RcwIcon style={{...XS, color:'#2563eb'}} />
-            <span>👤</span>
-            <strong>Personal Customers</strong>
-            <span style={{fontWeight:'400',fontStyle:'italic',color:'#6b7280',fontSize:'0.8rem'}}>— % of bill, typically</span>
+            <span>👥</span>
+            <strong>Team (Group) Customers</strong>
+            <span style={{fontWeight:'400',fontStyle:'italic',color:'#6b7280',fontSize:'0.8rem'}}>— pence per service, typically</span>
           </p>
-          <p style={unlockStyle}>🔓 Unlocks at 6 Personal Customers</p>
-          <div>• Tenant — £2–£3 per month <span style={{color:'#6b7280',fontSize:'0.72rem'}}>(after first bill paid)</span></div>
-          <div style={{marginBottom:'0.5rem'}}>• Homeowner — £3–£5 per month <span style={{color:'#6b7280',fontSize:'0.72rem'}}>(after a set period)</span></div>
+          <p style={unlockStyle}>🔓 Unlocks at 3 Personal Customers</p>
+          <div style={{marginBottom:'0.5rem'}}>• 30–50p /month per customer</div>
           <div style={{borderTop:'1px solid #c4b5fd',paddingTop:'0.4rem'}}>
             <p style={{margin:'0 0 0 0',display:'flex',alignItems:'center',gap:'0.3rem'}}>
               <RcwIcon style={{...XS, color:'#2563eb'}} />
-              <span>👥</span>
-              <strong>Team (Group) Customers</strong>
-              <span style={{fontWeight:'400',fontStyle:'italic',color:'#6b7280',fontSize:'0.8rem'}}>— pence per service</span>
+              <span>👤</span>
+              <strong>Personal Customers</strong>
+              <span style={{fontWeight:'400',fontStyle:'italic',color:'#6b7280',fontSize:'0.8rem'}}>— % of bill, typically</span>
             </p>
-            <p style={unlockStyle}>🔓 Unlocks at 3 Personal Customers</p>
-            <div>• Typically 30p–50p per customer per month</div>
+            <p style={unlockStyle}>🔓 Unlocks at 6 Personal Customers</p>
+            <div>• Tenant — £2–£3 /month <span style={{color:'#6b7280',fontSize:'0.72rem'}}>(after first bill paid)</span></div>
+            <div>• Homeowner — £3–£5 /month <span style={{color:'#6b7280',fontSize:'0.72rem'}}>(after a set period)</span></div>
           </div>
         </div>
         <p style={closing}>✨ Grows steadily as our customers and team expand.</p>
@@ -199,24 +199,24 @@ const sections = [
   {
     id: 'mb',
     icon: <span style={{fontSize:'1.1rem'}}>🎓</span>,
-    title: 'Mentoring Bonus †',
+    title: 'Mentor Bonus †',
     summary: mbSummary,
     detail: (
       <div style={{fontSize:'0.875rem',color:'#374151'}}>
         <p style={{marginBottom:'0.5rem',fontWeight:'600'}}>QD* = 6 Personal Customers + 1 Partner introduced</p>
         <div style={box}>
           <div style={{display:'flex',alignItems:'center',gap:'0.4rem'}}>
-            <span>🎓</span><span>Mentoring Bonus — £100</span>
+            <span>🎓</span><span>Mentor Bonus — £100</span>
           </div>
           <div style={{display:'flex',alignItems:'center',gap:'0.4rem',marginTop:'0.25rem'}}>
             <TrendingUp style={{...XS,color:'#374151'}} />
-            <span>30 days Fast Start Mentoring Bonus — £300</span>
+            <span>30 days Mentor Fast Starter Bonus — £300</span>
           </div>
           <div style={{borderTop:'1px solid #c4b5fd',marginTop:'0.5rem',paddingTop:'0.5rem',paddingLeft:'1.5rem'}}>
             Total — £400 per Partner
           </div>
         </div>
-        <p style={closing}>✨ Rewarding us for developing new Partners — with even more for Fast Start.</p>
+        <p style={closing}>✨ Rewarding us for developing new Partners — with even more for Fast Starter.</p>
       </div>
     ),
   },
@@ -286,7 +286,7 @@ const HowPaidPopup = ({ onClose }) => {
           })}
 
           <p style={{fontSize:'0.7rem',color:'#9ca3af',textAlign:'center',margin:'0.25rem 0 0.1rem',fontStyle:'italic',lineHeight:'1.6'}}>
-            † Complete Fast Start Bonus on the main screen to see<br/>a worked example of Supporting and Mentoring Bonuses.
+            † Complete Fast Starter Bonus on the main screen to see<br/>a worked example of Supporting and Mentor Bonuses.
           </p>
         </div>
       </div>
@@ -342,9 +342,9 @@ const UWTracker = () => {
   const totalCB = customers.reduce((sum, c, i) => sum + calculateCB(c, i), 0);
   const hasPartner = customers.some((c, i) => includeYou ? i > 0 && c.isPartner : c.isPartner);
   const allCirclesFilled = customers.every(c => c.type !== null);
-  const qualifiesForFastStart = allCirclesFilled && hasPartner;
-  const fastStartBonus = qualifiesForFastStart ? 500 : 0;
-  const grandTotal = totalCB + totalHAB + fastStartBonus;
+  const qualifiesForFastStarter = allCirclesFilled && hasPartner;
+  const fastStarterBonus = qualifiesForFastStarter ? 500 : 0;
+  const grandTotal = totalCB + totalHAB + fastStarterBonus;
   const tenantCount = customers.filter((c, i) => includeYou ? i > 0 && c.type === 'renting' : c.type === 'renting').length;
   const residualIncome = tenantCount * 2.5;
   const supportingBonus = Math.round(totalCB / 2);
@@ -375,7 +375,7 @@ const UWTracker = () => {
   const handlePartnerBadgeClick = (e, index) => {
     e.stopPropagation();
     if ((index === 0 && includeYou) || customers[index].type === null) return;
-    const wasQualified = qualifiesForFastStart;
+    const wasQualified = qualifiesForFastStarter;
     const nc = [...customers];
     nc[index] = {...nc[index], isPartner: !nc[index].isPartner};
     setCustomers(nc);
@@ -397,7 +397,7 @@ const UWTracker = () => {
 
   const setCustomerType = (type, services) => {
     if (selectedCircle === null) return;
-    const wasQualified = qualifiesForFastStart;
+    const wasQualified = qualifiesForFastStarter;
     const nc = [...customers];
     nc[selectedCircle] = { type, services: services || 0, isPartner: nc[selectedCircle].isPartner };
     setCustomers(nc);
@@ -456,7 +456,7 @@ const UWTracker = () => {
     return { border: '#7c3aed', text: '#6d28d9', bg: '#f5f3ff' };
   };
 
-  const bannerCol = qualifiesForFastStart ? '#fbcfe8' : '#9ca3af';
+  const bannerCol = qualifiesForFastStarter ? '#fbcfe8' : '#9ca3af';
 
   return (
     <div style={{minHeight:'100vh',background:'linear-gradient(135deg, #fdf2f8, #f5f3ff)',padding:'1rem'}}>
@@ -560,12 +560,12 @@ const UWTracker = () => {
               </div>
             )}
 
-            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'0.75rem 1rem',borderRadius:'0.5rem',border:`2px solid ${qualifiesForFastStart?'#86efac':'#e5e7eb'}`,background:qualifiesForFastStart?'#f0fdf4':'#f9fafb'}}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'0.75rem 1rem',borderRadius:'0.5rem',border:`2px solid ${qualifiesForFastStarter?'#86efac':'#e5e7eb'}`,background:qualifiesForFastStarter?'#f0fdf4':'#f9fafb'}}>
               <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}>
-                <TrendingUp style={{...MD, color:qualifiesForFastStart?'#16a34a':'#9ca3af'}} />
-                <span style={{fontWeight:'600',color:qualifiesForFastStart?'#16a34a':'#374151'}}>Fast Start Bonus:</span>
+                <TrendingUp style={{...MD, color:qualifiesForFastStarter?'#16a34a':'#9ca3af'}} />
+                <span style={{fontWeight:'600',color:qualifiesForFastStarter?'#16a34a':'#374151'}}>Fast Starter Bonus:</span>
               </div>
-              <span style={{fontSize:'1.25rem',fontWeight:'700',color:qualifiesForFastStart?'#16a34a':'#9ca3af'}}>£{fastStartBonus.toLocaleString()}</span>
+              <span style={{fontSize:'1.25rem',fontWeight:'700',color:qualifiesForFastStarter?'#16a34a':'#9ca3af'}}>£{fastStarterBonus.toLocaleString()}</span>
             </div>
 
             <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'1rem',borderRadius:'0.5rem',boxShadow:'0 2px 8px rgba(0,0,0,0.15)',color:'white',position:'relative',overflow:'hidden'}}>
@@ -593,38 +593,38 @@ const UWTracker = () => {
             )}
 
             <div
-              onClick={() => qualifiesForFastStart && setCardFlipped(!cardFlipped)}
-              style={{borderRadius:'0.75rem',border:`2px solid ${qualifiesForFastStart?'#a78bfa':'#e5e7eb'}`,overflow:'hidden',cursor:qualifiesForFastStart?'pointer':'not-allowed'}}
+              onClick={() => qualifiesForFastStarter && setCardFlipped(!cardFlipped)}
+              style={{borderRadius:'0.75rem',border:`2px solid ${qualifiesForFastStarter?'#a78bfa':'#e5e7eb'}`,overflow:'hidden',cursor:qualifiesForFastStarter?'pointer':'not-allowed'}}
             >
               {!cardFlipped ? (
-                <div style={{padding:'1rem',background:qualifiesForFastStart?'linear-gradient(to right,#7c3aed,#db2777)':'#f3f4f6'}}>
+                <div style={{padding:'1rem',background:qualifiesForFastStarter?'linear-gradient(to right,#7c3aed,#db2777)':'#f3f4f6'}}>
                   <div style={{display:'flex',alignItems:'center',gap:'0.5rem',marginBottom:'0.75rem'}}>
-                    {qualifiesForFastStart
+                    {qualifiesForFastStarter
                       ? <span style={{fontSize:'1.125rem',lineHeight:1}}>🔓</span>
                       : <Lock style={{...SM, color:'#9ca3af'}} />
                     }
-                    <span style={{fontWeight:'700',fontSize:'1rem',color:qualifiesForFastStart?'white':'#9ca3af'}}>New Revenue Streams Unlocked</span>
+                    <span style={{fontWeight:'700',fontSize:'1rem',color:qualifiesForFastStarter?'white':'#9ca3af'}}>New Revenue Streams Unlocked</span>
                   </div>
                   <div style={{fontSize:'0.875rem',color:bannerCol,display:'flex',flexDirection:'column',gap:'0.25rem'}}>
                     <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}>
-                      <span style={{filter:qualifiesForFastStart?'none':'grayscale(1)',opacity:qualifiesForFastStart?1:0.5}}>🤝</span>
-                      <span>Supporting Customer Bonuses</span>
+                      <span style={{filter:qualifiesForFastStarter?'none':'grayscale(1)',opacity:qualifiesForFastStarter?1:0.5}}>🤝</span>
+                      <span>Supporting</span>
                     </div>
                     <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}>
-                      <span style={{filter:qualifiesForFastStart?'none':'grayscale(1)',opacity:qualifiesForFastStart?1:0.5}}>🎓</span>
-                      <span>Mentoring Bonus</span>
+                      <span style={{filter:qualifiesForFastStarter?'none':'grayscale(1)',opacity:qualifiesForFastStarter?1:0.5}}>🎓</span>
+                      <span>Mentor</span>
                     </div>
                     <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}>
                       <TrendingUp style={{...SM, color:bannerCol}} />
-                      <span>Fast Start Mentoring Bonus</span>
+                      <span>Mentor Fast Starter</span>
                     </div>
                   </div>
-                  {qualifiesForFastStart && <p style={{fontSize:'0.75rem',color:'#fbcfe8',fontStyle:'italic',textAlign:'center',marginTop:'0.75rem',marginBottom:0}}>Tap to see worked example</p>}
+                  {qualifiesForFastStarter && <p style={{fontSize:'0.75rem',color:'#fbcfe8',fontStyle:'italic',textAlign:'center',marginTop:'0.75rem',marginBottom:0}}>Tap to see worked example</p>}
                 </div>
               ) : (
                 <div style={{padding:'1rem',background:'linear-gradient(to right,#7c3aed,#db2777)'}}>
                   <p style={{color:'white',fontWeight:'700',fontSize:'0.875rem',marginBottom:'0.25rem',marginTop:0}}>🔓 New Revenue Streams Unlocked — Worked Example</p>
-                  <p style={{color:'#fbcfe8',fontSize:'0.75rem',marginBottom:'0.75rem'}}>For each Partner you recruit and support to their QD* Fast Start Bonus:</p>
+                  <p style={{color:'#fbcfe8',fontSize:'0.75rem',marginBottom:'0.75rem'}}>For each Partner you recruit and support to their QD* Fast Starter Bonus:</p>
                   <div style={{background:'rgba(255,255,255,0.15)',borderRadius:'0.5rem',padding:'0.75rem',marginBottom:'0.75rem'}}>
                     <div style={{display:'flex',justifyContent:'space-between',color:'white',fontSize:'0.875rem',marginBottom:'0.25rem'}}>
                       <span>They earn (just like you, above)</span>
@@ -638,8 +638,8 @@ const UWTracker = () => {
                   <p style={{color:'white',fontSize:'0.75rem',fontWeight:'600',marginBottom:'0.25rem'}}>Made up of:</p>
                   {[
                     {icon:'🤝',label:'Supporting Customer Bonuses',val:supportingBonus},
-                    {icon:'🎓',label:'Mentoring Bonus',val:100},
-                    {icon:null,label:'Fast Start Mentoring Bonus',val:300},
+                    {icon:'🎓',label:'Mentor Bonus',val:100},
+                    {icon:null,label:'Mentor Fast Starter Bonus',val:300},
                   ].map(r => (
                     <div key={r.label} style={{display:'flex',justifyContent:'space-between',alignItems:'center',fontSize:'0.875rem',background:'rgba(255,255,255,0.1)',borderRadius:'0.25rem',padding:'0.25rem 0.5rem',marginBottom:'0.25rem'}}>
                       <span style={{display:'flex',alignItems:'center',gap:'0.375rem',color:'#fbcfe8'}}>
@@ -715,7 +715,7 @@ const UWTracker = () => {
             <div style={{fontSize:'3.75rem',marginBottom:'1rem'}}>🎉</div>
             <h2 style={{fontSize:'1.875rem',fontWeight:'700',color:'#7c3aed',marginBottom:'1rem'}}>Congratulations!</h2>
             <p style={{fontSize:'1.25rem',color:'#374151',marginBottom:'0.5rem'}}>You've qualified for the</p>
-            <p style={{fontSize:'2.25rem',fontWeight:'700',color:'#16a34a',marginBottom:'1rem'}}>£500 Fast Start Bonus!</p>
+            <p style={{fontSize:'2.25rem',fontWeight:'700',color:'#16a34a',marginBottom:'1rem'}}>£500 Fast Starter Bonus!</p>
           </div>
         </div>
       )}
