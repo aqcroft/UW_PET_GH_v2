@@ -87,31 +87,15 @@
 const { useState, useRef, useCallback, useEffect } = React;
 
 /* ─────────────────────────────────────────────
-   ★  CONTACT LAYER CONFIG — SWAP THESE IN  ★
-   ─────────────────────────────────────────────
-   Replace each placeholder with the real value.
-   All other code is untouched.
+   ★  CONTACT LAYER CONFIG  ★
 ───────────────────────────────────────────── */
 const CONTACT = {
-  // Your full name (shown on CTA heading)
-  displayName: 'Adrian Croft',
-
-  // Direct URL to your profile photo (from v1 repo, GitHub raw URL, or hosted image)
-  // e.g. 'https://raw.githubusercontent.com/aqcroft/UW_PET_GH_v1/main/photo.jpg'
-  photoUrl: '',   // ← PASTE YOUR PHOTO URL HERE
-
-  // WhatsApp number — digits only, with country code, no spaces or symbols
-  // e.g. '447712345678'
-  whatsappNumber: 'YOURWHATSAPPNUMBER',
-
-  // Pre-filled WhatsApp message (encoded automatically — no need to change)
+  displayName: 'Adrian',
+  photoUrl: '',
+  whatsappNumber: '447787400800',
   whatsappMessage: "Hi Adrian, I just had a play with your UW earnings tool and I've got a few questions...",
-
-  // Calendar booking link
-  calendarUrl: 'https://YOURCALENDARBOOKINGLINK',
-
-  // UW partner registration link
-  registrationUrl: 'https://YOURUWREGISTRATIONLINK',
+  calendarUrl: 'https://tidycal.com/aqcroft/uwcost',
+  registrationUrl: 'https://uw.partners/adrian.croft/partner/join',
 };
 /* ─────────────────────────────────────────────
    End of config block
@@ -201,7 +185,7 @@ const PostFastStartCTA = () => {
         </h3>
         <p style={{ color: '#fbcfe8', fontSize: '0.8rem', margin: 0, lineHeight: '1.5' }}>
           You've just seen what the first 30 days could look like.<br/>
-          Now imagine doing this alongside {CONTACT.displayName.split(' ')[0]}.
+          Now imagine doing this alongside {CONTACT.displayName}.
         </p>
       </div>
       <div style={{ background: '#faf9ff', padding: '1rem' }}>
