@@ -12,21 +12,255 @@
   @keyframes slideDown { 0%{opacity:0;transform:scale(0.95)} 100%{opacity:1;transform:scale(1)} }
   @keyframes confetti { 0%{transform:translateY(0) rotate(0deg);opacity:1} 100%{transform:translateY(100vh) rotate(360deg);opacity:0} }
   @keyframes bounceOnce { 0%,100%{transform:translateY(0)} 25%{transform:translateY(-20px)} 50%{transform:translateY(0)} 75%{transform:translateY(-10px)} }
+  @keyframes fabIn { 0%{opacity:0;transform:scale(0.7) translateY(8px)} 100%{opacity:1;transform:scale(1) translateY(0)} }
+  @keyframes ctaSlideIn { 0%{opacity:0;transform:translateY(20px)} 100%{opacity:1;transform:translateY(0)} }
   .animate-slideDown { animation: slideDown 0.2s ease-out forwards; }
   .animate-confetti { animation: confetti 3s ease-in forwards; }
   .animate-bounceOnce { animation: bounceOnce 0.6s ease-in-out; }
+  .fab-btn { animation: fabIn 0.22s cubic-bezier(0.34,1.56,0.64,1) both; }
+  .cta-slide-in { animation: ctaSlideIn 0.4s ease-out forwards; }
   * { box-sizing: border-box; }
   @media (orientation: landscape) and (max-height: 500px) {
     .popup-inner { max-width: 58rem !important; height: 92vh !important; }
     .accordion-list { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 0.4rem !important; align-items: start !important; }
     .accordion-list > div { overflow: visible !important; }
   }
+
+  /* ── Profile Bubble ── */
+  .profile-bubble-wrap {
+    position: fixed;
+    top: 0.75rem;
+    right: 0.75rem;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+  }
+  .profile-photo-btn {
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2.5px solid #ffffff;
+    box-shadow: 0 4px 16px rgba(124,58,237,0.35), 0 2px 6px rgba(0,0,0,0.18);
+    cursor: pointer;
+    background: linear-gradient(135deg,#7c3aed,#db2777);
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.18s, box-shadow 0.18s;
+    flex-shrink: 0;
+  }
+  .profile-photo-btn:hover { transform: scale(1.07); box-shadow: 0 6px 22px rgba(124,58,237,0.45); }
+  .profile-photo-btn img { width: 100%; height: 100%; object-fit: cover; }
+  .profile-photo-btn .initials { color: white; font-weight: 800; font-size: 1.1rem; letter-spacing: -0.02em; }
+  .fab-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.45rem;
+  }
+  .fab-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.85rem 0.5rem 0.65rem;
+    border-radius: 2rem;
+    border: none;
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 700;
+    white-space: nowrap;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.16);
+    text-decoration: none;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .fab-action-btn:hover { transform: scale(1.05); box-shadow: 0 5px 18px rgba(0,0,0,0.22); }
+  .fab-btn-jumpin  { background: linear-gradient(135deg,#7c3aed,#9333ea); color: white; animation-delay: 0.03s; }
+  .fab-btn-bookin  { background: linear-gradient(135deg,#db2777,#e11d48); color: white; animation-delay: 0.08s; }
+  .fab-btn-sayhi   { background: linear-gradient(135deg,#16a34a,#15803d); color: white; animation-delay: 0.13s; }
+  .fab-icon { font-size: 1rem; line-height: 1; }
 </style>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel">
-const { useState, useRef, useCallback } = React;
+const { useState, useRef, useCallback, useEffect } = React;
+
+/* ─────────────────────────────────────────────
+   ★  CONTACT LAYER CONFIG — SWAP THESE IN  ★
+   ─────────────────────────────────────────────
+   Replace each placeholder with the real value.
+   All other code is untouched.
+───────────────────────────────────────────── */
+const CONTACT = {
+  // Your full name (shown on CTA heading)
+  displayName: 'Adrian Croft',
+
+  // Direct URL to your profile photo (from v1 repo, GitHub raw URL, or hosted image)
+  // e.g. 'https://raw.githubusercontent.com/aqcroft/UW_PET_GH_v1/main/photo.jpg'
+  photoUrl: '',   // ← PASTE YOUR PHOTO URL HERE
+
+  // WhatsApp number — digits only, with country code, no spaces or symbols
+  // e.g. '447712345678'
+  whatsappNumber: 'YOURWHATSAPPNUMBER',
+
+  // Pre-filled WhatsApp message (encoded automatically — no need to change)
+  whatsappMessage: "Hi Adrian, I just had a play with your UW earnings tool and I've got a few questions...",
+
+  // Calendar booking link
+  calendarUrl: 'https://YOURCALENDARBOOKINGLINK',
+
+  // UW partner registration link
+  registrationUrl: 'https://YOURUWREGISTRATIONLINK',
+};
+/* ─────────────────────────────────────────────
+   End of config block
+───────────────────────────────────────────── */
+
+// Build WhatsApp URL from config
+const whatsappUrl = () => {
+  const num = CONTACT.whatsappNumber.replace(/\D/g,'');
+  const msg = encodeURIComponent(CONTACT.whatsappMessage);
+  return `https://wa.me/${num}?text=${msg}`;
+};
+
+/* ── Profile Bubble Component ── */
+const ProfileBubble = () => {
+  const [open, setOpen] = useState(false);
+
+  const actions = [
+    { emoji:'🔥', label:'Jump in',  href: CONTACT.registrationUrl, cls:'fab-btn-jumpin' },
+    { emoji:'🗓️', label:'Book in',  href: CONTACT.calendarUrl,     cls:'fab-btn-bookin' },
+    { emoji:'💬', label:'Say hi',   href: whatsappUrl(),            cls:'fab-btn-sayhi'  },
+  ];
+
+  return (
+    <div className="profile-bubble-wrap">
+      {open && (
+        <div className="fab-actions">
+          {actions.map((a, i) => (
+            <a
+              key={a.label}
+              href={a.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`fab-action-btn fab-btn ${a.cls}`}
+              style={{ animationDelay: `${i * 0.05}s` }}
+              onClick={() => setOpen(false)}
+            >
+              <span className="fab-icon">{a.emoji}</span>
+              <span>{a.label}</span>
+            </a>
+          ))}
+        </div>
+      )}
+      <button
+        className="profile-photo-btn"
+        onClick={() => setOpen(o => !o)}
+        aria-label={open ? 'Close contact menu' : 'Open contact menu'}
+        style={{ transform: open ? 'scale(1.06) rotate(5deg)' : undefined }}
+      >
+        {CONTACT.photoUrl
+          ? <img src={CONTACT.photoUrl} alt={CONTACT.displayName} />
+          : <span className="initials">
+              {CONTACT.displayName.split(' ').map(n=>n[0]).join('').slice(0,2)}
+            </span>
+        }
+      </button>
+    </div>
+  );
+};
+
+/* ── Post Fast Starter CTA Component ── */
+const PostFastStartCTA = () => {
+  const actions = [
+    { emoji:'🔥', label:'Jump in',  sub:'Become a partner today',  href: CONTACT.registrationUrl, bg:'linear-gradient(135deg,#7c3aed,#9333ea)', color:'white' },
+    { emoji:'🗓️', label:'Book in',  sub:'Grab 20 mins with me',    href: CONTACT.calendarUrl,     bg:'linear-gradient(135deg,#db2777,#e11d48)', color:'white' },
+    { emoji:'💬', label:'Say hi',   sub:'Drop me a WhatsApp',       href: whatsappUrl(),            bg:'linear-gradient(135deg,#16a34a,#15803d)', color:'white' },
+  ];
+
+  return (
+    <div
+      className="cta-slide-in"
+      style={{
+        marginTop: '1.25rem',
+        borderRadius: '1rem',
+        overflow: 'hidden',
+        boxShadow: '0 8px 30px rgba(124,58,237,0.2)',
+        border: '2px solid #c4b5fd',
+      }}
+    >
+      <div style={{
+        background: 'linear-gradient(135deg,#7c3aed,#db2777)',
+        padding: '1.25rem 1.25rem 1rem',
+        textAlign: 'center',
+      }}>
+        <div style={{ fontSize: '2rem', marginBottom: '0.35rem' }}>🚀</div>
+        <h3 style={{ color: 'white', fontWeight: '800', fontSize: '1.15rem', margin: '0 0 0.3rem' }}>
+          Curious what this looks like for you?
+        </h3>
+        <p style={{ color: '#fbcfe8', fontSize: '0.8rem', margin: 0, lineHeight: '1.5' }}>
+          You've just seen what the first 30 days could look like.<br/>
+          Now imagine doing this alongside {CONTACT.displayName.split(' ')[0]}.
+        </p>
+      </div>
+      <div style={{ background: '#faf9ff', padding: '1rem' }}>
+        <p style={{
+          textAlign: 'center',
+          fontSize: '0.82rem',
+          color: '#6b7280',
+          margin: '0 0 0.85rem',
+          fontStyle: 'italic',
+        }}>
+          No pressure. Pick whichever feels right.
+        </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          {actions.map(a => (
+            <a
+              key={a.label}
+              href={a.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                padding: '0.75rem 1rem',
+                borderRadius: '0.6rem',
+                background: a.bg,
+                color: a.color,
+                textDecoration: 'none',
+                fontWeight: '700',
+                fontSize: '0.9rem',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
+                transition: 'transform 0.15s, box-shadow 0.15s',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.transform='scale(1.02)'; e.currentTarget.style.boxShadow='0 4px 16px rgba(0,0,0,0.18)'; }}
+              onMouseLeave={e => { e.currentTarget.style.transform='scale(1)'; e.currentTarget.style.boxShadow='0 2px 8px rgba(0,0,0,0.12)'; }}
+            >
+              <span style={{ fontSize: '1.3rem', lineHeight: 1, flexShrink: 0 }}>{a.emoji}</span>
+              <div>
+                <div>{a.label}</div>
+                <div style={{ fontWeight: '400', fontSize: '0.74rem', opacity: 0.85, marginTop: '0.1rem' }}>{a.sub}</div>
+              </div>
+              <span style={{ marginLeft: 'auto', opacity: 0.7, fontSize: '1rem' }}>›</span>
+            </a>
+          ))}
+        </div>
+        <p style={{
+          textAlign: 'center',
+          fontSize: '0.72rem',
+          color: '#9ca3af',
+          marginTop: '0.85rem',
+          marginBottom: 0,
+          fontStyle: 'italic',
+        }}>
+          {CONTACT.displayName} · UW Partner
+        </p>
+      </div>
+    </div>
+  );
+};
 
 const defaultIconStyle = { width:'1rem', height:'1rem', flexShrink:0 };
 const TrendingUp = ({ style }) => (
@@ -145,7 +379,7 @@ const sections = [
     id: 'ri',
     icon: <RcwIcon style={{...SM, color:'#2563eb'}} />,
     title: 'Recurring (Residual) Income',
-    summary: 'Ongoing monthly income from our personal customers and our team\'s customers.',
+    summary: "Ongoing monthly income from our personal customers and our team's customers.",
     detail: (
       <div style={{fontSize:'0.875rem',color:'#374151'}}>
         <p style={{marginBottom:'0.5rem'}}>A recurring profit share of customers' bills which increases as customers add more services.</p>
@@ -294,6 +528,7 @@ const HowPaidPopup = ({ onClose }) => {
 
 const UWTracker = () => {
   const [showCelebration, setShowCelebration] = useState(false);
+  const [showPostFSBCTA, setShowPostFSBCTA] = useState(false);
   const [selectedCircle, setSelectedCircle] = useState(null);
   const [showPartnerPrompt, setShowPartnerPrompt] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
@@ -382,7 +617,13 @@ const UWTracker = () => {
     const nowQualifies = nowAllFilled && nowHasPartner;
     if (!wasQualified && nowQualifies && !previouslyQualified.current) {
       previouslyQualified.current = true;
-      setTimeout(() => { setShowCelebration(true); setTimeout(() => setShowCelebration(false), 3000); }, 200);
+      setTimeout(() => {
+        setShowCelebration(true);
+        setTimeout(() => {
+          setShowCelebration(false);
+          setShowPostFSBCTA(true);
+        }, 3000);
+      }, 200);
     }
     if (!nowQualifies) previouslyQualified.current = false;
     setShowPartnerPrompt(false);
@@ -405,7 +646,13 @@ const UWTracker = () => {
     const nowQualifies = nowAllFilled && nowHasPartner;
     if (!wasQualified && nowQualifies && !previouslyQualified.current) {
       previouslyQualified.current = true;
-      setTimeout(() => { setShowCelebration(true); setTimeout(() => setShowCelebration(false), 3000); }, 200);
+      setTimeout(() => {
+        setShowCelebration(true);
+        setTimeout(() => {
+          setShowCelebration(false);
+          setShowPostFSBCTA(true);
+        }, 3000);
+      }, 200);
     } else if (nowAllFilled && !nowHasPartner) {
       setShowPartnerPrompt(true);
     }
@@ -432,6 +679,7 @@ const UWTracker = () => {
     ]);
     setSelectedCircle(null); setShowPartnerPrompt(false);
     setShowResetConfirm(false); setCardFlipped(false);
+    setShowPostFSBCTA(false);
     previouslyQualified.current = false;
   };
 
@@ -458,6 +706,9 @@ const UWTracker = () => {
 
   return (
     <div style={{minHeight:'100vh',background:'linear-gradient(135deg, #fdf2f8, #f5f3ff)',padding:'1rem'}}>
+
+      <ProfileBubble />
+
       {showCelebration && (
         <div style={{position:'fixed',inset:0,pointerEvents:'none',zIndex:50}}>
           {[...Array(50)].map((_, i) => (
@@ -654,6 +905,9 @@ const UWTracker = () => {
                 </div>
               )}
             </div>
+
+            {showPostFSBCTA && <PostFastStartCTA />}
+
           </div>
         </div>
 
