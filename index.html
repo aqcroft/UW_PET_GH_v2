@@ -695,7 +695,7 @@ const UWTracker=()=>{
               {[1,2,3,4].map(num=>{const cb=[50,100,250,300][num-1];const active=customers[selectedCircle]&&customers[selectedCircle].type==='homeowner'&&customers[selectedCircle].services===num;return(
                 <button key={num} onClick={()=>setCustomerType('homeowner',num)} style={{padding:'1rem 0.5rem',border:`2px solid ${active?'#7c3aed':'#c4b5fd'}`,borderRadius:'0.5rem',background:active?'#7c3aed':'#f5f3ff',color:active?'white':'#6d28d9',cursor:'pointer',fontWeight:'600'}}>
                   <div style={{fontSize:'1rem',fontWeight:'700'}}>{num}</div><div style={{fontSize:'0.75rem',marginTop:'0.25rem'}}>(£{cb})</div>
-                </button>);})}</ div>
+                </button>);})}</div>
             <p style={{textAlign:'center',fontSize:'0.875rem',color:'#6b7280',marginBottom:'0.75rem'}}>or</p>
             <button onClick={()=>setCustomerType('renting')} style={{width:'100%',padding:'0.75rem',border:`2px solid ${customers[selectedCircle]&&customers[selectedCircle].type==='renting'?'#2563eb':'#93c5fd'}`,borderRadius:'0.5rem',background:customers[selectedCircle]&&customers[selectedCircle].type==='renting'?'#2563eb':'#eff6ff',color:customers[selectedCircle]&&customers[selectedCircle].type==='renting'?'white':'#1d4ed8',cursor:'pointer',fontWeight:'600',marginBottom:'0.75rem'}}>
               <div style={{fontSize:'1rem',fontWeight:'700'}}>Tenant/Renting</div><div style={{fontSize:'0.75rem',fontWeight:'400'}}>(No customer bonus, just recurring income)</div>
