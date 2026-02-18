@@ -14,17 +14,36 @@
   @keyframes bounceOnce { 0%,100%{transform:translateY(0)} 25%{transform:translateY(-20px)} 50%{transform:translateY(0)} 75%{transform:translateY(-10px)} }
   @keyframes pulseTwice { 0%,100%{transform:scale(1);opacity:1} 25%{transform:scale(1.4);opacity:0.65} 50%{transform:scale(1);opacity:1} 75%{transform:scale(1.4);opacity:0.65} }
   @keyframes tabPulse { 0%,100%{box-shadow:3px 0 14px rgba(124,58,237,0.35)} 25%{box-shadow:3px 0 26px rgba(219,39,119,0.85)} 50%{box-shadow:3px 0 14px rgba(124,58,237,0.35)} 75%{box-shadow:3px 0 26px rgba(219,39,119,0.85)} }
-  @keyframes coachFadeIn { 0%{opacity:0;transform:translateY(4px)} 100%{opacity:1;transform:translateY(0)} }
-  @keyframes coachFadeOut { 0%{opacity:1} 100%{opacity:0} }
-  @keyframes arrowBounce { 0%,100%{transform:translateX(0)} 50%{transform:translateX(5px)} }
+  @keyframes coachFadeIn { 0%{opacity:0;transform:translateY(6px)} 100%{opacity:1;transform:translateY(0)} }
+  @keyframes coachFadeOut { 0%{opacity:1;transform:translateY(0)} 100%{opacity:0;transform:translateY(-4px)} }
+  @keyframes arrowWiggle {
+    0%   { transform: translate(0,0) rotate(0deg); }
+    15%  { transform: translate(6px,-3px) rotate(15deg); }
+    30%  { transform: translate(3px,4px) rotate(-10deg); }
+    45%  { transform: translate(8px,1px) rotate(20deg); }
+    60%  { transform: translate(2px,-4px) rotate(-15deg); }
+    75%  { transform: translate(7px,3px) rotate(10deg); }
+    90%  { transform: translate(1px,-2px) rotate(-5deg); }
+    100% { transform: translate(0,0) rotate(0deg); }
+  }
+  @keyframes revenueSlideUp {
+    0%   { opacity:0; transform: translateY(60px) scale(0.97); }
+    100% { opacity:1; transform: translateY(0) scale(1); }
+  }
+  @keyframes revenueFloat {
+    0%,100% { transform: translateY(0); box-shadow: 0 8px 32px rgba(124,58,237,0.3); }
+    50%     { transform: translateY(-4px); box-shadow: 0 14px 40px rgba(124,58,237,0.45); }
+  }
   .animate-slideDown { animation: slideDown 0.2s ease-out forwards; }
   .animate-confetti { animation: confetti 3s ease-in forwards; }
   .animate-bounceOnce { animation: bounceOnce 0.6s ease-in-out; }
   .pulse-twice { animation: pulseTwice 0.9s ease-in-out 1 forwards; }
   .tab-pulse { animation: tabPulse 0.95s ease-in-out 2; }
-  .coach-in { animation: coachFadeIn 0.4s ease-out forwards; }
-  .coach-out { animation: coachFadeOut 0.35s ease-in forwards; }
-  .arrow-bounce { animation: arrowBounce 0.65s ease-in-out infinite; }
+  .coach-in  { animation: coachFadeIn  0.55s ease-out forwards; }
+  .coach-out { animation: coachFadeOut 0.45s ease-in  forwards; }
+  .arrow-wiggle { animation: arrowWiggle 1.2s ease-in-out infinite; display:inline-block; }
+  .revenue-slide-up { animation: revenueSlideUp 0.7s cubic-bezier(0.22,1,0.36,1) forwards; }
+  .revenue-float { animation: revenueFloat 3s ease-in-out infinite; }
   * { box-sizing: border-box; }
   @media (orientation: landscape) and (max-height: 500px) {
     .accordion-list { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 0.4rem !important; align-items: start !important; }
@@ -68,18 +87,18 @@
   .pull-tab-label { writing-mode:vertical-rl;text-orientation:mixed;font-size:0.6rem;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;line-height:1.2; }
   /* Intro modal */
   .intro-modal-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:300;padding:1rem; }
-  /* Tooltip */
-  .tooltip-wrap { position:relative;display:inline-flex;align-items:center; }
-  .tooltip-box { position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);color:white;font-size:0.75rem;border-radius:0.5rem;padding:0.55rem 0.8rem;max-width:260px;white-space:normal;text-align:center;line-height:1.5;z-index:400;box-shadow:0 4px 14px rgba(0,0,0,0.2);pointer-events:none; }
-  .tooltip-box::after { content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent; }
-  /* Coaching lane */
-  .coaching-lane { border-radius:0.6rem;padding:0.65rem 0.9rem;margin-bottom:0.85rem;min-height:2.8rem;display:flex;align-items:center;gap:0.5rem;transition:border-color 0.3s,background 0.3s; }
+  /* Coaching lane — fixed 3-line height, no layout shift */
+  .coaching-lane { border-radius:0.6rem;padding:0.6rem 0.9rem;margin-bottom:0.85rem;min-height:5.2rem;display:flex;align-items:center;gap:0.5rem;transition:border-color 0.3s,background 0.3s; }
   .coaching-lane.inactive { border:1.5px dashed #d1d5db;background:#f9fafb; }
-  .coaching-lane.active { border:1.5px solid #c4b5fd;background:linear-gradient(135deg,#f5f3ff,#eff6ff); }
+  .coaching-lane.active   { border:1.5px solid #c4b5fd;background:linear-gradient(135deg,#f5f3ff,#eff6ff); }
   /* P badge mini */
   .p-badge { width:1.35rem;height:1.35rem;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:800;flex-shrink:0;vertical-align:middle; }
   .p-badge-grey { background:#e5e7eb;border:2px solid #9ca3af;color:#6b7280; }
   .p-badge-gold { background:#facc15;border:2px solid #ca8a04;color:#713f12; }
+  /* Revenue floating card */
+  .revenue-card-wrap { position:fixed;bottom:0;left:50%;transform:translateX(-50%);z-index:120;width:min(42rem,100vw);padding:0 0.75rem; }
+  .revenue-card { background:linear-gradient(135deg,#7c3aed,#db2777);border-radius:1rem 1rem 0 0;overflow:hidden;cursor:pointer;box-shadow:0 -4px 30px rgba(124,58,237,0.4);transition:border-radius 0.3s; }
+  .revenue-card.expanded { border-radius:1rem; }
 </style>
 </head>
 <body>
@@ -112,52 +131,41 @@ const SM={width:'1rem',height:'1rem',flexShrink:0};
 const MD={width:'1.25rem',height:'1.25rem',flexShrink:0};
 const XS={width:'0.875rem',height:'0.875rem',flexShrink:0};
 
-/* ══ Lightbulb helpers — ITEM 2 global rule ══ */
-/* Pulses exactly twice on first render, then stays static. Never loops. */
+/* ══ Lightbulb helpers ══ */
 const PulsingBulb=({size='1rem',onDone})=>{
   const [pulsing,setPulsing]=useState(true);
   useEffect(()=>{const t=setTimeout(()=>{setPulsing(false);if(onDone)onDone();},950);return()=>clearTimeout(t);},[]);
   return <span className={pulsing?'pulse-twice':''} style={{display:'inline-flex',alignItems:'center',fontSize:size,lineHeight:1,flexShrink:0}}>💡</span>;
 };
-const Bulb=({size='1rem'})=><span style={{fontSize:size,lineHeight:1,flexShrink:0}}>💡</span>;
+const Bulb=({size='1rem',grey=false})=><span style={{fontSize:size,lineHeight:1,flexShrink:0,filter:grey?'grayscale(1)':'none',opacity:grey?0.4:1}}>💡</span>;
 
 /* ══ Contact icons ══ */
 const WaIcon=()=>(<svg viewBox="0 0 24 24" fill="#374151" style={{width:'1.15rem',height:'1.15rem'}}><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>);
 const EmailIcon=()=>(<svg viewBox="0 0 24 24" fill="none" stroke="#374151" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{width:'1.15rem',height:'1.15rem'}}><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>);
 const PhoneIcon=()=>(<svg viewBox="0 0 24 24" fill="none" stroke="#374151" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{width:'1.15rem',height:'1.15rem'}}><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.69A2 2 0 012.18 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.09a16 16 0 006 6l.56-.56a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>);
 
-/* ═══════════════════════════════════
-   ITEM 1 — INTRO MODAL
-   Gradient header band + locked copy
-═══════════════════════════════════ */
+/* ══ Intro Modal ══ */
 const IntroModal=({onClose})=>(
   <div className="intro-modal-overlay">
     <div className="animate-slideDown" style={{background:'white',borderRadius:'1rem',overflow:'hidden',maxWidth:'26rem',width:'100%',boxShadow:'0 20px 60px rgba(0,0,0,0.35)'}}>
-      {/* ITEM 1 — gradient header band */}
       <div style={{background:'linear-gradient(135deg,#7c3aed,#db2777)',padding:'1.4rem 1.5rem 1.25rem',textAlign:'center'}}>
         <div style={{fontSize:'1.6rem',marginBottom:'0.35rem'}}>👋</div>
-        {/* Two-line title, white, bold */}
         <h2 style={{fontSize:'1.3rem',fontWeight:'800',color:'white',margin:'0 0 0.05rem',lineHeight:1.25}}>Welcome to this</h2>
         <h2 style={{fontSize:'1.3rem',fontWeight:'800',color:'white',margin:0,lineHeight:1.25}}>interactive earnings tool</h2>
       </div>
-      {/* Body */}
       <div style={{padding:'1.25rem 1.5rem 1.5rem',textAlign:'center'}}>
-        {/* Gold subheading — unchanged */}
         <p style={{fontWeight:'700',color:'#92400e',fontSize:'0.95rem',margin:'0 0 1.1rem',background:'#fefce8',padding:'0.5rem 0.75rem',borderRadius:'0.5rem',border:'1px solid #fde68a'}}>
           5 conversations up to £2000? Explore how
         </p>
-        {/* LOCKED BODY COPY */}
         <p style={{fontSize:'0.875rem',color:'#374151',margin:'0 0 0.7rem',lineHeight:1.65}}>
           UW Partners help people save on essential services they already use: broadband, energy and mobile.
         </p>
-        {/* Bold paragraph per spec */}
         <p style={{fontSize:'0.875rem',color:'#374151',fontWeight:'700',margin:'0 0 0.7rem',lineHeight:1.65}}>
           Bundles build benefits — for customers and Partners.<br/>When customers win, Partners win. 🏆
         </p>
         <p style={{fontSize:'0.875rem',color:'#374151',margin:'0 0 0.85rem',lineHeight:1.65}}>
           Add customers and watch the numbers change.
         </p>
-        {/* ITEM 2 — lightbulb line: dark grey, bold italic, NOT purple */}
         <p style={{fontSize:'0.875rem',color:'#374151',fontWeight:'700',fontStyle:'italic',margin:'0 0 1.4rem',lineHeight:1.5}}>
           💡 Explore, experiment and learn as you play.
         </p>
@@ -169,11 +177,8 @@ const IntroModal=({onClose})=>(
   </div>
 );
 
-/* ═══════════════════════════════════
-   ITEM 4 — COACHING LANE
-   Fixed reserved space below circles
-═══════════════════════════════════ */
-const CoachingLane=({message,showArrow})=>{
+/* ══ Coaching Lane — fixed 3-line reserved space, slow fade ══ */
+const CoachingLane=({message,showArrow,customer5Ref})=>{
   const [visible,setVisible]=useState(false);
   const [displayed,setDisplayed]=useState(null);
   const [fading,setFading]=useState(false);
@@ -187,7 +192,7 @@ const CoachingLane=({message,showArrow})=>{
     if(!keepAlive){
       autoTimer.current=setTimeout(()=>{
         setFading(true);
-        fadeTimer.current=setTimeout(()=>{setVisible(false);setDisplayed(null);setFading(false);},380);
+        fadeTimer.current=setTimeout(()=>{setVisible(false);setDisplayed(null);setFading(false);},450);
       },6200);
     }
   };
@@ -195,7 +200,7 @@ const CoachingLane=({message,showArrow})=>{
   const hide=()=>{
     clearAll();
     setFading(true);
-    fadeTimer.current=setTimeout(()=>{setVisible(false);setDisplayed(null);setFading(false);},380);
+    fadeTimer.current=setTimeout(()=>{setVisible(false);setDisplayed(null);setFading(false);},450);
   };
 
   useEffect(()=>{
@@ -204,70 +209,79 @@ const CoachingLane=({message,showArrow})=>{
     return clearAll;
   },[message]);
 
-  // If showArrow changes to false while message is visible, restart auto-dismiss
   useEffect(()=>{
-    if(!showArrow&&visible&&displayed){clearAll();autoTimer.current=setTimeout(()=>{setFading(true);fadeTimer.current=setTimeout(()=>{setVisible(false);setDisplayed(null);setFading(false);},380);},6200);}
+    if(!showArrow&&visible&&displayed){clearAll();autoTimer.current=setTimeout(()=>{setFading(true);fadeTimer.current=setTimeout(()=>{setVisible(false);setDisplayed(null);setFading(false);},450);},6200);}
   },[showArrow]);
 
   const isActive=visible&&displayed;
+
+  const [arrowPos,setArrowPos]=useState(null);
+  useEffect(()=>{
+    if(!showArrow||!customer5Ref||!customer5Ref.current)return;
+    const update=()=>{
+      const r=customer5Ref.current.getBoundingClientRect();
+      setArrowPos({x:Math.round(r.left+r.width/2),y:Math.round(r.top+r.height/2)});
+    };
+    update();
+    window.addEventListener('scroll',update,{passive:true});
+    window.addEventListener('resize',update,{passive:true});
+    return()=>{window.removeEventListener('scroll',update);window.removeEventListener('resize',update);};
+  },[showArrow,customer5Ref]);
+
   return(
     <div className={`coaching-lane ${isActive?'active':'inactive'}`}>
       {!isActive&&(
-        /* ITEM 19 — greyed inactive lightbulb */
-        <span style={{fontSize:'0.9rem',filter:'grayscale(1)',opacity:0.35,lineHeight:1}}>💡</span>
+        <span style={{fontSize:'1.1rem',filter:'grayscale(1)',opacity:0.35,lineHeight:1}}>💡</span>
       )}
       {isActive&&(
         <span className={fading?'coach-out':'coach-in'} style={{display:'flex',alignItems:'center',gap:'0.45rem',width:'100%',flexWrap:'wrap'}}>
-          <Bulb size="0.95rem"/>
-          {/* ITEM 8 — partner prompt renders P badges inline */}
+          <Bulb size="1.1rem"/>
           {showArrow?(
             <span style={{display:'flex',alignItems:'center',gap:'0.35rem',flexWrap:'wrap',flex:1}}>
               <span style={{fontSize:'0.82rem',fontWeight:'700',fontStyle:'italic',color:'#374151',lineHeight:1.5}}>Tap one</span>
               <span className="p-badge p-badge-grey">P</span>
               <span style={{fontSize:'0.82rem',fontWeight:'700',fontStyle:'italic',color:'#374151',lineHeight:1.5}}>above to upgrade a customer</span>
-              <span style={{fontSize:'0.82rem',fontWeight:'700',fontStyle:'italic',color:'#374151',lineHeight:1.5}}>→</span>
+              <span style={{fontSize:'0.82rem',fontWeight:'700',fontStyle:'italic',color:'#6b7280',lineHeight:1.5}}>→</span>
               <span className="p-badge p-badge-gold">P</span>
-              <span className="arrow-bounce" style={{fontSize:'0.85rem',color:'#92400e',flexShrink:0,marginLeft:'0.15rem'}}>→</span>
             </span>
           ):(
-            <span style={{fontSize:'0.82rem',fontWeight:'700',fontStyle:'italic',color:'#374151',lineHeight:1.5,flex:1}}>{displayed}</span>
+            <span style={{fontSize:'0.82rem',fontWeight:'700',fontStyle:'italic',color:'#374151',lineHeight:1.6,flex:1}}>{displayed}</span>
           )}
         </span>
+      )}
+      {showArrow&&isActive&&arrowPos&&(
+        <span className="arrow-wiggle" style={{
+          position:'fixed',
+          left:arrowPos.x-14,
+          top:arrowPos.y-54,
+          fontSize:'1.6rem',
+          pointerEvents:'none',
+          zIndex:30,
+          filter:'drop-shadow(0 2px 4px rgba(124,58,237,0.5))',
+        }}>👆</span>
       )}
     </div>
   );
 };
 
-/* ═══════════════════════════════════
-   CONTACT PANEL + LEFT TAB
-═══════════════════════════════════ */
+/* ══ Contact Panel ══ */
 const ContactPanel=({grandTotal,isOpen,onClose,tabColoured,onTabClick})=>{
   const initials=CONTACT.fullName.split(' ').map(n=>n[0]).join('').slice(0,2);
   const [tabPulseKey,setTabPulseKey]=useState(0);
   const prevColoured=useRef(false);
-
   useEffect(()=>{
-    /* ITEM 10 — tab pulses AFTER stage reveal (which fires setTabColoured). 
-       Small extra delay so it clearly follows the reveal coaching message fade. */
-    if(tabColoured&&!prevColoured.current){
-      setTimeout(()=>setTabPulseKey(k=>k+1),300);
-    }
+    if(tabColoured&&!prevColoured.current){setTimeout(()=>setTabPulseKey(k=>k+1),300);}
     prevColoured.current=tabColoured;
   },[tabColoured]);
-
   const tabClass=`left-pull-tab${isOpen?' panel-open':''} ${tabColoured?'tab-coloured':'tab-grey'}`;
   return(
     <>
       <div className={`contact-panel-overlay${isOpen?' visible':''}`} onClick={onClose}/>
-      {/* key forces re-mount so CSS animation replays on each pulse trigger */}
       <div key={`tab-${tabPulseKey}`} className={`${tabClass}${tabPulseKey>0?' tab-pulse':''}`} onClick={onTabClick}>
-        <span className="pull-tab-emoji" style={{filter:tabColoured?'none':'grayscale(1)'}}>
-          {isOpen?'✕':tabColoured?'✨':'👋'}
-        </span>
+        <span className="pull-tab-emoji" style={{filter:tabColoured?'none':'grayscale(1)'}}>{isOpen?'✕':tabColoured?'🧭':'👋'}</span>
         <span className="pull-tab-label">{isOpen?'Close':tabColoured?'Next Steps':'Get in touch'}</span>
       </div>
       <div className={`contact-panel${isOpen?' open':''}`}>
-        {/* Panel header */}
         <div style={{background:'linear-gradient(135deg,rgba(124,58,237,0.75),rgba(219,39,119,0.75))',padding:'1.6rem 1.25rem 1.3rem',textAlign:'center',position:'relative',flexShrink:0}}>
           <button onClick={onClose} style={{position:'absolute',top:'0.75rem',right:'0.75rem',width:'1.75rem',height:'1.75rem',borderRadius:'50%',background:'rgba(255,255,255,0.15)',border:'none',cursor:'pointer',color:'rgba(255,255,255,0.8)',fontSize:'0.9rem',display:'flex',alignItems:'center',justifyContent:'center'}}>✕</button>
           <img src={CONTACT.photoUrl} alt={CONTACT.fullName} style={{width:'4rem',height:'4rem',borderRadius:'50%',border:'2.5px solid rgba(255,255,255,0.7)',objectFit:'cover',margin:'0 auto 0.5rem',display:'block'}} onError={e=>{e.currentTarget.style.display='none';e.currentTarget.nextSibling.style.display='flex';}}/>
@@ -280,7 +294,6 @@ const ContactPanel=({grandTotal,isOpen,onClose,tabColoured,onTabClick})=>{
           </span>
           <span style={{color:'rgba(255,255,255,0.72)',fontSize:'0.82rem',fontStyle:'italic',lineHeight:'1.4',display:'block'}}>Are you ready to make it happen?</span>
         </div>
-        {/* ITEM 11 — button order: Jump in, Book in, Explore Savings (3rd), Say hi */}
         <div style={{padding:'1rem',display:'flex',flexDirection:'column',gap:'0.5rem',flex:1}}>
           <a href={CONTACT.registrationUrl} target="_blank" rel="noopener noreferrer" style={{minHeight:'5.5rem',borderRadius:'0.75rem',display:'flex',alignItems:'center',gap:'0.7rem',padding:'0.8rem 0.9rem',background:'white',boxShadow:'3px 3px 10px rgba(109,40,217,0.3)',textDecoration:'none',transition:'transform 0.15s'}} onMouseEnter={e=>e.currentTarget.style.transform='scale(1.02)'} onMouseLeave={e=>e.currentTarget.style.transform='scale(1)'} onClick={onClose}>
             <span style={{fontSize:'1.3rem',lineHeight:1,flexShrink:0}}>🔥</span>
@@ -290,10 +303,9 @@ const ContactPanel=({grandTotal,isOpen,onClose,tabColoured,onTabClick})=>{
             <span style={{fontSize:'1.3rem',lineHeight:1,flexShrink:0}}>🗓️</span>
             <span style={{flex:1}}><span style={{fontWeight:'700',fontSize:'0.9rem',display:'block',color:'#1f2937'}}>Book in</span><span style={{fontSize:'0.73rem',marginTop:'0.2rem',display:'block',fontStyle:'italic',lineHeight:'1.35',color:'#6b7280'}}>"I've got questions and I'd love a chat"</span></span>
           </a>
-          {/* ITEM 11 — Explore Savings is 3rd */}
           <a href={CONTACT.savingsUrl} target="_blank" rel="noopener noreferrer" style={{minHeight:'5.5rem',borderRadius:'0.75rem',display:'flex',alignItems:'center',gap:'0.7rem',padding:'0.8rem 0.9rem',background:'white',boxShadow:'3px 3px 10px rgba(234,179,8,0.3)',textDecoration:'none',transition:'transform 0.15s'}} onMouseEnter={e=>e.currentTarget.style.transform='scale(1.02)'} onMouseLeave={e=>e.currentTarget.style.transform='scale(1)'} onClick={onClose}>
             <span style={{fontSize:'1.3rem',lineHeight:1,flexShrink:0}}>💡</span>
-            <span style={{flex:1}}><span style={{fontWeight:'700',fontSize:'0.9rem',display:'block',color:'#1f2937'}}>Explore Savings</span><span style={{fontSize:'0.73rem',marginTop:'0.2rem',display:'block',fontStyle:'italic',lineHeight:'1.35',color:'#6b7280'}}>See how much you could save as a customer.</span></span>
+            <span style={{flex:1}}><span style={{fontWeight:'700',fontSize:'0.9rem',display:'block',color:'#1f2937'}}>Explore Savings</span><span style={{fontSize:'0.73rem',marginTop:'0.2rem',display:'block',fontStyle:'italic',lineHeight:'1.35',color:'#6b7280'}}>I'd like to see the customer benefits.</span></span>
           </a>
           <div style={{borderRadius:'0.75rem',background:'white',boxShadow:'3px 3px 10px rgba(219,39,119,0.3)',padding:'0.8rem 0.9rem 0.85rem'}}>
             <div style={{display:'flex',alignItems:'center',gap:'0.7rem',marginBottom:'0.65rem'}}>
@@ -312,7 +324,7 @@ const ContactPanel=({grandTotal,isOpen,onClose,tabColoured,onTabClick})=>{
   );
 };
 
-/* ══ Profile Bubble (unchanged) ══ */
+/* ══ Profile Bubble ══ */
 const ProfileBubble=()=>{
   const [open,setOpen]=useState(false);
   const [sayhiOpen,setSayhiOpen]=useState(false);
@@ -340,11 +352,8 @@ const ProfileBubble=()=>{
   );
 };
 
-/* ═══════════════════════════════════
-   ITEM 18 — INFO ACCORDION
-   Single unlock, personal first, then team
-═══════════════════════════════════ */
-const box={background:'#f5f3ff',borderRadius:'0.5rem',padding:'0.75rem',marginBottom:'0.5rem'};
+/* ══ Info Accordion ══ */
+const box={background:'#fdf8f0',borderRadius:'0.5rem',padding:'0.75rem',marginBottom:'0.5rem',border:'1px solid #f3e8d0'};
 const closing={fontStyle:'italic',fontWeight:'700',color:'#374151',margin:0};
 const scbSummary=(isOpen)=>(<span>Upfront payment when we support a Partner to introduce a homeowner.{' '}<span style={{fontStyle:'italic',fontSize:'0.72rem',color:'#7c3aed',opacity:isOpen?1:0,transition:'opacity 0.15s'}}>🔓 Unlocks at 6 Personal Customers.</span></span>);
 const mbSummary=(isOpen)=>(<span>Up to £400 when a Partner we introduce reaches QD*.<br/><span style={{fontStyle:'italic',fontSize:'0.72rem',color:'#7c3aed',opacity:isOpen?1:0,transition:'opacity 0.15s'}}>🔓 Unlocks at 3 Personal Customers.</span></span>);
@@ -357,7 +366,6 @@ const sections=[
     detail:(<div style={{fontSize:'0.875rem',color:'#374151'}}>
       <p style={{marginBottom:'0.5rem'}}>A recurring profit share of customers' bills which increases as customers add more services.</p>
       <div style={{...box,marginBottom:'0.5rem'}}>
-        {/* ITEM 18 — single unlock, personal first then team */}
         <p style={{fontStyle:'italic',fontSize:'0.72rem',color:'#7c3aed',margin:'0 0 0.5rem',lineHeight:'1.3'}}>🔓 Unlocks at 3 personal customers (QD)</p>
         <p style={{margin:'0 0 0.3rem',display:'flex',alignItems:'center',gap:'0.3rem',flexWrap:'wrap'}}>
           <RefreshCw style={{width:'0.75rem',height:'0.75rem',flexShrink:0,color:'#2563eb'}}/>
@@ -387,17 +395,29 @@ const sections=[
     detail:(<div style={{fontSize:'0.875rem',color:'#374151'}}><p style={{marginBottom:'0.5rem',fontWeight:'600'}}>QD* = 3 Personal Customers + 1 Partner introduced</p><div style={box}><div style={{display:'flex',alignItems:'center',gap:'0.4rem'}}><span>🎓</span><span>Mentor Bonus — £100</span></div><div style={{display:'flex',alignItems:'center',gap:'0.4rem',marginTop:'0.25rem'}}><TrendingUp style={{width:'0.75rem',height:'0.75rem',color:'#374151'}}/><span>30 days Mentor Fast Starter Bonus — £300</span></div><div style={{borderTop:'1px solid #c4b5fd',marginTop:'0.5rem',paddingTop:'0.5rem',paddingLeft:'1.5rem'}}>Total — £400 per Partner</div></div><p style={closing}>💡 Rewarding us for developing new Partners — with even more for Fast Starter.</p></div>)},
 ];
 
-const HowPaidPopup=({onClose})=>{
+const HowPaidPopup=({onClose,fastStarterAchieved,revenueExplored})=>{
   const [openId,setOpenId]=useState(null);
   const headerRefs=useRef({});
   const toggle=useCallback((id)=>{const opening=openId!==id;setOpenId(opening?id:null);if(opening&&headerRefs.current[id])headerRefs.current[id].scrollIntoView({behavior:'instant',block:'start'});},[openId]);
+  const bulbMsg = fastStarterAchieved && revenueExplored ? null
+    : fastStarterAchieved && !revenueExplored
+      ? '💡 You\'ve explored your earnings. Next, see how helping others unlocks three new revenue streams.'
+      : '💡 Have a play with the Partner Earnings Tool to explore and understand what\'s possible.';
   return(
     <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.5)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:200,padding:'0.75rem'}} onClick={onClose}>
       <div style={{background:'white',borderRadius:'0.75rem',boxShadow:'0 20px 50px rgba(0,0,0,0.3)',maxWidth:'28rem',width:'100%',display:'flex',flexDirection:'column',height:'85vh'}} onClick={e=>e.stopPropagation()}>
         <div style={{padding:'1rem 1rem 0.6rem',borderBottom:'1px solid #f3f4f6',display:'flex',alignItems:'flex-start',justifyContent:'space-between',flexShrink:0}}>
-          <div><h3 style={{fontSize:'1.05rem',fontWeight:'700',color:'#111827',margin:0}}>How Are UW Partners Paid?</h3><p style={{fontSize:'0.75rem',color:'#6b7280',marginTop:'0.2rem',marginBottom:0}}>We earn upfront income — and recurring income over time.</p></div>
+          <div>
+            <h3 style={{fontSize:'1.05rem',fontWeight:'700',color:'#111827',margin:0}}>Understanding how UW Partners earn</h3>
+            <p style={{fontSize:'0.75rem',color:'#6b7280',marginTop:'0.2rem',marginBottom:0,lineHeight:1.4}}>How different income streams build as customers and Partner numbers grow.</p>
+          </div>
           <button onClick={onClose} style={{marginLeft:'0.75rem',width:'1.75rem',height:'1.75rem',borderRadius:'50%',background:'#f3f4f6',border:'none',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}><X style={{...XS,color:'#4b5563'}}/></button>
         </div>
+        {bulbMsg&&(
+          <div style={{margin:'0.5rem 0.75rem 0',padding:'0.55rem 0.8rem',borderRadius:'0.5rem',background:'#fdf3e3',border:'1px solid #f9d49c'}}>
+            <p style={{margin:0,fontSize:'0.78rem',fontWeight:'700',fontStyle:'italic',color:'#92400e',lineHeight:1.5}}>{bulbMsg}</p>
+          </div>
+        )}
         <div className="accordion-list" style={{overflowY:'auto',flex:1,padding:'0.6rem',display:'flex',flexDirection:'column',gap:'0.4rem'}}>
           {sections.map(s=>{const isOpen=openId===s.id;return(
             <div key={s.id} style={{border:'1px solid #e5e7eb',borderRadius:'0.6rem',overflow:'hidden',background:'white'}}>
@@ -406,19 +426,83 @@ const HowPaidPopup=({onClose})=>{
                 <div style={{flex:1,minWidth:0}}><p style={{fontWeight:'600',fontSize:'0.85rem',color:'#111827',margin:'0 0 0.1rem'}}>{s.title}</p><p style={{fontSize:'0.78rem',color:'#6b7280',margin:0,lineHeight:'1.4'}}>{typeof s.summary==='function'?s.summary(isOpen):s.summary}</p></div>
                 {isOpen?<ChevronUp style={{...SM,color:'#9ca3af'}}/>:<ChevronDown style={{...SM,color:'#9ca3af'}}/>}
               </button>
-              {isOpen&&<div style={{padding:'0.25rem 0.75rem 0.75rem',borderTop:'1px solid #f3f4f6',background:'#faf9ff'}}>{s.detail}</div>}
+              {isOpen&&<div style={{padding:'0.25rem 0.75rem 0.75rem',borderTop:'1px solid #f3f4f6',background:'#fdf9ff'}}>{s.detail}</div>}
             </div>
           );})}
-          <p style={{fontSize:'0.7rem',color:'#9ca3af',textAlign:'center',margin:'0.25rem 0 0.1rem',fontStyle:'italic',lineHeight:'1.6'}}>† Complete Fast Starter Bonus on the main screen to see<br/>a worked example of Supporting and Mentor Bonuses.</p>
         </div>
       </div>
     </div>
   );
 };
 
-/* ═══════════════════════════════════════════════
+/* ══ Floating Revenue Card ══ */
+const RevenueCard=({grandTotal,supportingBonus,partnerTotalEarnings,onInteracted,onClose})=>{
+  const [phase,setPhase]=useState('compact');
+  const handleExpand=()=>{
+    if(phase==='compact'){
+      setPhase('expanding');
+      onInteracted&&onInteracted();
+      setTimeout(()=>setPhase('expanded'),50);
+    }else{
+      setPhase('compact');
+    }
+  };
+  const isExpanded=phase==='expanded'||phase==='expanding';
+  return(
+    <div className="revenue-card-wrap">
+      <div className={`revenue-card ${isExpanded?'expanded':''}`}>
+        <div onClick={handleExpand} style={{padding:'0.85rem 1rem',display:'flex',alignItems:'center',justifyContent:'space-between',gap:'0.5rem',cursor:'pointer',userSelect:'none'}}>
+          <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}>
+            <span style={{fontSize:'1.15rem',lineHeight:1}}>🔓</span>
+            <span style={{fontWeight:'700',fontSize:'0.95rem',color:'white'}}>Three revenue streams unlocked</span>
+          </div>
+          <div style={{display:'flex',alignItems:'center',gap:'0.4rem'}}>
+            <span style={{fontSize:'0.72rem',color:'rgba(255,255,255,0.7)',fontStyle:'italic',whiteSpace:'nowrap'}}>tap to explore</span>
+            {isExpanded
+              ?<ChevronDown style={{...SM,color:'rgba(255,255,255,0.8)'}}/>
+              :<ChevronUp style={{...SM,color:'rgba(255,255,255,0.8)'}}/>
+            }
+          </div>
+        </div>
+        <div style={{maxHeight:isExpanded?'30rem':'0',overflow:'hidden',transition:'max-height 0.45s cubic-bezier(0.22,1,0.36,1)'}}>
+          <div style={{padding:'0 1rem 1rem'}}>
+            <div style={{display:'flex',flexDirection:'column',gap:'0.3rem',marginBottom:'0.75rem'}}>
+              {[
+                {icon:'🤝',label:'Supporting Customer Bonus',val:`£${supportingBonus.toLocaleString()}`},
+                {icon:'🎓',label:'Mentor Bonus',val:'£100'},
+                {icon:null,label:'Fast Starter Mentor Bonus',val:'£300'},
+              ].map(s=>(
+                <div key={s.label} style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:'0.5rem',fontSize:'0.875rem',background:'rgba(255,255,255,0.12)',borderRadius:'0.4rem',padding:'0.35rem 0.7rem'}}>
+                  <span style={{color:'#fbcfe8',display:'flex',alignItems:'center',gap:'0.4rem'}}>
+                    {s.icon?<span style={{fontSize:'0.95rem',lineHeight:1,flexShrink:0}}>{s.icon}</span>:<TrendingUp style={{...SM,color:'#fbcfe8'}}/>}
+                    {s.label}
+                  </span>
+                  <span style={{color:'#fde68a',fontWeight:'700',flexShrink:0}}>{s.val}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{background:'rgba(255,255,255,0.1)',borderRadius:'0.5rem',padding:'0.65rem 0.75rem'}}>
+              <p style={{color:'white',fontWeight:'600',fontSize:'0.78rem',margin:'0 0 0.45rem'}}>For each Partner you support to QD*:</p>
+              <div style={{display:'flex',justifyContent:'space-between',color:'white',fontSize:'0.82rem',marginBottom:'0.2rem'}}>
+                <span>They earn (same as above)</span><span style={{fontWeight:'700'}}>£{grandTotal.toLocaleString()}</span>
+              </div>
+              <div style={{borderTop:'1px solid rgba(255,255,255,0.25)',paddingTop:'0.25rem',display:'flex',justifyContent:'space-between',fontSize:'0.85rem'}}>
+                <span style={{color:'#fbcfe8'}}>You earn</span><span style={{fontWeight:'700',color:'#fde68a'}}>£{partnerTotalEarnings.toLocaleString()}</span>
+              </div>
+            </div>
+            <button onClick={e=>{e.stopPropagation();onClose();}} style={{marginTop:'0.65rem',width:'100%',background:'rgba(255,255,255,0.12)',border:'1px solid rgba(255,255,255,0.2)',borderRadius:'0.4rem',color:'rgba(255,255,255,0.7)',fontSize:'0.75rem',fontWeight:'600',padding:'0.4rem',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:'0.3rem'}}>
+              <ChevronDown style={{...XS,color:'rgba(255,255,255,0.7)'}}/> Push down
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ══════════════════════════════════════════
    MAIN TRACKER
-═══════════════════════════════════════════════ */
+══════════════════════════════════════════ */
 const UWTracker=()=>{
   const [showIntro,setShowIntro]=useState(true);
   const [showCelebration,setShowCelebration]=useState(false);
@@ -437,11 +521,15 @@ const UWTracker=()=>{
   const [coachMsg,setCoachMsg]=useState(null);
   const [coachArrow,setCoachArrow]=useState(false);
   const [stageRevealShown,setStageRevealShown]=useState(false);
+  const [revenueExplored,setRevenueExplored]=useState(false);
+  const [revenueCardVisible,setRevenueCardVisible]=useState(false);
   const qdShown=useRef(false);
   const mixShown=useRef(false);
   const inactivityTimer=useRef(null);
   const previouslyQualified=useRef(false);
   const tooltipTimer=useRef(null);
+  const customer5Ref=useRef(null);
+  const stageRevealTimer=useRef(null);
 
   const [customers,setCustomers]=useState([
     {type:'own',services:0,isPartner:false},
@@ -452,7 +540,6 @@ const UWTracker=()=>{
     {type:null,services:0,isPartner:false},
   ]);
 
-  /* ══ Earnings logic (UNCHANGED) ══ */
   const calculateCB=(customer,index)=>{
     if(!includeYou&&index===0){if(customer.type==='homeowner'){if(customer.services===1)return 50;if(customer.services===2)return 100;if(customer.services===3)return 250;if(customer.services===4)return 300;}return 0;}
     if(customer.type==='own'||customer.type==='renting')return 0;
@@ -474,22 +561,17 @@ const UWTracker=()=>{
   const partnerTotalEarnings=supportingBonus+100+300;
   const recurringActive=tenantCount>0;
 
-  /* ══ QD count ══ */
   const filledNonYou=customers.filter((c,i)=>includeYou?i>0&&c.type!==null:c.type!==null).length;
   const totalForQD=(includeYou?1:0)+filledNonYou;
-
-  /* ══ Mix prompt ══ */
   const nonYouFilled=customers.filter((c,i)=>includeYou?i>0&&c.type!==null:c.type!==null);
   const totalCircles=includeYou?5:6;
   const oneRemaining=nonYouFilled.length===(totalCircles-1);
   const allHomeowners=nonYouFilled.length>0&&nonYouFilled.every(c=>c.type==='homeowner');
   const allTenants=nonYouFilled.length>0&&nonYouFilled.every(c=>c.type==='renting');
 
-  /* ITEM 7 — QD coaching; ITEM 6 — mix prompt */
   useEffect(()=>{
     if(!qdShown.current&&totalForQD>=3){
-      qdShown.current=true;
-      setCoachArrow(false);
+      qdShown.current=true;setCoachArrow(false);
       setCoachMsg('QD* achieved 🎉 Recurring (residual) income unlocked. Watch as your income builds.');
       return;
     }
@@ -499,50 +581,52 @@ const UWTracker=()=>{
     }
   },[totalForQD,oneRemaining,allHomeowners,allTenants,qualifiesForFastStarter]);
 
-  /* ITEM 8 — Partner upgrade prompt */
   useEffect(()=>{
     if(allCirclesFilled&&!hasPartner&&!qualifiesForFastStarter){
-      setCoachArrow(true);
-      setCoachMsg('__partner_prompt__'); // sentinel so CoachingLane renders badge version
+      setCoachArrow(true);setCoachMsg('__partner_prompt__');
     }else if(allCirclesFilled&&hasPartner){
       setCoachArrow(false);
       if(coachMsg==='__partner_prompt__')setCoachMsg(null);
     }
   },[allCirclesFilled,hasPartner,qualifiesForFastStarter]);
 
-  /* ITEM 17 — Inactivity prompt */
   const resetInactivity=useCallback(()=>{
     clearTimeout(inactivityTimer.current);
-    if(fastStarterAchieved&&stageRevealShown){
+    if(fastStarterAchieved&&stageRevealShown&&revenueExplored){
       inactivityTimer.current=setTimeout(()=>{
         setCoachArrow(false);
-        setCoachMsg('Ready for next steps? Your options are waiting on the left.');
+        setCoachMsg('Continue exploring, dig into the 💡 next to total earnings, or tap 🧭 for next steps.');
       },9000);
     }
-  },[fastStarterAchieved,stageRevealShown]);
-  useEffect(()=>{resetInactivity();},[fastStarterAchieved,stageRevealShown]);
+  },[fastStarterAchieved,stageRevealShown,revenueExplored]);
+  useEffect(()=>{resetInactivity();},[fastStarterAchieved,stageRevealShown,revenueExplored]);
 
   const circleColor=(c)=>{if(c.type===null)return{border:'#d1d5db',text:'#9ca3af',bg:'#f9fafb'};if(c.type==='own')return{border:'#9ca3af',text:'#374151',bg:'#f3f4f6'};if(c.type==='renting')return{border:'#2563eb',text:'#1d4ed8',bg:'#eff6ff'};return{border:'#7c3aed',text:'#6d28d9',bg:'#f5f3ff'};};
   const getCircleOpacity=(index)=>{if(index===0&&includeYou)return 1;if(!includeYou){for(let i=0;i<index;i++)if(customers[i].type===null)return 0.3;return 1;}for(let i=1;i<index;i++)if(customers[i].type===null)return 0.3;return 1;};
   const canSelectCircle=(index)=>{if(index===0&&includeYou)return false;if(!includeYou){if(allCirclesFilled)return true;for(let i=0;i<index;i++)if(customers[i].type===null)return false;return true;}if(allCirclesFilled)return true;for(let i=1;i<index;i++)if(customers[i].type===null)return false;return true;};
   const ordinal=(n)=>n===1?'1st':n===2?'2nd':n===3?'3rd':`${n}th`;
 
-  /* ITEMS 9, 10, 15, 16 — Celebration → stage reveal → tab colour */
   const triggerCelebration=()=>{
     setShowCelebration(true);
     setCoachMsg(null);setCoachArrow(false);
+    clearTimeout(stageRevealTimer.current);
     setTimeout(()=>{
       setShowCelebration(false);
       setFastStarterAchieved(true);
-      /* ITEM 16 — stage reveal coaching message, two sentences */
       setCoachMsg("You've seen what you can earn. Now see what happens when you help others.");
-      setTimeout(()=>{
+      stageRevealTimer.current=setTimeout(()=>{
         setStageRevealShown(true);
-        setCoachMsg(null);
-        /* ITEM 10 — tab changes colour only after stage reveal complete */
         setTabColoured(true);
-      },4500);
+        setRevenueCardVisible(true);
+      },2000);
     },3000);
+  };
+
+  const handleRevenueInteracted=()=>{
+    if(revenueExplored)return;
+    setRevenueExplored(true);
+    setCoachMsg("Ready for next steps? Keep exploring, tap 💡 for income detail, or 🧭 on the left.");
+    resetInactivity();
   };
 
   const handlePartnerBadgeClick=(e,index)=>{
@@ -577,21 +661,19 @@ const UWTracker=()=>{
 
   const removeCustomer=()=>{if(selectedCircle===null)return;const nc=[...customers];nc[selectedCircle]={type:null,services:0,isPartner:false};setCustomers(nc);setSelectedCircle(null);previouslyQualified.current=false;setShowBestGuess(false);};
 
-  /* ITEM 13 — Reset button clears all state flags */
   const resetTracking=()=>{
     setCustomers([{type:includeYou?'own':null,services:0,isPartner:false},{type:null,services:0,isPartner:false},{type:null,services:0,isPartner:false},{type:null,services:0,isPartner:false},{type:null,services:0,isPartner:false},{type:null,services:0,isPartner:false}]);
     setSelectedCircle(null);setShowResetConfirm(false);
     previouslyQualified.current=false;qdShown.current=false;mixShown.current=false;
     setHasInteracted(false);setShowBestGuess(false);setCoachMsg(null);setCoachArrow(false);
     setTabColoured(false);setFastStarterAchieved(false);setInfoBulbPulsed(false);
-    setStageRevealShown(false);setYouBulbPulsed(false);
-    clearTimeout(inactivityTimer.current);clearTimeout(tooltipTimer.current);
+    setStageRevealShown(false);setYouBulbPulsed(false);setRevenueCardVisible(false);setRevenueExplored(false);
+    clearTimeout(inactivityTimer.current);clearTimeout(tooltipTimer.current);clearTimeout(stageRevealTimer.current);
     setYouTooltipVisible(false);
   };
 
   const toggleIncludeYou=()=>{const niy=!includeYou;setIncludeYou(niy);const nc=[...customers];nc[0]={type:niy?'own':null,services:0,isPartner:false};setCustomers(nc);setSelectedCircle(null);previouslyQualified.current=false;resetInactivity();};
 
-  /* ITEM 3A — tooltip auto-dismiss */
   const openYouTooltip=()=>{
     clearTimeout(tooltipTimer.current);
     setYouTooltipVisible(v=>{
@@ -600,16 +682,17 @@ const UWTracker=()=>{
     });
   };
 
-  /* ══ Render ══ */
+  const infoBulbActive=fastStarterAchieved&&revenueExplored;
+  const c5Index=4; // Customer 5 is always index 4
+
   return(
-    <div style={{minHeight:'100vh',background:'linear-gradient(135deg,#fdf2f8,#f5f3ff)',padding:'1rem'}}>
+    <div style={{minHeight:'100vh',background:'linear-gradient(135deg,#fdf2f8,#f5f3ff)',padding:'1rem',paddingBottom:revenueCardVisible?'7rem':'1rem',transition:'padding-bottom 0.4s'}}>
       {showIntro&&<IntroModal onClose={()=>setShowIntro(false)}/>}
       <ProfileBubble/>
       <ContactPanel grandTotal={grandTotal} isOpen={showContactPanel} onClose={()=>setShowContactPanel(false)} tabColoured={tabColoured} onTabClick={()=>setShowContactPanel(o=>!o)}/>
       {showCelebration&&(<div style={{position:'fixed',inset:0,pointerEvents:'none',zIndex:50}}>{[...Array(50)].map((_,i)=>(<div key={i} className="animate-confetti" style={{position:'absolute',left:`${Math.random()*100}%`,top:'-10%',animationDelay:`${Math.random()*0.5}s`,animationDuration:`${2+Math.random()}s`}}><div style={{color:'#facc15',fontSize:`${Math.random()*20+10}px`,transform:`rotate(${Math.random()*360}deg)`}}>✨</div></div>))}</div>)}
 
       <div style={{maxWidth:'42rem',margin:'0 auto'}}>
-        {/* Header */}
         <div style={{marginBottom:'1.5rem'}}>
           <h1 style={{fontSize:'1.5rem',fontWeight:'700',color:'#1f2937',marginBottom:'0.5rem',textAlign:'center'}}>UW Partner Earnings Tool</h1>
           <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:'1rem'}}>
@@ -618,16 +701,13 @@ const UWTracker=()=>{
                 <span style={{display:'inline-block',height:'1rem',width:'1rem',transform:includeYou?'translateX(1.5rem)':'translateX(0.25rem)',borderRadius:'50%',background:'white',transition:'transform 0.2s',boxShadow:'0 1px 3px rgba(0,0,0,0.2)'}}></span>
               </button>
               <span style={{fontSize:'0.875rem',fontWeight:'600',color:'#374151'}}>You</span>
-              {/* ITEM 3A — toggle lightbulb: yellow emoji, pulses twice on mount, click opens tooltip */}
-              <div className="tooltip-wrap" style={{marginLeft:'0.2rem'}}>
+              <div style={{position:'relative',marginLeft:'0.2rem',display:'inline-flex',alignItems:'center'}}>
                 <button onClick={openYouTooltip} style={{background:'none',border:'none',cursor:'pointer',padding:'0.15rem',display:'flex',alignItems:'center',lineHeight:1}}>
                   {!youBulbPulsed?<PulsingBulb size="0.95rem" onDone={()=>setYouBulbPulsed(true)}/>:<Bulb size="0.95rem"/>}
                 </button>
                 {youTooltipVisible&&(
-                  /* ITEM 3A — softer muted-gold/warm-neutral background, wider */
-                  <div className="tooltip-box" style={{minWidth:'230px',background:'#92400e',opacity:0.92,borderRadius:'0.5rem'}}>
+                  <div style={{position:'fixed',top:'3.5rem',left:'0.75rem',right:'0.75rem',maxWidth:'260px',background:'#92400e',color:'white',fontSize:'0.75rem',borderRadius:'0.5rem',padding:'0.55rem 0.8rem',lineHeight:1.5,zIndex:400,boxShadow:'0 4px 14px rgba(0,0,0,0.25)',textAlign:'center',animation:'slideDown 0.2s ease-out forwards'}}>
                     💡 Most Partners also use UW themselves to save on their own household bills. Toggle this off any time.
-                    <span style={{position:'absolute',top:'100%',left:'50%',transform:'translateX(-50%)',border:'5px solid transparent',borderTopColor:'#92400e',display:'block'}}></span>
                   </div>
                 )}
               </div>
@@ -637,15 +717,14 @@ const UWTracker=()=>{
           </div>
         </div>
 
-        {/* Main card */}
         <div style={{background:'white',borderRadius:'1rem',boxShadow:'0 4px 16px rgba(0,0,0,0.08)',padding:'1.5rem'}}>
-          {/* Customer circles */}
           <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'1rem',marginBottom:'1rem'}}>
             {customers.map((customer,index)=>{
               const col=circleColor(customer);const cb=calculateCB(customer,index);
               const showHAB=customer.type==='homeowner'&&(customer.services===3||customer.services===4)&&highActivityCustomers>=2;
+              const isC5=index===c5Index;
               return(
-                <div key={index} style={{display:'flex',flexDirection:'column',alignItems:'center',position:'relative'}}>
+                <div key={index} ref={isC5?customer5Ref:null} style={{display:'flex',flexDirection:'column',alignItems:'center',position:'relative'}}>
                   <div onClick={()=>handleCircleClick(index)} style={{width:'5rem',height:'5rem',borderRadius:'50%',border:`4px solid ${col.border}`,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',fontSize:'1.125rem',fontWeight:'700',position:'relative',background:col.bg,color:col.text,cursor:canSelectCircle(index)?'pointer':'not-allowed',opacity:getCircleOpacity(index),transition:'transform 0.15s',boxSizing:'border-box'}}>
                     {(index===0&&includeYou)?<span style={{fontSize:'1rem',fontWeight:'700'}}>You</span>
                     :customer.type?(
@@ -666,11 +745,9 @@ const UWTracker=()=>{
             })}
           </div>
 
-          {/* ITEM 4 — Coaching lane: fixed space, always present */}
-          <CoachingLane message={coachMsg} showArrow={coachArrow}/>
+          <CoachingLane message={coachMsg} showArrow={coachArrow} customer5Ref={customer5Ref}/>
 
           <div style={{display:'flex',flexDirection:'column',gap:'0.75rem'}}>
-            {/* Customer Bonus — ITEM 19: emoji greys when inactive */}
             <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'0.75rem 1rem',borderRadius:'0.5rem',border:`4px solid ${totalCB>0?'#7c3aed':'#d1d5db'}`,background:totalCB>0?'#f5f3ff':'#f9fafb'}}>
               <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}>
                 <span style={{fontSize:'1.25rem',filter:totalCB>0?'none':'grayscale(1)',opacity:totalCB>0?1:0.4}}>💷</span>
@@ -679,15 +756,18 @@ const UWTracker=()=>{
               <span style={{fontSize:'1.25rem',fontWeight:'700',color:totalCB>0?'#6d28d9':'#9ca3af'}}>£{totalCB.toLocaleString()}</span>
             </div>
 
-            {/* High Activity Bonus */}
-            {highActivityCustomers>=2&&(
-              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'0.75rem 1rem',borderRadius:'0.5rem',border:'4px solid #f97316',background:'#fff7ed'}}>
-                <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}><span style={{fontSize:'1.25rem'}}>🔥</span><span style={{fontWeight:'600',color:'#ea580c'}}>High Activity Bonus:</span></div>
-                <span style={{fontSize:'1.25rem',fontWeight:'700',color:'#ea580c'}}>£{totalHAB.toLocaleString()}</span>
+            {/* High Activity Bonus — always visible, greyed when inactive */}
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'0.75rem 1rem',borderRadius:'0.5rem',border:`4px solid ${highActivityCustomers>=2?'#f97316':'#e5e7eb'}`,background:highActivityCustomers>=2?'#fff7ed':'#f9fafb',opacity:highActivityCustomers>=2?1:0.5,transition:'opacity 0.3s,border-color 0.3s,background 0.3s'}}>
+              <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}>
+                <span style={{fontSize:'1.25rem',filter:highActivityCustomers>=2?'none':'grayscale(1)',opacity:highActivityCustomers>=2?1:0.4}}>🔥</span>
+                <span style={{fontWeight:'600',color:highActivityCustomers>=2?'#ea580c':'#6b7280'}}>High Activity Bonus:</span>
               </div>
-            )}
+              <div style={{textAlign:'right'}}>
+                <span style={{fontSize:'1.25rem',fontWeight:'700',color:highActivityCustomers>=2?'#ea580c':'#9ca3af'}}>{highActivityCustomers>=2?`£${totalHAB.toLocaleString()}`:'—'}</span>
+                {!highActivityCustomers&&<span style={{display:'block',fontSize:'0.72rem',color:'#9ca3af',fontStyle:'italic'}}>Add 2+ homeowners with 3 services</span>}
+              </div>
+            </div>
 
-            {/* Fast Starter — ITEM 19: SVG icon greys when inactive */}
             <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'0.75rem 1rem',borderRadius:'0.5rem',border:`2px solid ${qualifiesForFastStarter?'#86efac':'#e5e7eb'}`,background:qualifiesForFastStarter?'#f0fdf4':'#f9fafb'}}>
               <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}>
                 <TrendingUp style={{...MD,color:qualifiesForFastStarter?'#16a34a':'#d1d5db'}}/>
@@ -696,22 +776,20 @@ const UWTracker=()=>{
               <span style={{fontSize:'1.25rem',fontWeight:'700',color:qualifiesForFastStarter?'#16a34a':'#9ca3af'}}>£{fastStarterBonus.toLocaleString()}</span>
             </div>
 
-            {/* ITEM 3B — Total Earnings: yellow 💡, pulses twice once after Fast Starter */}
             <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'1rem',borderRadius:'0.5rem',boxShadow:'0 2px 8px rgba(0,0,0,0.15)',color:'white',position:'relative',overflow:'hidden'}}>
               <div style={{position:'absolute',inset:0,background:grandTotal>0?'linear-gradient(to right,#7c3aed,#db2777)':'#9ca3af'}}></div>
               <div style={{display:'flex',alignItems:'center',gap:'0.5rem',position:'relative',zIndex:1}}>
                 <span style={{fontWeight:'700',fontSize:'1.125rem'}}>TOTAL EARNINGS:</span>
-                <button onClick={(e)=>{e.stopPropagation();setShowInfoPopup(true);}} style={{width:'1.5rem',height:'1.5rem',borderRadius:'50%',background:'rgba(255,255,255,0.3)',border:'none',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',padding:0,lineHeight:1,fontSize:'0.9rem'}}>
-                  {fastStarterAchieved&&!infoBulbPulsed
+                <button onClick={(e)=>{e.stopPropagation();if(infoBulbActive)setShowInfoPopup(true);}} style={{width:'1.5rem',height:'1.5rem',borderRadius:'50%',background:'rgba(255,255,255,0.3)',border:'none',cursor:infoBulbActive?'pointer':'default',display:'flex',alignItems:'center',justifyContent:'center',padding:0,lineHeight:1,fontSize:'0.9rem',opacity:infoBulbActive?1:0.4}}>
+                  {infoBulbActive&&!infoBulbPulsed
                     ?<PulsingBulb size="0.9rem" onDone={()=>setInfoBulbPulsed(true)}/>
-                    :<Bulb size="0.9rem"/>
+                    :<Bulb size="0.9rem" grey={!infoBulbActive}/>
                   }
                 </button>
               </div>
               <span style={{fontSize:'1.5rem',fontWeight:'700',position:'relative',zIndex:1}}>£{grandTotal.toLocaleString()}</span>
             </div>
 
-            {/* ITEM 14 — Recurring Income always visible; ITEM 19 emoji + icon grey when inactive */}
             <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'0.75rem 1rem',borderRadius:'0.5rem',border:`4px solid ${recurringActive?'#2563eb':'#d1d5db'}`,background:recurringActive?'#eff6ff':'#f9fafb',opacity:recurringActive?1:0.5,transition:'opacity 0.3s,border-color 0.3s'}}>
               <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}>
                 <RefreshCw style={{...MD,color:recurringActive?'#2563eb':'#d1d5db'}}/>
@@ -724,67 +802,36 @@ const UWTracker=()=>{
               </div>
             </div>
 
-            {/* ITEM 15 — Revenue Stream Panel (replaces flip card) */}
-            {/* ITEM 19 — locked state: text, icon grey. Uses 🔒 emoji per spec. */}
-            <div style={{borderRadius:'0.75rem',border:`2px solid ${qualifiesForFastStarter?'#a78bfa':'#e5e7eb'}`,overflow:'hidden'}}>
-              {!qualifiesForFastStarter&&(
+            {!qualifiesForFastStarter&&(
+              <div style={{borderRadius:'0.75rem',border:'2px solid #e5e7eb',overflow:'hidden'}}>
                 <div style={{padding:'1rem',background:'#f9fafb',display:'flex',alignItems:'center',gap:'0.5rem'}}>
-                  {/* ITEM 15 locked — emoji 🔒 per spec, NOT SVG Lock */}
                   <span style={{fontSize:'1.1rem',filter:'grayscale(1)',opacity:0.5,lineHeight:1}}>🔒</span>
                   <span style={{fontWeight:'700',fontSize:'0.95rem',color:'#9ca3af'}}>Three revenue streams (locked)</span>
                 </div>
-              )}
-              {qualifiesForFastStarter&&(
-                <div style={{background:'linear-gradient(to right,#7c3aed,#db2777)'}}>
-                  <div style={{padding:'1rem 1rem 0.75rem',display:'flex',alignItems:'center',gap:'0.5rem'}}>
-                    <span style={{fontSize:'1.15rem',lineHeight:1}}>🔓</span>
-                    <span style={{fontWeight:'700',fontSize:'0.95rem',color:'white'}}>Three revenue streams unlocked</span>
-                  </div>
-                  <div style={{padding:'0 1rem 0.75rem',display:'flex',flexDirection:'column',gap:'0.35rem'}}>
-                    {[
-                      {icon:'🤝',label:'Supporting Bonus'},
-                      {icon:'🎓',label:'Mentor Bonus'},
-                      {icon:null,label:'Fast Starter Mentor Bonus'},
-                    ].map(s=>(
-                      <div key={s.label} style={{display:'flex',alignItems:'center',gap:'0.5rem',fontSize:'0.875rem',color:'#fbcfe8'}}>
-                        {s.icon?<span style={{fontSize:'1rem',lineHeight:1,flexShrink:0}}>{s.icon}</span>:<TrendingUp style={{...SM,color:'#fbcfe8'}}/>}
-                        <span>{s.label}</span>
-                      </div>
-                    ))}
-                  </div>
-                  {/* Worked example — existing maths unchanged */}
-                  <div style={{margin:'0 1rem 1rem',background:'rgba(255,255,255,0.12)',borderRadius:'0.5rem',padding:'0.75rem'}}>
-                    <p style={{color:'white',fontWeight:'600',fontSize:'0.78rem',margin:'0 0 0.5rem'}}>Worked example — for each Partner you support to QD*:</p>
-                    <div style={{display:'flex',justifyContent:'space-between',color:'white',fontSize:'0.85rem',marginBottom:'0.2rem'}}>
-                      <span>They earn (same as you above)</span><span style={{fontWeight:'700'}}>£{grandTotal.toLocaleString()}</span>
-                    </div>
-                    <div style={{borderTop:'1px solid rgba(255,255,255,0.3)',paddingTop:'0.2rem',display:'flex',justifyContent:'space-between',fontSize:'0.85rem'}}>
-                      <span style={{color:'#fbcfe8'}}>You earn</span><span style={{fontWeight:'700',color:'#fde68a'}}>£{partnerTotalEarnings.toLocaleString()}</span>
-                    </div>
-                    <div style={{marginTop:'0.5rem',display:'flex',flexDirection:'column',gap:'0.2rem'}}>
-                      {[{icon:'🤝',label:'Supporting Customer Bonuses',val:supportingBonus},{icon:'🎓',label:'Mentor Bonus',val:100},{icon:null,label:'Fast Starter Mentor Bonus',val:300}].map(r=>(
-                        <div key={r.label} style={{display:'flex',justifyContent:'space-between',fontSize:'0.8rem',background:'rgba(255,255,255,0.08)',borderRadius:'0.25rem',padding:'0.2rem 0.45rem'}}>
-                          <span style={{color:'#fbcfe8',display:'flex',alignItems:'center',gap:'0.3rem'}}>{r.icon?<span>{r.icon}</span>:<TrendingUp style={{width:'0.7rem',height:'0.7rem',color:'#fbcfe8'}}/>}{r.label}</span>
-                          <span style={{color:'white',fontWeight:'700'}}>£{r.val.toLocaleString()}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* ITEM 13 — Reset */}
         <div style={{marginTop:'1rem'}}>
           <button onClick={()=>setShowResetConfirm(true)} style={{width:'100%',padding:'0.75rem',background:'#e5e7eb',border:'none',borderRadius:'0.5rem',fontWeight:'600',color:'#374151',cursor:'pointer',fontSize:'1rem'}}>Reset</button>
         </div>
       </div>
 
-      {showInfoPopup&&<HowPaidPopup onClose={()=>setShowInfoPopup(false)}/>}
+      {revenueCardVisible&&(
+        <div className="revenue-slide-up" style={{animationFillMode:'forwards'}}>
+          <RevenueCard
+            grandTotal={grandTotal}
+            supportingBonus={supportingBonus}
+            partnerTotalEarnings={partnerTotalEarnings}
+            onInteracted={handleRevenueInteracted}
+            onClose={()=>setRevenueCardVisible(false)}
+          />
+        </div>
+      )}
 
-      {/* Customer selection modal — ITEM 5: best guess in yellow box, dark bold italic */}
+      {showInfoPopup&&<HowPaidPopup onClose={()=>setShowInfoPopup(false)} fastStarterAchieved={fastStarterAchieved} revenueExplored={revenueExplored}/>}
+
       {selectedCircle!==null&&(
         <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.3)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:50,padding:'1rem'}} onClick={()=>{setSelectedCircle(null);setShowBestGuess(false);}}>
           <div className="animate-slideDown" style={{background:'white',borderRadius:'0.75rem',padding:'1.5rem',boxShadow:'0 20px 50px rgba(0,0,0,0.3)',maxWidth:'24rem',width:'100%'}} onClick={e=>e.stopPropagation()}>
@@ -811,7 +858,6 @@ const UWTracker=()=>{
         </div>
       )}
 
-      {/* Reset confirm */}
       {showResetConfirm&&(
         <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.3)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:50,padding:'1rem'}}>
           <div className="animate-slideDown" style={{background:'white',borderRadius:'0.75rem',padding:'1.5rem',boxShadow:'0 20px 50px rgba(0,0,0,0.3)',maxWidth:'24rem',width:'100%'}}>
@@ -825,7 +871,6 @@ const UWTracker=()=>{
         </div>
       )}
 
-      {/* ITEM 9 — Fast Starter celebration: £500 fast / starter bonus (two lines, lowercase) */}
       {showCelebration&&(
         <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.5)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:40,padding:'1rem'}}>
           <div className="animate-bounceOnce" style={{background:'white',borderRadius:'1rem',padding:'2rem',maxWidth:'28rem',textAlign:'center',boxShadow:'0 20px 60px rgba(0,0,0,0.3)'}}>
