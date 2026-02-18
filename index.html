@@ -13,66 +13,73 @@
   @keyframes confetti { 0%{transform:translateY(0) rotate(0deg);opacity:1} 100%{transform:translateY(100vh) rotate(360deg);opacity:0} }
   @keyframes bounceOnce { 0%,100%{transform:translateY(0)} 25%{transform:translateY(-20px)} 50%{transform:translateY(0)} 75%{transform:translateY(-10px)} }
   @keyframes pulseTwice { 0%,100%{transform:scale(1);opacity:1} 25%{transform:scale(1.4);opacity:0.65} 50%{transform:scale(1);opacity:1} 75%{transform:scale(1.4);opacity:0.65} }
-  @keyframes tabPulse { 0%,100%{box-shadow:3px 0 14px rgba(124,58,237,0.35)} 25%{box-shadow:3px 0 26px rgba(219,39,119,0.8)} 50%{box-shadow:3px 0 14px rgba(124,58,237,0.35)} 75%{box-shadow:3px 0 26px rgba(219,39,119,0.8)} }
+  @keyframes tabPulse { 0%,100%{box-shadow:3px 0 14px rgba(124,58,237,0.35)} 25%{box-shadow:3px 0 26px rgba(219,39,119,0.85)} 50%{box-shadow:3px 0 14px rgba(124,58,237,0.35)} 75%{box-shadow:3px 0 26px rgba(219,39,119,0.85)} }
   @keyframes coachFadeIn { 0%{opacity:0;transform:translateY(4px)} 100%{opacity:1;transform:translateY(0)} }
   @keyframes coachFadeOut { 0%{opacity:1} 100%{opacity:0} }
-  @keyframes arrowBounce { 0%,100%{transform:translateX(0)} 50%{transform:translateX(4px)} }
+  @keyframes arrowBounce { 0%,100%{transform:translateX(0)} 50%{transform:translateX(5px)} }
   .animate-slideDown { animation: slideDown 0.2s ease-out forwards; }
   .animate-confetti { animation: confetti 3s ease-in forwards; }
   .animate-bounceOnce { animation: bounceOnce 0.6s ease-in-out; }
   .pulse-twice { animation: pulseTwice 0.9s ease-in-out 1 forwards; }
-  .tab-pulse { animation: tabPulse 0.9s ease-in-out 2; }
+  .tab-pulse { animation: tabPulse 0.95s ease-in-out 2; }
   .coach-in { animation: coachFadeIn 0.4s ease-out forwards; }
-  .coach-out { animation: coachFadeOut 0.4s ease-in forwards; }
-  .arrow-bounce { animation: arrowBounce 0.7s ease-in-out infinite; }
+  .coach-out { animation: coachFadeOut 0.35s ease-in forwards; }
+  .arrow-bounce { animation: arrowBounce 0.65s ease-in-out infinite; }
   * { box-sizing: border-box; }
   @media (orientation: landscape) and (max-height: 500px) {
     .accordion-list { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 0.4rem !important; align-items: start !important; }
     .accordion-list > div { overflow: visible !important; }
   }
-  .profile-bubble-wrap { position:fixed; top:0.75rem; right:0.75rem; z-index:100; display:flex; flex-direction:column; align-items:flex-end; gap:0.3rem; }
-  .profile-photo-btn { width:3.25rem; height:3.25rem; border-radius:50%; overflow:hidden; border:2.5px solid #fff; box-shadow:0 4px 16px rgba(124,58,237,0.35),0 2px 6px rgba(0,0,0,0.18); cursor:pointer; background:linear-gradient(135deg,#7c3aed,#db2777); display:flex; align-items:center; justify-content:center; transition:transform 0.18s; flex-shrink:0; align-self:flex-end; }
+  /* Profile bubble */
+  .profile-bubble-wrap { position:fixed;top:0.75rem;right:0.75rem;z-index:100;display:flex;flex-direction:column;align-items:flex-end;gap:0.3rem; }
+  .profile-photo-btn { width:3.25rem;height:3.25rem;border-radius:50%;overflow:hidden;border:2.5px solid #fff;box-shadow:0 4px 16px rgba(124,58,237,0.35),0 2px 6px rgba(0,0,0,0.18);cursor:pointer;background:linear-gradient(135deg,#7c3aed,#db2777);display:flex;align-items:center;justify-content:center;transition:transform 0.18s;flex-shrink:0;align-self:flex-end; }
   .profile-photo-btn:hover { transform:scale(1.07); }
-  .profile-photo-btn img { width:100%; height:100%; object-fit:cover; }
-  .profile-photo-btn .initials { color:white; font-weight:800; font-size:1.1rem; letter-spacing:-0.02em; }
-  .bubble-name-wrap { text-align:right; transition:opacity 0.35s ease,max-height 0.35s ease,margin 0.35s ease; max-height:3rem; overflow:hidden; margin-bottom:0; }
-  .bubble-name-wrap.hidden { opacity:0; max-height:0; pointer-events:none; margin-bottom:-0.3rem; }
-  .bubble-name-primary { font-size:0.78rem; font-weight:700; color:#1f2937; line-height:1.3; }
-  .bubble-name-secondary { font-size:0.68rem; color:#6b7280; line-height:1.3; }
-  .fab-actions { display:flex; flex-direction:column; align-items:flex-end; gap:0.4rem; max-height:0; opacity:0; overflow:hidden; transform:translateY(-12px); transition:max-height 0.35s ease,opacity 0.3s ease,transform 0.3s ease; }
-  .fab-actions.open { max-height:16rem; opacity:1; transform:translateY(0); }
-  .fab-action-btn { display:flex; align-items:center; gap:0.45rem; padding:0.45rem 0.75rem; border-radius:2rem; border:none; cursor:pointer; font-size:0.8rem; font-weight:700; white-space:nowrap; background:white; color:#1f2937; text-decoration:none; transition:transform 0.15s; }
+  .profile-photo-btn img { width:100%;height:100%;object-fit:cover; }
+  .profile-photo-btn .initials { color:white;font-weight:800;font-size:1.1rem;letter-spacing:-0.02em; }
+  .bubble-name-wrap { text-align:right;transition:opacity 0.35s ease,max-height 0.35s ease,margin 0.35s ease;max-height:3rem;overflow:hidden;margin-bottom:0; }
+  .bubble-name-wrap.hidden { opacity:0;max-height:0;pointer-events:none;margin-bottom:-0.3rem; }
+  .bubble-name-primary { font-size:0.78rem;font-weight:700;color:#1f2937;line-height:1.3; }
+  .bubble-name-secondary { font-size:0.68rem;color:#6b7280;line-height:1.3; }
+  .fab-actions { display:flex;flex-direction:column;align-items:flex-end;gap:0.4rem;max-height:0;opacity:0;overflow:hidden;transform:translateY(-12px);transition:max-height 0.35s ease,opacity 0.3s ease,transform 0.3s ease; }
+  .fab-actions.open { max-height:16rem;opacity:1;transform:translateY(0); }
+  .fab-action-btn { display:flex;align-items:center;gap:0.45rem;padding:0.45rem 0.75rem;border-radius:2rem;border:none;cursor:pointer;font-size:0.8rem;font-weight:700;white-space:nowrap;background:white;color:#1f2937;text-decoration:none;transition:transform 0.15s; }
   .fab-action-btn:hover { transform:scale(1.04); }
   .fab-btn-jumpin { box-shadow:3px 3px 10px rgba(109,40,217,0.3); }
   .fab-btn-bookin { box-shadow:3px 3px 10px rgba(168,85,247,0.3); }
   .fab-btn-sayhi  { box-shadow:3px 3px 10px rgba(219,39,119,0.3); }
-  .fab-icon { font-size:1rem; line-height:1; }
-  .sayhi-icons-row { display:flex; justify-content:flex-end; gap:0.4rem; max-height:0; opacity:0; overflow:hidden; transform:translateY(-6px); transition:max-height 0.3s ease,opacity 0.25s ease,transform 0.25s ease; }
-  .sayhi-icons-row.open { max-height:3rem; opacity:1; transform:translateY(0); }
-  .fab-icon-circle { width:2.2rem; height:2.2rem; border-radius:50%; background:white; border:1.5px solid #e5e7eb; box-shadow:2px 2px 8px rgba(219,39,119,0.2); display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; text-decoration:none; transition:transform 0.15s,background 0.15s; }
-  .fab-icon-circle:hover { transform:scale(1.1); background:#fdf2f8; }
-  .fab-icon-circle svg { width:1rem; height:1rem; }
-  .contact-panel-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.35); opacity:0; pointer-events:none; transition:opacity 0.35s ease; z-index:150; }
-  .contact-panel-overlay.visible { opacity:1; pointer-events:auto; }
-  .contact-panel { position:fixed; top:0; left:0; height:100%; width:min(22rem,88vw); background:white; box-shadow:6px 0 32px rgba(0,0,0,0.22); transform:translateX(-100%); transition:transform 0.38s cubic-bezier(0.4,0,0.2,1); z-index:151; display:flex; flex-direction:column; overflow-y:auto; }
+  .fab-icon { font-size:1rem;line-height:1; }
+  .sayhi-icons-row { display:flex;justify-content:flex-end;gap:0.4rem;max-height:0;opacity:0;overflow:hidden;transform:translateY(-6px);transition:max-height 0.3s ease,opacity 0.25s ease,transform 0.25s ease; }
+  .sayhi-icons-row.open { max-height:3rem;opacity:1;transform:translateY(0); }
+  .fab-icon-circle { width:2.2rem;height:2.2rem;border-radius:50%;background:white;border:1.5px solid #e5e7eb;box-shadow:2px 2px 8px rgba(219,39,119,0.2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;text-decoration:none;transition:transform 0.15s,background 0.15s; }
+  .fab-icon-circle:hover { transform:scale(1.1);background:#fdf2f8; }
+  .fab-icon-circle svg { width:1rem;height:1rem; }
+  /* Contact panel */
+  .contact-panel-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.35);opacity:0;pointer-events:none;transition:opacity 0.35s ease;z-index:150; }
+  .contact-panel-overlay.visible { opacity:1;pointer-events:auto; }
+  .contact-panel { position:fixed;top:0;left:0;height:100%;width:min(22rem,88vw);background:white;box-shadow:6px 0 32px rgba(0,0,0,0.22);transform:translateX(-100%);transition:transform 0.38s cubic-bezier(0.4,0,0.2,1);z-index:151;display:flex;flex-direction:column;overflow-y:auto; }
   .contact-panel.open { transform:translateX(0); }
-  .left-pull-tab { position:fixed; top:50%; left:0; transform:translateY(-50%); z-index:152; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0.2rem; color:white; border-radius:0 0.6rem 0.6rem 0; padding:0.7rem 0.45rem; cursor:pointer; transition:transform 0.38s cubic-bezier(0.4,0,0.2,1),box-shadow 0.2s,background 0.4s; user-select:none; }
-  .left-pull-tab.tab-grey { background:#9ca3af; box-shadow:3px 0 10px rgba(0,0,0,0.15); }
-  .left-pull-tab.tab-coloured { background:linear-gradient(135deg,#7c3aed,#db2777); box-shadow:3px 0 14px rgba(124,58,237,0.35); }
-  .left-pull-tab:hover { filter:brightness(1.08); }
+  /* Left tab */
+  .left-pull-tab { position:fixed;top:50%;left:0;transform:translateY(-50%);z-index:152;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.2rem;color:white;border-radius:0 0.6rem 0.6rem 0;padding:0.7rem 0.45rem;cursor:pointer;transition:transform 0.38s cubic-bezier(0.4,0,0.2,1),filter 0.2s,background 0.45s;user-select:none; }
+  .left-pull-tab.tab-grey { background:#9ca3af;box-shadow:3px 0 10px rgba(0,0,0,0.15); }
+  .left-pull-tab.tab-coloured { background:linear-gradient(135deg,#7c3aed,#db2777);box-shadow:3px 0 14px rgba(124,58,237,0.35); }
+  .left-pull-tab:hover { filter:brightness(1.1); }
   .left-pull-tab.panel-open { transform:translateY(-50%) translateX(min(22rem,88vw)); }
-  .pull-tab-emoji { font-size:1.15rem; line-height:1; margin-bottom:0.3rem; }
-  .pull-tab-label { writing-mode:vertical-rl; text-orientation:mixed; font-size:0.6rem; font-weight:800; letter-spacing:0.06em; text-transform:uppercase; line-height:1.2; }
-  .intro-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:300; padding:1rem; }
-  .tooltip-wrap { position:relative; display:inline-flex; align-items:center; }
-  .tooltip-box { position:absolute; bottom:calc(100% + 8px); left:50%; transform:translateX(-50%); background:#4b5563; color:white; font-size:0.75rem; border-radius:0.5rem; padding:0.5rem 0.75rem; max-width:260px; white-space:normal; text-align:center; line-height:1.5; z-index:400; box-shadow:0 4px 14px rgba(0,0,0,0.22); pointer-events:none; }
-  .tooltip-box::after { content:''; position:absolute; top:100%; left:50%; transform:translateX(-50%); border:5px solid transparent; border-top-color:#4b5563; }
-  .coaching-lane { border-radius:0.6rem; padding:0.65rem 0.9rem; margin-bottom:0.85rem; min-height:2.8rem; display:flex; align-items:center; gap:0.5rem; transition:border-color 0.3s,background 0.3s; }
-  .coaching-lane.inactive { border:1.5px dashed #d1d5db; background:#f9fafb; }
-  .coaching-lane.active { border:1.5px solid #c4b5fd; background:linear-gradient(135deg,#f5f3ff,#eff6ff); }
-  .revenue-panel { border-radius:0.75rem; border:2px solid #e5e7eb; overflow:hidden; }
-  .revenue-panel.locked { border-color:#e5e7eb; }
-  .revenue-panel.unlocked { border-color:#a78bfa; }
+  .pull-tab-emoji { font-size:1.15rem;line-height:1;margin-bottom:0.3rem; }
+  .pull-tab-label { writing-mode:vertical-rl;text-orientation:mixed;font-size:0.6rem;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;line-height:1.2; }
+  /* Intro modal */
+  .intro-modal-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:300;padding:1rem; }
+  /* Tooltip */
+  .tooltip-wrap { position:relative;display:inline-flex;align-items:center; }
+  .tooltip-box { position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);color:white;font-size:0.75rem;border-radius:0.5rem;padding:0.55rem 0.8rem;max-width:260px;white-space:normal;text-align:center;line-height:1.5;z-index:400;box-shadow:0 4px 14px rgba(0,0,0,0.2);pointer-events:none; }
+  .tooltip-box::after { content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent; }
+  /* Coaching lane */
+  .coaching-lane { border-radius:0.6rem;padding:0.65rem 0.9rem;margin-bottom:0.85rem;min-height:2.8rem;display:flex;align-items:center;gap:0.5rem;transition:border-color 0.3s,background 0.3s; }
+  .coaching-lane.inactive { border:1.5px dashed #d1d5db;background:#f9fafb; }
+  .coaching-lane.active { border:1.5px solid #c4b5fd;background:linear-gradient(135deg,#f5f3ff,#eff6ff); }
+  /* P badge mini */
+  .p-badge { width:1.35rem;height:1.35rem;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:800;flex-shrink:0;vertical-align:middle; }
+  .p-badge-grey { background:#e5e7eb;border:2px solid #9ca3af;color:#6b7280; }
+  .p-badge-gold { background:#facc15;border:2px solid #ca8a04;color:#713f12; }
 </style>
 </head>
 <body>
@@ -95,10 +102,9 @@ const whatsappUrl=()=>`https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIC
 const emailUrl=()=>`mailto:${CONTACT.email}?subject=${encodeURIComponent(CONTACT.emailSubject)}&body=${encodeURIComponent(CONTACT.emailBody)}`;
 const phoneUrl=()=>`tel:${CONTACT.phone}`;
 
-/* ── SVG Icons ── */
+/* ══ SVG Icons ══ */
 const TrendingUp=({style})=>(<svg style={style||{width:'1rem',height:'1rem',flexShrink:0}} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>);
 const RefreshCw=({style})=>(<svg style={style||{width:'1rem',height:'1rem',flexShrink:0}} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>);
-const Lock=({style})=>(<svg style={style||{width:'1rem',height:'1rem',flexShrink:0}} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>);
 const X=({style})=>(<svg style={style||{width:'1rem',height:'1rem',flexShrink:0}} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/></svg>);
 const ChevronDown=({style})=>(<svg style={style||{width:'1rem',height:'1rem',flexShrink:0}} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7"/></svg>);
 const ChevronUp=({style})=>(<svg style={style||{width:'1rem',height:'1rem',flexShrink:0}} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7"/></svg>);
@@ -106,49 +112,52 @@ const SM={width:'1rem',height:'1rem',flexShrink:0};
 const MD={width:'1.25rem',height:'1.25rem',flexShrink:0};
 const XS={width:'0.875rem',height:'0.875rem',flexShrink:0};
 
-/* ── Pulsing 💡 emoji (global rule: pulse twice, never loop) ── */
+/* ══ Lightbulb helpers — ITEM 2 global rule ══ */
+/* Pulses exactly twice on first render, then stays static. Never loops. */
 const PulsingBulb=({size='1rem',onDone})=>{
   const [pulsing,setPulsing]=useState(true);
   useEffect(()=>{const t=setTimeout(()=>{setPulsing(false);if(onDone)onDone();},950);return()=>clearTimeout(t);},[]);
-  return <span className={pulsing?'pulse-twice':''} style={{display:'inline-flex',alignItems:'center',fontSize:size,lineHeight:1}}>💡</span>;
+  return <span className={pulsing?'pulse-twice':''} style={{display:'inline-flex',alignItems:'center',fontSize:size,lineHeight:1,flexShrink:0}}>💡</span>;
 };
-
-/* ── Static 💡 (no pulse) ── */
 const Bulb=({size='1rem'})=><span style={{fontSize:size,lineHeight:1,flexShrink:0}}>💡</span>;
 
-/* ── Icon helpers ── */
+/* ══ Contact icons ══ */
 const WaIcon=()=>(<svg viewBox="0 0 24 24" fill="#374151" style={{width:'1.15rem',height:'1.15rem'}}><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>);
 const EmailIcon=()=>(<svg viewBox="0 0 24 24" fill="none" stroke="#374151" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{width:'1.15rem',height:'1.15rem'}}><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>);
 const PhoneIcon=()=>(<svg viewBox="0 0 24 24" fill="none" stroke="#374151" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{width:'1.15rem',height:'1.15rem'}}><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.69A2 2 0 012.18 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.09a16 16 0 006 6l.56-.56a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>);
 
-/* ══════════════════════════════════════════════
-   ITEM 1 — INTRO MODAL (gradient header band)
-══════════════════════════════════════════════ */
+/* ═══════════════════════════════════
+   ITEM 1 — INTRO MODAL
+   Gradient header band + locked copy
+═══════════════════════════════════ */
 const IntroModal=({onClose})=>(
   <div className="intro-modal-overlay">
     <div className="animate-slideDown" style={{background:'white',borderRadius:'1rem',overflow:'hidden',maxWidth:'26rem',width:'100%',boxShadow:'0 20px 60px rgba(0,0,0,0.35)'}}>
-      {/* Gradient header band */}
-      <div style={{background:'linear-gradient(135deg,#7c3aed,#db2777)',padding:'1.4rem 1.5rem 1.2rem',textAlign:'center'}}>
-        <div style={{fontSize:'1.5rem',marginBottom:'0.3rem'}}>👋</div>
-        <h2 style={{fontSize:'1.35rem',fontWeight:'800',color:'white',margin:'0 0 0.1rem',lineHeight:1.25}}>Welcome to this</h2>
-        <h2 style={{fontSize:'1.35rem',fontWeight:'800',color:'white',margin:0,lineHeight:1.25}}>interactive earnings tool</h2>
+      {/* ITEM 1 — gradient header band */}
+      <div style={{background:'linear-gradient(135deg,#7c3aed,#db2777)',padding:'1.4rem 1.5rem 1.25rem',textAlign:'center'}}>
+        <div style={{fontSize:'1.6rem',marginBottom:'0.35rem'}}>👋</div>
+        {/* Two-line title, white, bold */}
+        <h2 style={{fontSize:'1.3rem',fontWeight:'800',color:'white',margin:'0 0 0.05rem',lineHeight:1.25}}>Welcome to this</h2>
+        <h2 style={{fontSize:'1.3rem',fontWeight:'800',color:'white',margin:0,lineHeight:1.25}}>interactive earnings tool</h2>
       </div>
       {/* Body */}
       <div style={{padding:'1.25rem 1.5rem 1.5rem',textAlign:'center'}}>
-        {/* Gold subheading */}
+        {/* Gold subheading — unchanged */}
         <p style={{fontWeight:'700',color:'#92400e',fontSize:'0.95rem',margin:'0 0 1.1rem',background:'#fefce8',padding:'0.5rem 0.75rem',borderRadius:'0.5rem',border:'1px solid #fde68a'}}>
           5 conversations up to £2000? Explore how
         </p>
+        {/* LOCKED BODY COPY */}
         <p style={{fontSize:'0.875rem',color:'#374151',margin:'0 0 0.7rem',lineHeight:1.65}}>
           UW Partners help people save on essential services they already use: broadband, energy and mobile.
         </p>
-        <p style={{fontSize:'0.875rem',color:'#374151',margin:'0 0 0.7rem',lineHeight:1.65,fontWeight:'700'}}>
+        {/* Bold paragraph per spec */}
+        <p style={{fontSize:'0.875rem',color:'#374151',fontWeight:'700',margin:'0 0 0.7rem',lineHeight:1.65}}>
           Bundles build benefits — for customers and Partners.<br/>When customers win, Partners win. 🏆
         </p>
         <p style={{fontSize:'0.875rem',color:'#374151',margin:'0 0 0.85rem',lineHeight:1.65}}>
           Add customers and watch the numbers change.
         </p>
-        {/* Item 2 lightbulb line: dark grey, bold italic */}
+        {/* ITEM 2 — lightbulb line: dark grey, bold italic, NOT purple */}
         <p style={{fontSize:'0.875rem',color:'#374151',fontWeight:'700',fontStyle:'italic',margin:'0 0 1.4rem',lineHeight:1.5}}>
           💡 Explore, experiment and learn as you play.
         </p>
@@ -160,42 +169,68 @@ const IntroModal=({onClose})=>(
   </div>
 );
 
-/* ══════════════════════════════════════════════
-   ITEM 4 — COACHING LANE (fixed area below circles)
-══════════════════════════════════════════════ */
-const CoachingLane=({message,showArrow,arrowTargetIndex})=>{
+/* ═══════════════════════════════════
+   ITEM 4 — COACHING LANE
+   Fixed reserved space below circles
+═══════════════════════════════════ */
+const CoachingLane=({message,showArrow})=>{
   const [visible,setVisible]=useState(false);
   const [displayed,setDisplayed]=useState(null);
   const [fading,setFading]=useState(false);
-  const timerRef=useRef(null);
+  const autoTimer=useRef(null);
+  const fadeTimer=useRef(null);
 
-  const show=(msg)=>{
-    if(timerRef.current)clearTimeout(timerRef.current);
-    setFading(false);setDisplayed(msg);setVisible(true);
-    // auto-dismiss after 6s (not for partner prompt — handled externally)
-    if(!showArrow){
-      timerRef.current=setTimeout(()=>{setFading(true);setTimeout(()=>{setVisible(false);setDisplayed(null);setFading(false);},400);},6000);
+  const clearAll=()=>{clearTimeout(autoTimer.current);clearTimeout(fadeTimer.current);};
+
+  const show=(msg,keepAlive)=>{
+    clearAll();setFading(false);setDisplayed(msg);setVisible(true);
+    if(!keepAlive){
+      autoTimer.current=setTimeout(()=>{
+        setFading(true);
+        fadeTimer.current=setTimeout(()=>{setVisible(false);setDisplayed(null);setFading(false);},380);
+      },6200);
     }
   };
 
+  const hide=()=>{
+    clearAll();
+    setFading(true);
+    fadeTimer.current=setTimeout(()=>{setVisible(false);setDisplayed(null);setFading(false);},380);
+  };
+
   useEffect(()=>{
-    if(message){show(message);}
-    else{setFading(true);setTimeout(()=>{setVisible(false);setDisplayed(null);setFading(false);},400);}
-    return()=>{if(timerRef.current)clearTimeout(timerRef.current);};
+    if(message){show(message,showArrow);}
+    else{if(visible)hide();}
+    return clearAll;
   },[message]);
+
+  // If showArrow changes to false while message is visible, restart auto-dismiss
+  useEffect(()=>{
+    if(!showArrow&&visible&&displayed){clearAll();autoTimer.current=setTimeout(()=>{setFading(true);fadeTimer.current=setTimeout(()=>{setVisible(false);setDisplayed(null);setFading(false);},380);},6200);}
+  },[showArrow]);
 
   const isActive=visible&&displayed;
   return(
-    <div className={`coaching-lane ${isActive?'active':'inactive'}`} style={{position:'relative'}}>
+    <div className={`coaching-lane ${isActive?'active':'inactive'}`}>
       {!isActive&&(
-        <span style={{fontSize:'0.85rem',filter:'grayscale(1)',opacity:0.4,lineHeight:1}}>💡</span>
+        /* ITEM 19 — greyed inactive lightbulb */
+        <span style={{fontSize:'0.9rem',filter:'grayscale(1)',opacity:0.35,lineHeight:1}}>💡</span>
       )}
       {isActive&&(
-        <span className={fading?'coach-out':'coach-in'} style={{display:'flex',alignItems:'flex-start',gap:'0.45rem',width:'100%'}}>
-          <span style={{fontSize:'0.95rem',lineHeight:1,flexShrink:0,marginTop:'0.05rem'}}>💡</span>
-          <span style={{fontSize:'0.82rem',fontWeight:'700',fontStyle:'italic',color:'#374151',lineHeight:1.5,flex:1}}>{displayed}</span>
-          {showArrow&&(
-            <span className="arrow-bounce" style={{fontSize:'0.9rem',color:'#92400e',flexShrink:0}}>→</span>
+        <span className={fading?'coach-out':'coach-in'} style={{display:'flex',alignItems:'center',gap:'0.45rem',width:'100%',flexWrap:'wrap'}}>
+          <Bulb size="0.95rem"/>
+          {/* ITEM 8 — partner prompt renders P badges inline */}
+          {showArrow?(
+            <span style={{display:'flex',alignItems:'center',gap:'0.35rem',flexWrap:'wrap',flex:1}}>
+              <span style={{fontSize:'0.82rem',fontWeight:'700',fontStyle:'italic',color:'#374151',lineHeight:1.5}}>Tap one</span>
+              <span className="p-badge p-badge-grey">P</span>
+              <span style={{fontSize:'0.82rem',fontWeight:'700',fontStyle:'italic',color:'#374151',lineHeight:1.5}}>above to upgrade a customer</span>
+              <span style={{fontSize:'0.82rem',fontWeight:'700',fontStyle:'italic',color:'#374151',lineHeight:1.5}}>→</span>
+              <span className="p-badge p-badge-gold">P</span>
+              <span className="arrow-bounce" style={{fontSize:'0.85rem',color:'#92400e',flexShrink:0,marginLeft:'0.15rem'}}>→</span>
+            </span>
+          ):(
+            <span style={{fontSize:'0.82rem',fontWeight:'700',fontStyle:'italic',color:'#374151',lineHeight:1.5,flex:1}}>{displayed}</span>
           )}
         </span>
       )}
@@ -203,24 +238,28 @@ const CoachingLane=({message,showArrow,arrowTargetIndex})=>{
   );
 };
 
-/* ══════════════════════════════════════════════
+/* ═══════════════════════════════════
    CONTACT PANEL + LEFT TAB
-══════════════════════════════════════════════ */
+═══════════════════════════════════ */
 const ContactPanel=({grandTotal,isOpen,onClose,tabColoured,onTabClick})=>{
   const initials=CONTACT.fullName.split(' ').map(n=>n[0]).join('').slice(0,2);
   const [tabPulseKey,setTabPulseKey]=useState(0);
-  const prevTabColoured=useRef(false);
+  const prevColoured=useRef(false);
+
   useEffect(()=>{
-    if(tabColoured&&!prevTabColoured.current){
-      // delay pulse so it fires after celebration visuals finish (item 10)
-      setTimeout(()=>setTabPulseKey(k=>k+1),500);
+    /* ITEM 10 — tab pulses AFTER stage reveal (which fires setTabColoured). 
+       Small extra delay so it clearly follows the reveal coaching message fade. */
+    if(tabColoured&&!prevColoured.current){
+      setTimeout(()=>setTabPulseKey(k=>k+1),300);
     }
-    prevTabColoured.current=tabColoured;
+    prevColoured.current=tabColoured;
   },[tabColoured]);
+
   const tabClass=`left-pull-tab${isOpen?' panel-open':''} ${tabColoured?'tab-coloured':'tab-grey'}`;
   return(
     <>
       <div className={`contact-panel-overlay${isOpen?' visible':''}`} onClick={onClose}/>
+      {/* key forces re-mount so CSS animation replays on each pulse trigger */}
       <div key={`tab-${tabPulseKey}`} className={`${tabClass}${tabPulseKey>0?' tab-pulse':''}`} onClick={onTabClick}>
         <span className="pull-tab-emoji" style={{filter:tabColoured?'none':'grayscale(1)'}}>
           {isOpen?'✕':tabColoured?'✨':'👋'}
@@ -228,6 +267,7 @@ const ContactPanel=({grandTotal,isOpen,onClose,tabColoured,onTabClick})=>{
         <span className="pull-tab-label">{isOpen?'Close':tabColoured?'Next Steps':'Get in touch'}</span>
       </div>
       <div className={`contact-panel${isOpen?' open':''}`}>
+        {/* Panel header */}
         <div style={{background:'linear-gradient(135deg,rgba(124,58,237,0.75),rgba(219,39,119,0.75))',padding:'1.6rem 1.25rem 1.3rem',textAlign:'center',position:'relative',flexShrink:0}}>
           <button onClick={onClose} style={{position:'absolute',top:'0.75rem',right:'0.75rem',width:'1.75rem',height:'1.75rem',borderRadius:'50%',background:'rgba(255,255,255,0.15)',border:'none',cursor:'pointer',color:'rgba(255,255,255,0.8)',fontSize:'0.9rem',display:'flex',alignItems:'center',justifyContent:'center'}}>✕</button>
           <img src={CONTACT.photoUrl} alt={CONTACT.fullName} style={{width:'4rem',height:'4rem',borderRadius:'50%',border:'2.5px solid rgba(255,255,255,0.7)',objectFit:'cover',margin:'0 auto 0.5rem',display:'block'}} onError={e=>{e.currentTarget.style.display='none';e.currentTarget.nextSibling.style.display='flex';}}/>
@@ -240,23 +280,21 @@ const ContactPanel=({grandTotal,isOpen,onClose,tabColoured,onTabClick})=>{
           </span>
           <span style={{color:'rgba(255,255,255,0.72)',fontSize:'0.82rem',fontStyle:'italic',lineHeight:'1.4',display:'block'}}>Are you ready to make it happen?</span>
         </div>
+        {/* ITEM 11 — button order: Jump in, Book in, Explore Savings (3rd), Say hi */}
         <div style={{padding:'1rem',display:'flex',flexDirection:'column',gap:'0.5rem',flex:1}}>
-          {/* 1. Jump in */}
           <a href={CONTACT.registrationUrl} target="_blank" rel="noopener noreferrer" style={{minHeight:'5.5rem',borderRadius:'0.75rem',display:'flex',alignItems:'center',gap:'0.7rem',padding:'0.8rem 0.9rem',background:'white',boxShadow:'3px 3px 10px rgba(109,40,217,0.3)',textDecoration:'none',transition:'transform 0.15s'}} onMouseEnter={e=>e.currentTarget.style.transform='scale(1.02)'} onMouseLeave={e=>e.currentTarget.style.transform='scale(1)'} onClick={onClose}>
             <span style={{fontSize:'1.3rem',lineHeight:1,flexShrink:0}}>🔥</span>
             <span style={{flex:1}}><span style={{fontWeight:'700',fontSize:'0.9rem',display:'block',color:'#1f2937'}}>Jump in</span><span style={{fontSize:'0.73rem',marginTop:'0.2rem',display:'block',fontStyle:'italic',lineHeight:'1.35',color:'#6b7280'}}>"I'm ready to get registered and start earning"</span></span>
           </a>
-          {/* 2. Book in */}
           <a href={CONTACT.calendarUrl} target="_blank" rel="noopener noreferrer" style={{minHeight:'5.5rem',borderRadius:'0.75rem',display:'flex',alignItems:'center',gap:'0.7rem',padding:'0.8rem 0.9rem',background:'white',boxShadow:'3px 3px 10px rgba(168,85,247,0.3)',textDecoration:'none',transition:'transform 0.15s'}} onMouseEnter={e=>e.currentTarget.style.transform='scale(1.02)'} onMouseLeave={e=>e.currentTarget.style.transform='scale(1)'} onClick={onClose}>
             <span style={{fontSize:'1.3rem',lineHeight:1,flexShrink:0}}>🗓️</span>
             <span style={{flex:1}}><span style={{fontWeight:'700',fontSize:'0.9rem',display:'block',color:'#1f2937'}}>Book in</span><span style={{fontSize:'0.73rem',marginTop:'0.2rem',display:'block',fontStyle:'italic',lineHeight:'1.35',color:'#6b7280'}}>"I've got questions and I'd love a chat"</span></span>
           </a>
-          {/* 3. Explore Savings — item 11: third position */}
+          {/* ITEM 11 — Explore Savings is 3rd */}
           <a href={CONTACT.savingsUrl} target="_blank" rel="noopener noreferrer" style={{minHeight:'5.5rem',borderRadius:'0.75rem',display:'flex',alignItems:'center',gap:'0.7rem',padding:'0.8rem 0.9rem',background:'white',boxShadow:'3px 3px 10px rgba(234,179,8,0.3)',textDecoration:'none',transition:'transform 0.15s'}} onMouseEnter={e=>e.currentTarget.style.transform='scale(1.02)'} onMouseLeave={e=>e.currentTarget.style.transform='scale(1)'} onClick={onClose}>
             <span style={{fontSize:'1.3rem',lineHeight:1,flexShrink:0}}>💡</span>
             <span style={{flex:1}}><span style={{fontWeight:'700',fontSize:'0.9rem',display:'block',color:'#1f2937'}}>Explore Savings</span><span style={{fontSize:'0.73rem',marginTop:'0.2rem',display:'block',fontStyle:'italic',lineHeight:'1.35',color:'#6b7280'}}>See how much you could save as a customer.</span></span>
           </a>
-          {/* 4. Say hi */}
           <div style={{borderRadius:'0.75rem',background:'white',boxShadow:'3px 3px 10px rgba(219,39,119,0.3)',padding:'0.8rem 0.9rem 0.85rem'}}>
             <div style={{display:'flex',alignItems:'center',gap:'0.7rem',marginBottom:'0.65rem'}}>
               <span style={{fontSize:'1.3rem',lineHeight:1,flexShrink:0}}>👋</span>
@@ -264,7 +302,7 @@ const ContactPanel=({grandTotal,isOpen,onClose,tabColoured,onTabClick})=>{
             </div>
             <div style={{display:'flex',gap:'0.6rem',justifyContent:'center'}}>
               {[{href:whatsappUrl(),icon:<WaIcon/>,title:'WhatsApp'},{href:emailUrl(),icon:<EmailIcon/>,title:'Email'},{href:phoneUrl(),icon:<PhoneIcon/>,title:'Call'}].map(btn=>(
-                <a key={btn.title} href={btn.href} target="_blank" rel="noopener noreferrer" title={btn.title} style={{width:'2.5rem',height:'2.5rem',borderRadius:'50%',background:'#f3f4f6',border:'1.5px solid #e5e7eb',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',transition:'background 0.15s,transform 0.15s',flexShrink:0,textDecoration:'none'}} onMouseEnter={e=>{e.currentTarget.style.background='#e5e7eb';e.currentTarget.style.transform='scale(1.1)';}} onMouseLeave={e=>{e.currentTarget.style.background='#f3f4f6';e.currentTarget.style.transform='scale(1)';}} onClick={onClose}>{btn.icon}</a>
+                <a key={btn.title} href={btn.href} target="_blank" rel="noopener noreferrer" title={btn.title} style={{width:'2.5rem',height:'2.5rem',borderRadius:'50%',background:'#f3f4f6',border:'1.5px solid #e5e7eb',display:'flex',alignItems:'center',justifyContent:'center',transition:'background 0.15s,transform 0.15s',flexShrink:0,textDecoration:'none'}} onMouseEnter={e=>{e.currentTarget.style.background='#e5e7eb';e.currentTarget.style.transform='scale(1.1)';}} onMouseLeave={e=>{e.currentTarget.style.background='#f3f4f6';e.currentTarget.style.transform='scale(1)';}} onClick={onClose}>{btn.icon}</a>
               ))}
             </div>
           </div>
@@ -274,7 +312,7 @@ const ContactPanel=({grandTotal,isOpen,onClose,tabColoured,onTabClick})=>{
   );
 };
 
-/* ── Profile Bubble (unchanged) ── */
+/* ══ Profile Bubble (unchanged) ══ */
 const ProfileBubble=()=>{
   const [open,setOpen]=useState(false);
   const [sayhiOpen,setSayhiOpen]=useState(false);
@@ -302,14 +340,14 @@ const ProfileBubble=()=>{
   );
 };
 
-/* ══════════════════════════════════════════════
-   ITEM 18 — INFO ACCORDION (Recurring Income fixed)
-══════════════════════════════════════════════ */
+/* ═══════════════════════════════════
+   ITEM 18 — INFO ACCORDION
+   Single unlock, personal first, then team
+═══════════════════════════════════ */
 const box={background:'#f5f3ff',borderRadius:'0.5rem',padding:'0.75rem',marginBottom:'0.5rem'};
 const closing={fontStyle:'italic',fontWeight:'700',color:'#374151',margin:0};
 const scbSummary=(isOpen)=>(<span>Upfront payment when we support a Partner to introduce a homeowner.{' '}<span style={{fontStyle:'italic',fontSize:'0.72rem',color:'#7c3aed',opacity:isOpen?1:0,transition:'opacity 0.15s'}}>🔓 Unlocks at 6 Personal Customers.</span></span>);
 const mbSummary=(isOpen)=>(<span>Up to £400 when a Partner we introduce reaches QD*.<br/><span style={{fontStyle:'italic',fontSize:'0.72rem',color:'#7c3aed',opacity:isOpen?1:0,transition:'opacity 0.15s'}}>🔓 Unlocks at 3 Personal Customers.</span></span>);
-
 const sections=[
   {id:'cb',icon:<span style={{fontSize:'1.1rem'}}>💷</span>,title:'Customer Bonus',summary:'Upfront payment when we introduce a homeowner customer.',
     detail:(<div style={{fontSize:'0.875rem',color:'#374151'}}><p style={{marginBottom:'0.5rem'}}>Paid when services go live:</p><div style={{...box,display:'grid',gridTemplateColumns:'1fr 1fr',gap:'0.25rem'}}><span>1️⃣ service — £50</span><span>3️⃣ services — £250</span><span>2️⃣ services — £100</span><span>4️⃣ services — £300</span></div><p style={closing}>💡 The more customers we introduce, the more we earn.</p></div>)},
@@ -319,16 +357,26 @@ const sections=[
     detail:(<div style={{fontSize:'0.875rem',color:'#374151'}}>
       <p style={{marginBottom:'0.5rem'}}>A recurring profit share of customers' bills which increases as customers add more services.</p>
       <div style={{...box,marginBottom:'0.5rem'}}>
-        {/* Item 18: single unlock at QD/3 customers, personal first, then team */}
+        {/* ITEM 18 — single unlock, personal first then team */}
         <p style={{fontStyle:'italic',fontSize:'0.72rem',color:'#7c3aed',margin:'0 0 0.5rem',lineHeight:'1.3'}}>🔓 Unlocks at 3 personal customers (QD)</p>
-        <p style={{margin:'0 0 0.35rem',display:'flex',alignItems:'center',gap:'0.3rem'}}><RefreshCw style={{width:'0.75rem',height:'0.75rem',flexShrink:0,color:'#2563eb'}}/><span style={{fontSize:'0.8rem'}}>👤</span><strong>Personal Customers</strong><span style={{fontWeight:'400',fontStyle:'italic',color:'#6b7280',fontSize:'0.8rem'}}>— % of bill, typically</span></p>
-        <div style={{marginBottom:'0.4rem',paddingLeft:'0.25rem'}}>
+        <p style={{margin:'0 0 0.3rem',display:'flex',alignItems:'center',gap:'0.3rem',flexWrap:'wrap'}}>
+          <RefreshCw style={{width:'0.75rem',height:'0.75rem',flexShrink:0,color:'#2563eb'}}/>
+          <span style={{fontSize:'0.8rem'}}>👤</span>
+          <strong>Personal Customers</strong>
+          <span style={{fontWeight:'400',fontStyle:'italic',color:'#6b7280',fontSize:'0.78rem'}}>— % of bill, typically</span>
+        </p>
+        <div style={{marginBottom:'0.45rem',paddingLeft:'0.3rem',fontSize:'0.82rem'}}>
           <div>• Tenant — £2–£3 /month <span style={{color:'#6b7280',fontSize:'0.72rem'}}>(after first bill paid)</span></div>
           <div>• Homeowner — £3–£5 /month <span style={{color:'#6b7280',fontSize:'0.72rem'}}>(after a set period)</span></div>
         </div>
         <div style={{borderTop:'1px solid #c4b5fd',paddingTop:'0.4rem'}}>
-          <p style={{margin:'0 0 0.35rem',display:'flex',alignItems:'center',gap:'0.3rem'}}><RefreshCw style={{width:'0.75rem',height:'0.75rem',flexShrink:0,color:'#2563eb'}}/><span style={{fontSize:'0.8rem'}}>👥</span><strong>Team (Group) Customers</strong><span style={{fontWeight:'400',fontStyle:'italic',color:'#6b7280',fontSize:'0.8rem'}}>— pence per service, typically</span></p>
-          <div style={{paddingLeft:'0.25rem'}}>• 30–50p /month per customer</div>
+          <p style={{margin:'0 0 0.3rem',display:'flex',alignItems:'center',gap:'0.3rem',flexWrap:'wrap'}}>
+            <RefreshCw style={{width:'0.75rem',height:'0.75rem',flexShrink:0,color:'#2563eb'}}/>
+            <span style={{fontSize:'0.8rem'}}>👥</span>
+            <strong>Team (Group) Customers</strong>
+            <span style={{fontWeight:'400',fontStyle:'italic',color:'#6b7280',fontSize:'0.78rem'}}>— pence per service, typically</span>
+          </p>
+          <div style={{paddingLeft:'0.3rem',fontSize:'0.82rem'}}>• 30–50p /month per customer</div>
         </div>
       </div>
       <p style={closing}>💡 Grows steadily as our customers and team expand.</p>
@@ -368,9 +416,9 @@ const HowPaidPopup=({onClose})=>{
   );
 };
 
-/* ══════════════════════════════════════════════
+/* ═══════════════════════════════════════════════
    MAIN TRACKER
-══════════════════════════════════════════════ */
+═══════════════════════════════════════════════ */
 const UWTracker=()=>{
   const [showIntro,setShowIntro]=useState(true);
   const [showCelebration,setShowCelebration]=useState(false);
@@ -386,16 +434,14 @@ const UWTracker=()=>{
   const [infoBulbPulsed,setInfoBulbPulsed]=useState(false);
   const [showBestGuess,setShowBestGuess]=useState(false);
   const [hasInteracted,setHasInteracted]=useState(false);
-  // Coaching lane state
   const [coachMsg,setCoachMsg]=useState(null);
   const [coachArrow,setCoachArrow]=useState(false);
-  // Session flags
+  const [stageRevealShown,setStageRevealShown]=useState(false);
   const qdShown=useRef(false);
   const mixShown=useRef(false);
   const inactivityTimer=useRef(null);
   const previouslyQualified=useRef(false);
-  // Stage reveal
-  const [stageRevealShown,setStageRevealShown]=useState(false);
+  const tooltipTimer=useRef(null);
 
   const [customers,setCustomers]=useState([
     {type:'own',services:0,isPartner:false},
@@ -406,7 +452,7 @@ const UWTracker=()=>{
     {type:null,services:0,isPartner:false},
   ]);
 
-  /* ── Derived values (earnings logic UNCHANGED) ── */
+  /* ══ Earnings logic (UNCHANGED) ══ */
   const calculateCB=(customer,index)=>{
     if(!includeYou&&index===0){if(customer.type==='homeowner'){if(customer.services===1)return 50;if(customer.services===2)return 100;if(customer.services===3)return 250;if(customer.services===4)return 300;}return 0;}
     if(customer.type==='own'||customer.type==='renting')return 0;
@@ -428,46 +474,45 @@ const UWTracker=()=>{
   const partnerTotalEarnings=supportingBonus+100+300;
   const recurringActive=tenantCount>0;
 
-  /* ── QD coaching (item 7) ── */
+  /* ══ QD count ══ */
   const filledNonYou=customers.filter((c,i)=>includeYou?i>0&&c.type!==null:c.type!==null).length;
   const totalForQD=(includeYou?1:0)+filledNonYou;
 
-  /* ── Mix prompt logic (item 6) ── */
-  const filledCustomers=customers.filter((c,i)=>includeYou?i>0&&c.type!==null:c.type!==null);
-  const totalFilled=filledCustomers.length;
+  /* ══ Mix prompt ══ */
+  const nonYouFilled=customers.filter((c,i)=>includeYou?i>0&&c.type!==null:c.type!==null);
   const totalCircles=includeYou?5:6;
-  const oneRemaining=totalFilled===(totalCircles-1);
-  const allHomeowners=filledCustomers.length>0&&filledCustomers.every(c=>c.type==='homeowner');
-  const allTenants=filledCustomers.length>0&&filledCustomers.every(c=>c.type==='renting');
+  const oneRemaining=nonYouFilled.length===(totalCircles-1);
+  const allHomeowners=nonYouFilled.length>0&&nonYouFilled.every(c=>c.type==='homeowner');
+  const allTenants=nonYouFilled.length>0&&nonYouFilled.every(c=>c.type==='renting');
 
+  /* ITEM 7 — QD coaching; ITEM 6 — mix prompt */
   useEffect(()=>{
-    // QD message
     if(!qdShown.current&&totalForQD>=3){
       qdShown.current=true;
       setCoachArrow(false);
       setCoachMsg('QD* achieved 🎉 Recurring (residual) income unlocked. Watch as your income builds.');
       return;
     }
-    // Mix prompt (item 6) — only if QD already shown or not yet reached
     if(!mixShown.current&&oneRemaining&&!qualifiesForFastStarter){
       if(allHomeowners){mixShown.current=true;setCoachArrow(false);setCoachMsg('All homeowners so far. Try adding a tenant to see what changes.');}
       else if(allTenants){mixShown.current=true;setCoachArrow(false);setCoachMsg('All tenants so far. Try adding a homeowner to see what changes.');}
     }
   },[totalForQD,oneRemaining,allHomeowners,allTenants,qualifiesForFastStarter]);
 
-  /* ── Partner prompt coaching (item 8) ── */
+  /* ITEM 8 — Partner upgrade prompt */
   useEffect(()=>{
     if(allCirclesFilled&&!hasPartner&&!qualifiesForFastStarter){
       setCoachArrow(true);
-      setCoachMsg('Tap one grey P above to upgrade a customer → partner');
+      setCoachMsg('__partner_prompt__'); // sentinel so CoachingLane renders badge version
     }else if(allCirclesFilled&&hasPartner){
       setCoachArrow(false);
+      if(coachMsg==='__partner_prompt__')setCoachMsg(null);
     }
   },[allCirclesFilled,hasPartner,qualifiesForFastStarter]);
 
-  /* ── Inactivity prompt (item 17) ── */
+  /* ITEM 17 — Inactivity prompt */
   const resetInactivity=useCallback(()=>{
-    if(inactivityTimer.current)clearTimeout(inactivityTimer.current);
+    clearTimeout(inactivityTimer.current);
     if(fastStarterAchieved&&stageRevealShown){
       inactivityTimer.current=setTimeout(()=>{
         setCoachArrow(false);
@@ -475,7 +520,6 @@ const UWTracker=()=>{
       },9000);
     }
   },[fastStarterAchieved,stageRevealShown]);
-
   useEffect(()=>{resetInactivity();},[fastStarterAchieved,stageRevealShown]);
 
   const circleColor=(c)=>{if(c.type===null)return{border:'#d1d5db',text:'#9ca3af',bg:'#f9fafb'};if(c.type==='own')return{border:'#9ca3af',text:'#374151',bg:'#f3f4f6'};if(c.type==='renting')return{border:'#2563eb',text:'#1d4ed8',bg:'#eff6ff'};return{border:'#7c3aed',text:'#6d28d9',bg:'#f5f3ff'};};
@@ -483,19 +527,19 @@ const UWTracker=()=>{
   const canSelectCircle=(index)=>{if(index===0&&includeYou)return false;if(!includeYou){if(allCirclesFilled)return true;for(let i=0;i<index;i++)if(customers[i].type===null)return false;return true;}if(allCirclesFilled)return true;for(let i=1;i<index;i++)if(customers[i].type===null)return false;return true;};
   const ordinal=(n)=>n===1?'1st':n===2?'2nd':n===3?'3rd':`${n}th`;
 
-  /* ── Celebration + stage reveal (items 9, 15, 16) ── */
+  /* ITEMS 9, 10, 15, 16 — Celebration → stage reveal → tab colour */
   const triggerCelebration=()=>{
     setShowCelebration(true);
-    setCoachMsg(null);
+    setCoachMsg(null);setCoachArrow(false);
     setTimeout(()=>{
       setShowCelebration(false);
       setFastStarterAchieved(true);
-      // Stage reveal coaching (item 16)
+      /* ITEM 16 — stage reveal coaching message, two sentences */
       setCoachMsg("You've seen what you can earn. Now see what happens when you help others.");
       setTimeout(()=>{
         setStageRevealShown(true);
         setCoachMsg(null);
-        // Tab colours after reveal (item 10)
+        /* ITEM 10 — tab changes colour only after stage reveal complete */
         setTabColoured(true);
       },4500);
     },3000);
@@ -515,15 +559,13 @@ const UWTracker=()=>{
   const handleCircleClick=(index)=>{
     if((index===0&&includeYou)||!canSelectCircle(index))return;
     if(!hasInteracted){setHasInteracted(true);setShowBestGuess(true);}
-    setSelectedCircle(index);
-    resetInactivity();
+    setSelectedCircle(index);resetInactivity();
   };
 
   const setCustomerType=(type,services)=>{
     if(selectedCircle===null)return;
     const wasQualified=qualifiesForFastStarter;
-    const nc=[...customers];
-    nc[selectedCircle]={type,services:services||0,isPartner:nc[selectedCircle].isPartner};
+    const nc=[...customers];nc[selectedCircle]={type,services:services||0,isPartner:nc[selectedCircle].isPartner};
     setCustomers(nc);setSelectedCircle(null);setShowBestGuess(false);
     const nowAllFilled=nc.every(c=>c.type!==null);
     const nowHasPartner=nc.some((c,i)=>includeYou?i>0&&c.isPartner:c.isPartner);
@@ -535,6 +577,7 @@ const UWTracker=()=>{
 
   const removeCustomer=()=>{if(selectedCircle===null)return;const nc=[...customers];nc[selectedCircle]={type:null,services:0,isPartner:false};setCustomers(nc);setSelectedCircle(null);previouslyQualified.current=false;setShowBestGuess(false);};
 
+  /* ITEM 13 — Reset button clears all state flags */
   const resetTracking=()=>{
     setCustomers([{type:includeYou?'own':null,services:0,isPartner:false},{type:null,services:0,isPartner:false},{type:null,services:0,isPartner:false},{type:null,services:0,isPartner:false},{type:null,services:0,isPartner:false},{type:null,services:0,isPartner:false}]);
     setSelectedCircle(null);setShowResetConfirm(false);
@@ -542,12 +585,22 @@ const UWTracker=()=>{
     setHasInteracted(false);setShowBestGuess(false);setCoachMsg(null);setCoachArrow(false);
     setTabColoured(false);setFastStarterAchieved(false);setInfoBulbPulsed(false);
     setStageRevealShown(false);setYouBulbPulsed(false);
-    if(inactivityTimer.current)clearTimeout(inactivityTimer.current);
+    clearTimeout(inactivityTimer.current);clearTimeout(tooltipTimer.current);
+    setYouTooltipVisible(false);
   };
 
   const toggleIncludeYou=()=>{const niy=!includeYou;setIncludeYou(niy);const nc=[...customers];nc[0]={type:niy?'own':null,services:0,isPartner:false};setCustomers(nc);setSelectedCircle(null);previouslyQualified.current=false;resetInactivity();};
 
-  /* ── Render ── */
+  /* ITEM 3A — tooltip auto-dismiss */
+  const openYouTooltip=()=>{
+    clearTimeout(tooltipTimer.current);
+    setYouTooltipVisible(v=>{
+      if(!v){tooltipTimer.current=setTimeout(()=>setYouTooltipVisible(false),5000);}
+      return!v;
+    });
+  };
+
+  /* ══ Render ══ */
   return(
     <div style={{minHeight:'100vh',background:'linear-gradient(135deg,#fdf2f8,#f5f3ff)',padding:'1rem'}}>
       {showIntro&&<IntroModal onClose={()=>setShowIntro(false)}/>}
@@ -565,15 +618,16 @@ const UWTracker=()=>{
                 <span style={{display:'inline-block',height:'1rem',width:'1rem',transform:includeYou?'translateX(1.5rem)':'translateX(0.25rem)',borderRadius:'50%',background:'white',transition:'transform 0.2s',boxShadow:'0 1px 3px rgba(0,0,0,0.2)'}}></span>
               </button>
               <span style={{fontSize:'0.875rem',fontWeight:'600',color:'#374151'}}>You</span>
-              {/* Item 3A — Toggle lightbulb, yellow emoji, tooltip auto-dismiss 5s, softer bg */}
+              {/* ITEM 3A — toggle lightbulb: yellow emoji, pulses twice on mount, click opens tooltip */}
               <div className="tooltip-wrap" style={{marginLeft:'0.2rem'}}>
-                <button onClick={()=>{setYouTooltipVisible(v=>!v);if(!youTooltipVisible){setTimeout(()=>setYouTooltipVisible(false),5000);}}} style={{background:'none',border:'none',cursor:'pointer',padding:'0.15rem',display:'flex',alignItems:'center',lineHeight:1}}>
+                <button onClick={openYouTooltip} style={{background:'none',border:'none',cursor:'pointer',padding:'0.15rem',display:'flex',alignItems:'center',lineHeight:1}}>
                   {!youBulbPulsed?<PulsingBulb size="0.95rem" onDone={()=>setYouBulbPulsed(true)}/>:<Bulb size="0.95rem"/>}
                 </button>
                 {youTooltipVisible&&(
-                  <div className="tooltip-box" style={{minWidth:'220px',background:'#78716c',borderRadius:'0.5rem'}}>
-                    💡 Most Partners also use UW themselves to save on their own household bills.<br/>Toggle this off any time.
-                    <span style={{position:'absolute',top:'100%',left:'50%',transform:'translateX(-50%)',border:'5px solid transparent',borderTopColor:'#78716c',display:'block'}}></span>
+                  /* ITEM 3A — softer muted-gold/warm-neutral background, wider */
+                  <div className="tooltip-box" style={{minWidth:'230px',background:'#92400e',opacity:0.92,borderRadius:'0.5rem'}}>
+                    💡 Most Partners also use UW themselves to save on their own household bills. Toggle this off any time.
+                    <span style={{position:'absolute',top:'100%',left:'50%',transform:'translateX(-50%)',border:'5px solid transparent',borderTopColor:'#92400e',display:'block'}}></span>
                   </div>
                 )}
               </div>
@@ -585,7 +639,6 @@ const UWTracker=()=>{
 
         {/* Main card */}
         <div style={{background:'white',borderRadius:'1rem',boxShadow:'0 4px 16px rgba(0,0,0,0.08)',padding:'1.5rem'}}>
-
           {/* Customer circles */}
           <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'1rem',marginBottom:'1rem'}}>
             {customers.map((customer,index)=>{
@@ -613,13 +666,16 @@ const UWTracker=()=>{
             })}
           </div>
 
-          {/* Item 4 — Coaching lane (fixed space below circles) */}
+          {/* ITEM 4 — Coaching lane: fixed space, always present */}
           <CoachingLane message={coachMsg} showArrow={coachArrow}/>
 
           <div style={{display:'flex',flexDirection:'column',gap:'0.75rem'}}>
-            {/* Customer Bonus */}
+            {/* Customer Bonus — ITEM 19: emoji greys when inactive */}
             <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'0.75rem 1rem',borderRadius:'0.5rem',border:`4px solid ${totalCB>0?'#7c3aed':'#d1d5db'}`,background:totalCB>0?'#f5f3ff':'#f9fafb'}}>
-              <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}><span style={{fontSize:'1.25rem',filter:totalCB>0?'none':'grayscale(1)',opacity:totalCB>0?1:0.4}}>💷</span><span style={{fontWeight:'600',color:totalCB>0?'#7c3aed':'#4b5563'}}>Customer Bonus:</span></div>
+              <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}>
+                <span style={{fontSize:'1.25rem',filter:totalCB>0?'none':'grayscale(1)',opacity:totalCB>0?1:0.4}}>💷</span>
+                <span style={{fontWeight:'600',color:totalCB>0?'#7c3aed':'#6b7280'}}>Customer Bonus:</span>
+              </div>
               <span style={{fontSize:'1.25rem',fontWeight:'700',color:totalCB>0?'#6d28d9':'#9ca3af'}}>£{totalCB.toLocaleString()}</span>
             </div>
 
@@ -631,28 +687,34 @@ const UWTracker=()=>{
               </div>
             )}
 
-            {/* Fast Starter */}
+            {/* Fast Starter — ITEM 19: SVG icon greys when inactive */}
             <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'0.75rem 1rem',borderRadius:'0.5rem',border:`2px solid ${qualifiesForFastStarter?'#86efac':'#e5e7eb'}`,background:qualifiesForFastStarter?'#f0fdf4':'#f9fafb'}}>
-              <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}><TrendingUp style={{...MD,color:qualifiesForFastStarter?'#16a34a':'#9ca3af'}}/><span style={{fontWeight:'600',color:qualifiesForFastStarter?'#16a34a':'#374151'}}>Fast Starter Bonus:</span></div>
+              <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}>
+                <TrendingUp style={{...MD,color:qualifiesForFastStarter?'#16a34a':'#d1d5db'}}/>
+                <span style={{fontWeight:'600',color:qualifiesForFastStarter?'#16a34a':'#6b7280'}}>Fast Starter Bonus:</span>
+              </div>
               <span style={{fontSize:'1.25rem',fontWeight:'700',color:qualifiesForFastStarter?'#16a34a':'#9ca3af'}}>£{fastStarterBonus.toLocaleString()}</span>
             </div>
 
-            {/* Total Earnings — item 3B: yellow 💡 icon */}
+            {/* ITEM 3B — Total Earnings: yellow 💡, pulses twice once after Fast Starter */}
             <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'1rem',borderRadius:'0.5rem',boxShadow:'0 2px 8px rgba(0,0,0,0.15)',color:'white',position:'relative',overflow:'hidden'}}>
               <div style={{position:'absolute',inset:0,background:grandTotal>0?'linear-gradient(to right,#7c3aed,#db2777)':'#9ca3af'}}></div>
               <div style={{display:'flex',alignItems:'center',gap:'0.5rem',position:'relative',zIndex:1}}>
                 <span style={{fontWeight:'700',fontSize:'1.125rem'}}>TOTAL EARNINGS:</span>
-                <button onClick={(e)=>{e.stopPropagation();setShowInfoPopup(true);}} style={{width:'1.5rem',height:'1.5rem',borderRadius:'50%',background:'rgba(255,255,255,0.3)',border:'none',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',padding:0,fontSize:'0.9rem',lineHeight:1}}>
-                  {fastStarterAchieved&&!infoBulbPulsed?<PulsingBulb size="0.9rem" onDone={()=>setInfoBulbPulsed(true)}/>:'💡'}
+                <button onClick={(e)=>{e.stopPropagation();setShowInfoPopup(true);}} style={{width:'1.5rem',height:'1.5rem',borderRadius:'50%',background:'rgba(255,255,255,0.3)',border:'none',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',padding:0,lineHeight:1,fontSize:'0.9rem'}}>
+                  {fastStarterAchieved&&!infoBulbPulsed
+                    ?<PulsingBulb size="0.9rem" onDone={()=>setInfoBulbPulsed(true)}/>
+                    :<Bulb size="0.9rem"/>
+                  }
                 </button>
               </div>
               <span style={{fontSize:'1.5rem',fontWeight:'700',position:'relative',zIndex:1}}>£{grandTotal.toLocaleString()}</span>
             </div>
 
-            {/* Item 14 — Recurring Income always visible, greyed when inactive */}
+            {/* ITEM 14 — Recurring Income always visible; ITEM 19 emoji + icon grey when inactive */}
             <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'0.75rem 1rem',borderRadius:'0.5rem',border:`4px solid ${recurringActive?'#2563eb':'#d1d5db'}`,background:recurringActive?'#eff6ff':'#f9fafb',opacity:recurringActive?1:0.5,transition:'opacity 0.3s,border-color 0.3s'}}>
               <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}>
-                <RefreshCw style={{...MD,color:recurringActive?'#2563eb':'#9ca3af'}}/>
+                <RefreshCw style={{...MD,color:recurringActive?'#2563eb':'#d1d5db'}}/>
                 <span style={{fontWeight:'600',color:recurringActive?'#374151':'#6b7280'}}>Recurring Income:</span>
               </div>
               <div style={{textAlign:'right'}}>
@@ -662,24 +724,22 @@ const UWTracker=()=>{
               </div>
             </div>
 
-            {/* Item 15 — Revenue Stream Panel (replaces flip card) */}
-            <div className={`revenue-panel ${qualifiesForFastStarter?'unlocked':'locked'}`}>
-              {/* Locked state */}
+            {/* ITEM 15 — Revenue Stream Panel (replaces flip card) */}
+            {/* ITEM 19 — locked state: text, icon grey. Uses 🔒 emoji per spec. */}
+            <div style={{borderRadius:'0.75rem',border:`2px solid ${qualifiesForFastStarter?'#a78bfa':'#e5e7eb'}`,overflow:'hidden'}}>
               {!qualifiesForFastStarter&&(
-                <div style={{padding:'1rem',background:'#f3f4f6',display:'flex',alignItems:'center',gap:'0.5rem'}}>
-                  <Lock style={{...SM,color:'#9ca3af'}}/>
+                <div style={{padding:'1rem',background:'#f9fafb',display:'flex',alignItems:'center',gap:'0.5rem'}}>
+                  {/* ITEM 15 locked — emoji 🔒 per spec, NOT SVG Lock */}
+                  <span style={{fontSize:'1.1rem',filter:'grayscale(1)',opacity:0.5,lineHeight:1}}>🔒</span>
                   <span style={{fontWeight:'700',fontSize:'0.95rem',color:'#9ca3af'}}>Three revenue streams (locked)</span>
                 </div>
               )}
-              {/* Unlocked state — always shows content once FS achieved, no flip needed */}
               {qualifiesForFastStarter&&(
                 <div style={{background:'linear-gradient(to right,#7c3aed,#db2777)'}}>
-                  {/* Header */}
                   <div style={{padding:'1rem 1rem 0.75rem',display:'flex',alignItems:'center',gap:'0.5rem'}}>
-                    <span style={{fontSize:'1.1rem',lineHeight:1}}>🔓</span>
+                    <span style={{fontSize:'1.15rem',lineHeight:1}}>🔓</span>
                     <span style={{fontWeight:'700',fontSize:'0.95rem',color:'white'}}>Three revenue streams unlocked</span>
                   </div>
-                  {/* Streams */}
                   <div style={{padding:'0 1rem 0.75rem',display:'flex',flexDirection:'column',gap:'0.35rem'}}>
                     {[
                       {icon:'🤝',label:'Supporting Bonus'},
@@ -687,16 +747,20 @@ const UWTracker=()=>{
                       {icon:null,label:'Fast Starter Mentor Bonus'},
                     ].map(s=>(
                       <div key={s.label} style={{display:'flex',alignItems:'center',gap:'0.5rem',fontSize:'0.875rem',color:'#fbcfe8'}}>
-                        {s.icon?<span style={{fontSize:'1rem',lineHeight:1}}>{s.icon}</span>:<TrendingUp style={{...SM,color:'#fbcfe8'}}/>}
+                        {s.icon?<span style={{fontSize:'1rem',lineHeight:1,flexShrink:0}}>{s.icon}</span>:<TrendingUp style={{...SM,color:'#fbcfe8'}}/>}
                         <span>{s.label}</span>
                       </div>
                     ))}
                   </div>
-                  {/* Worked example (existing maths) */}
+                  {/* Worked example — existing maths unchanged */}
                   <div style={{margin:'0 1rem 1rem',background:'rgba(255,255,255,0.12)',borderRadius:'0.5rem',padding:'0.75rem'}}>
                     <p style={{color:'white',fontWeight:'600',fontSize:'0.78rem',margin:'0 0 0.5rem'}}>Worked example — for each Partner you support to QD*:</p>
-                    <div style={{display:'flex',justifyContent:'space-between',color:'white',fontSize:'0.85rem',marginBottom:'0.2rem'}}><span>They earn (same as you above)</span><span style={{fontWeight:'700'}}>£{grandTotal.toLocaleString()}</span></div>
-                    <div style={{borderTop:'1px solid rgba(255,255,255,0.3)',paddingTop:'0.2rem',display:'flex',justifyContent:'space-between',fontSize:'0.85rem'}}><span style={{color:'#fbcfe8'}}>You earn</span><span style={{fontWeight:'700',color:'#fde68a'}}>£{partnerTotalEarnings.toLocaleString()}</span></div>
+                    <div style={{display:'flex',justifyContent:'space-between',color:'white',fontSize:'0.85rem',marginBottom:'0.2rem'}}>
+                      <span>They earn (same as you above)</span><span style={{fontWeight:'700'}}>£{grandTotal.toLocaleString()}</span>
+                    </div>
+                    <div style={{borderTop:'1px solid rgba(255,255,255,0.3)',paddingTop:'0.2rem',display:'flex',justifyContent:'space-between',fontSize:'0.85rem'}}>
+                      <span style={{color:'#fbcfe8'}}>You earn</span><span style={{fontWeight:'700',color:'#fde68a'}}>£{partnerTotalEarnings.toLocaleString()}</span>
+                    </div>
                     <div style={{marginTop:'0.5rem',display:'flex',flexDirection:'column',gap:'0.2rem'}}>
                       {[{icon:'🤝',label:'Supporting Customer Bonuses',val:supportingBonus},{icon:'🎓',label:'Mentor Bonus',val:100},{icon:null,label:'Fast Starter Mentor Bonus',val:300}].map(r=>(
                         <div key={r.label} style={{display:'flex',justifyContent:'space-between',fontSize:'0.8rem',background:'rgba(255,255,255,0.08)',borderRadius:'0.25rem',padding:'0.2rem 0.45rem'}}>
@@ -712,22 +776,21 @@ const UWTracker=()=>{
           </div>
         </div>
 
-        {/* Item 13 — Reset button */}
+        {/* ITEM 13 — Reset */}
         <div style={{marginTop:'1rem'}}>
           <button onClick={()=>setShowResetConfirm(true)} style={{width:'100%',padding:'0.75rem',background:'#e5e7eb',border:'none',borderRadius:'0.5rem',fontWeight:'600',color:'#374151',cursor:'pointer',fontSize:'1rem'}}>Reset</button>
         </div>
       </div>
 
-      {/* Info popup */}
       {showInfoPopup&&<HowPaidPopup onClose={()=>setShowInfoPopup(false)}/>}
 
-      {/* Customer selection modal */}
+      {/* Customer selection modal — ITEM 5: best guess in yellow box, dark bold italic */}
       {selectedCircle!==null&&(
         <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.3)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:50,padding:'1rem'}} onClick={()=>{setSelectedCircle(null);setShowBestGuess(false);}}>
           <div className="animate-slideDown" style={{background:'white',borderRadius:'0.75rem',padding:'1.5rem',boxShadow:'0 20px 50px rgba(0,0,0,0.3)',maxWidth:'24rem',width:'100%'}} onClick={e=>e.stopPropagation()}>
             <p style={{fontSize:'0.875rem',fontWeight:'600',color:'#111827',marginBottom:'0.5rem',textAlign:'center'}}>{includeYou?`Customer ${selectedCircle}`:`Customer ${selectedCircle+1}`}: Homeowner with how many services?</p>
             {showBestGuess&&(
-              <p style={{fontSize:'0.8rem',color:'#374151',fontWeight:'700',fontStyle:'italic',textAlign:'center',margin:'0 0 0.85rem',background:'#fef9c3',padding:'0.4rem 0.6rem',borderRadius:'0.4rem'}}>
+              <p style={{fontSize:'0.82rem',color:'#374151',fontWeight:'700',fontStyle:'italic',textAlign:'center',margin:'0 0 0.85rem',background:'#fef9c3',padding:'0.45rem 0.65rem',borderRadius:'0.4rem',lineHeight:1.5}}>
                 💡 Just make your best guess — you can change this later.
               </p>
             )}
@@ -762,14 +825,14 @@ const UWTracker=()=>{
         </div>
       )}
 
-      {/* Item 9 — Fast Starter celebration modal */}
+      {/* ITEM 9 — Fast Starter celebration: £500 fast / starter bonus (two lines, lowercase) */}
       {showCelebration&&(
         <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.5)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:40,padding:'1rem'}}>
-          <div className="animate-bounceOnce" style={{background:'white',borderRadius:'1rem',padding:'2rem',maxWidth:'28rem',textAlign:'center'}}>
+          <div className="animate-bounceOnce" style={{background:'white',borderRadius:'1rem',padding:'2rem',maxWidth:'28rem',textAlign:'center',boxShadow:'0 20px 60px rgba(0,0,0,0.3)'}}>
             <div style={{fontSize:'3.75rem',marginBottom:'1rem'}}>🎉</div>
             <h2 style={{fontSize:'1.875rem',fontWeight:'700',color:'#7c3aed',marginBottom:'1rem'}}>Congratulations!</h2>
             <p style={{fontSize:'1.25rem',color:'#374151',marginBottom:'0.5rem'}}>You've qualified for the</p>
-            <p style={{fontSize:'2.25rem',fontWeight:'700',color:'#16a34a',marginBottom:'0.25rem',lineHeight:1.15}}>£500 fast</p>
+            <p style={{fontSize:'2.25rem',fontWeight:'700',color:'#16a34a',marginBottom:'0.15rem',lineHeight:1.15}}>£500 fast</p>
             <p style={{fontSize:'2.25rem',fontWeight:'700',color:'#16a34a',marginBottom:'1rem',lineHeight:1.15}}>starter bonus</p>
           </div>
         </div>
