@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,6 +17,12 @@
   @keyframes tabPulse { 0%,100%{box-shadow:3px 0 14px rgba(124,58,237,0.35)} 25%{box-shadow:3px 0 26px rgba(219,39,119,0.85)} 50%{box-shadow:3px 0 14px rgba(124,58,237,0.35)} 75%{box-shadow:3px 0 26px rgba(219,39,119,0.85)} }
   @keyframes coachFadeIn { 0%{opacity:0;transform:translateY(6px)} 100%{opacity:1;transform:translateY(0)} }
   @keyframes coachFadeOut { 0%{opacity:1;transform:translateY(0)} 100%{opacity:0;transform:translateY(-4px)} }
+  /* Change 8: fingerPoint removed. badgeGlow added. */
+  @keyframes badgeGlow {
+    0%   { box-shadow: 0 0 0 0px rgba(168,85,247,0.9), 0 0 0 0px rgba(168,85,247,0.3); }
+    40%  { box-shadow: 0 0 0 5px rgba(168,85,247,0.55), 0 0 0 10px rgba(168,85,247,0.15); }
+    100% { box-shadow: 0 0 0 0px rgba(168,85,247,0), 0 0 0 0px rgba(168,85,247,0); }
+  }
   @keyframes revenueSlideUp {
     0%   { opacity:0; transform: translateY(60px) scale(0.97); }
     100% { opacity:1; transform: translateY(0) scale(1); }
@@ -32,12 +39,6 @@
     0%,100% { box-shadow: 0 0 0 0 rgba(124,58,237,0); }
     50%     { box-shadow: 0 0 0 6px rgba(124,58,237,0.25); }
   }
-  @keyframes badgeGlow {
-    0%   { box-shadow: 0 0 0 0px rgba(168,85,247,0.8), 0 0 0 0px rgba(168,85,247,0.3); }
-    33%  { box-shadow: 0 0 0 5px rgba(168,85,247,0.5), 0 0 0 10px rgba(168,85,247,0.12); }
-    66%  { box-shadow: 0 0 0 3px rgba(168,85,247,0.25), 0 0 0 6px rgba(168,85,247,0.06); }
-    100% { box-shadow: 0 0 0 0px rgba(168,85,247,0), 0 0 0 0px rgba(168,85,247,0); }
-  }
   .animate-slideDown { animation: slideDown 0.2s ease-out forwards; }
   .animate-confetti { animation: confetti 3s ease-in forwards; }
   .animate-bounceOnce { animation: bounceOnce 0.6s ease-in-out; }
@@ -45,10 +46,11 @@
   .tab-pulse { animation: tabPulse 0.95s ease-in-out 2; }
   .coach-in  { animation: coachFadeIn  0.55s ease-out forwards; }
   .coach-out { animation: coachFadeOut 0.45s ease-in  forwards; }
+  /* Change 8: .finger-point removed. .p-badge-glow replaces it. */
+  .p-badge-glow { animation: badgeGlow 0.67s ease-out 3; animation-fill-mode: forwards; }
   .revenue-slide-up { animation: revenueSlideUp 0.7s cubic-bezier(0.22,1,0.36,1) forwards; }
   .revenue-wiggle { animation: revenueWiggle 0.5s ease-in-out 1; }
   .soft-glow { animation: softGlow 2s ease-in-out 1; }
-  .p-badge-glow { animation: badgeGlow 0.7s ease-out 3; animation-fill-mode: forwards; }
   * { box-sizing: border-box; }
   @media (orientation: landscape) and (max-height: 500px) {
     .accordion-list { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 0.4rem !important; align-items: start !important; }
@@ -94,7 +96,8 @@
   .p-badge { width:1.35rem;height:1.35rem;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:800;flex-shrink:0;vertical-align:middle; }
   .p-badge-grey { background:#e5e7eb;border:2px solid #9ca3af;color:#6b7280; }
   .p-badge-gold { background:#facc15;border:2px solid #ca8a04;color:#713f12; }
-  .revenue-card-wrap { position:fixed;left:50%;transform:translateX(-50%);z-index:140;width:min(42rem,100vw); }
+  /* Change 2: revenue-card-wrap — centred, no bottom:0. bottom set dynamically via inline style. */
+  .revenue-card-wrap { position:fixed;left:50%;transform:translateX(-50%);z-index:140;width:min(42rem,100vw);overflow-y:auto; }
   .revenue-card { background:linear-gradient(135deg,#7c3aed,#db2777);border-radius:1rem 1rem 0 0;overflow:hidden;cursor:pointer;box-shadow:0 -4px 30px rgba(124,58,237,0.4);transition:border-radius 0.3s; }
   .earnings-banner { min-height:4.5rem;display:flex;flex-direction:column;justify-content:center; }
 </style>
@@ -159,22 +162,29 @@ const IntroModal=({onClose})=>(
   </div>
 );
 
-// CHANGES 7+8: finger pointer removed; permanent message detection added
-const CoachingLane=({message,showArrow,customer5Ref})=>{
+// Changes 7+8: permanent message detection via 🔁 prefix. Finger pointer logic fully removed.
+const CoachingLane=({message,showArrow})=>{
   const [visible,setVisible]=useState(false);
   const [displayed,setDisplayed]=useState(null);
   const [fading,setFading]=useState(false);
   const autoTimer=useRef(null);
   const fadeTimer=useRef(null);
   const clearAll=()=>{clearTimeout(autoTimer.current);clearTimeout(fadeTimer.current);};
+  const isPermanent=(msg)=>msg&&msg.includes('🔁');
   const show=(msg,keepAlive)=>{
     clearAll();setFading(false);setDisplayed(msg);setVisible(true);
-    const isPermanent=keepAlive||(msg&&msg.includes('🔁'));
-    if(!isPermanent){autoTimer.current=setTimeout(()=>{setFading(true);fadeTimer.current=setTimeout(()=>{setVisible(false);setDisplayed(null);setFading(false);},450);},6200);}
+    if(!keepAlive&&!isPermanent(msg)){
+      autoTimer.current=setTimeout(()=>{setFading(true);fadeTimer.current=setTimeout(()=>{setVisible(false);setDisplayed(null);setFading(false);},450);},6200);
+    }
   };
   const hide=()=>{clearAll();setFading(true);fadeTimer.current=setTimeout(()=>{setVisible(false);setDisplayed(null);setFading(false);},450);};
   useEffect(()=>{if(message){show(message,showArrow);}else{if(visible)hide();}return clearAll;},[message]);
-  useEffect(()=>{if(!showArrow&&visible&&displayed&&!(displayed&&displayed.includes('🔁'))){clearAll();autoTimer.current=setTimeout(()=>{setFading(true);fadeTimer.current=setTimeout(()=>{setVisible(false);setDisplayed(null);setFading(false);},450);},6200);}},[showArrow]);
+  useEffect(()=>{
+    if(!showArrow&&visible&&displayed&&!isPermanent(displayed)){
+      clearAll();
+      autoTimer.current=setTimeout(()=>{setFading(true);fadeTimer.current=setTimeout(()=>{setVisible(false);setDisplayed(null);setFading(false);},450);},6200);
+    }
+  },[showArrow]);
   const isActive=visible&&displayed;
   const renderLines=(msg)=>msg.split('\n').map((line,i)=>(<span key={i} style={{display:'block',lineHeight:1.55}}>{line}</span>));
   return(
@@ -331,8 +341,7 @@ const HowPaidPopup=({onClose,fastStarterAchieved,revenueExplored})=>{
   );
 };
 
-// CHANGES 2+4: revenue-card-wrap now uses left/transform positioning, not bottom:0
-// dockedBottom + dockedMaxHeight props control dynamic docking
+// Changes 4+6: both unlocked and locked cards receive dockedBottom + dockedMaxHeight props.
 const RevenueCard=({grandTotal,supportingBonus,partnerTotalEarnings,onInteracted,wiggle,dockedBottom,dockedMaxHeight})=>{
   const [expanded,setExpanded]=useState(false);
   const collapseTimer=useRef(null);
@@ -347,8 +356,9 @@ const RevenueCard=({grandTotal,supportingBonus,partnerTotalEarnings,onInteracted
     }
   };
   useEffect(()=>()=>clearTimeout(collapseTimer.current),[]);
+  const innerMax=Math.max(0,dockedMaxHeight-54);
   return(
-    <div className="revenue-card-wrap" style={{bottom:`${dockedBottom}px`,maxHeight:`${dockedMaxHeight}px`,overflowY:'auto'}}>
+    <div className="revenue-card-wrap" style={{bottom:`${dockedBottom}px`,maxHeight:`${dockedMaxHeight}px`}}>
       <div className={`revenue-card${wiggle?' revenue-wiggle':''}`}>
         <div onClick={handleToggle} style={{padding:'0.85rem 1rem',display:'flex',alignItems:'center',justifyContent:'space-between',gap:'0.5rem',cursor:'pointer',userSelect:'none'}}>
           <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}>
@@ -360,7 +370,7 @@ const RevenueCard=({grandTotal,supportingBonus,partnerTotalEarnings,onInteracted
             {expanded?<ChevronDown style={{...SM,color:'rgba(255,255,255,0.8)'}}/>:<ChevronUp style={{...SM,color:'rgba(255,255,255,0.8)'}}/>}
           </div>
         </div>
-        <div style={{maxHeight:expanded?'60vh':'0',overflow:'hidden',transition:'max-height 0.5s cubic-bezier(0.22,1,0.36,1)'}}>
+        <div style={{maxHeight:expanded?`${innerMax}px`:'0',overflow:'hidden',transition:'max-height 0.5s cubic-bezier(0.22,1,0.36,1)'}}>
           <div style={{padding:'0 1rem 1rem'}}>
             <div style={{display:'flex',flexDirection:'column',gap:'0.3rem',marginBottom:'0.75rem'}}>
               {[{icon:'🤝',label:'Supporting Customer Bonus',val:`£${supportingBonus.toLocaleString()}`},{icon:'🎓',label:'Mentor Bonus',val:'£100'},{icon:null,label:'Fast Starter Mentor Bonus',val:'£300'}].map(s=>(
@@ -381,6 +391,18 @@ const RevenueCard=({grandTotal,supportingBonus,partnerTotalEarnings,onInteracted
     </div>
   );
 };
+
+// Change 6: locked placeholder uses identical docking.
+const LockedRevenueCard=({dockedBottom,dockedMaxHeight})=>(
+  <div className="revenue-card-wrap" style={{bottom:`${dockedBottom}px`,maxHeight:`${dockedMaxHeight}px`}}>
+    <div style={{background:'#e5e7eb',borderRadius:'1rem 1rem 0 0',overflow:'hidden',boxShadow:'0 -4px 20px rgba(0,0,0,0.1)'}}>
+      <div style={{padding:'0.85rem 1rem',display:'flex',alignItems:'center',gap:'0.5rem'}}>
+        <span style={{fontSize:'1.1rem',filter:'grayscale(1)',opacity:0.5,lineHeight:1}}>🔒</span>
+        <span style={{fontWeight:'700',fontSize:'0.95rem',color:'#9ca3af'}}>Three revenue streams (locked)</span>
+      </div>
+    </div>
+  </div>
+);
 
 const UWTracker=()=>{
   const [showIntro,setShowIntro]=useState(true);
@@ -405,14 +427,16 @@ const UWTracker=()=>{
   const [revenueCardVisible,setRevenueCardVisible]=useState(false);
   const [revenueWiggle,setRevenueWiggle]=useState(false);
   const [circleGlow,setCircleGlow]=useState(false);
+  // Change 8: pBadgeGlow triggers the glowing ring on grey P badges
   const [pBadgeGlow,setPBadgeGlow]=useState(false);
 
-  // CHANGES 1+3: refs for docking measurement, docking state + effect
+  // Changes 1+3: refs for dynamic docking measurement
   const circlesRef=useRef(null);
   const totalEarningsRef=useRef(null);
   const [revenueBottomOffset,setRevenueBottomOffset]=useState(0);
   const [revenueMaxHeight,setRevenueMaxHeight]=useState(200);
 
+  // Change 3: dynamic docking useEffect
   useEffect(()=>{
     const updateDocking=()=>{
       if(!circlesRef.current||!totalEarningsRef.current)return;
@@ -484,11 +508,12 @@ const UWTracker=()=>{
     }
   },[totalForQD,oneRemaining,allHomeowners,allTenants,qualifiesForFastStarter]);
 
-  // CHANGE 8e: P badge glow fires when partner prompt appears
+  // Change 8: when partner prompt appears, trigger glow on grey P badges. No finger pointer.
   useEffect(()=>{
     if(allCirclesFilled&&!hasPartner&&!qualifiesForFastStarter){
       setCoachArrow(true);setCoachMsg('__partner_prompt__');
-      setPBadgeGlow(true);setTimeout(()=>setPBadgeGlow(false),2100);
+      setPBadgeGlow(true);
+      setTimeout(()=>setPBadgeGlow(false),2100);
     }
     else if(allCirclesFilled&&hasPartner){setCoachArrow(false);if(coachMsg==='__partner_prompt__')setCoachMsg(null);}
   },[allCirclesFilled,hasPartner,qualifiesForFastStarter]);
@@ -520,6 +545,7 @@ const UWTracker=()=>{
     },3000);
   };
 
+  // Change 7: the 🔁 message is permanent — CoachingLane checks for it and won't auto-hide
   const handleRevenueInteracted=()=>{
     if(revenueExplored)return;
     setRevenueExplored(true);
@@ -527,7 +553,6 @@ const UWTracker=()=>{
       setStageRevealShown(true);
       setTabColoured(true);
       setCircleGlow(true);setTimeout(()=>setCircleGlow(false),2000);
-      // CHANGE 7: message contains 🔁 — CoachingLane will NOT auto-hide it
       setCoachMsg("🔁 Keep exploring customer types\n💡 Learn how it works\n🧭 Next steps");
     },5000);
     resetInactivity();
@@ -616,13 +641,15 @@ const UWTracker=()=>{
         </div>
 
         <div style={{background:'white',borderRadius:'1rem',boxShadow:'0 4px 16px rgba(0,0,0,0.08)',padding:'1.5rem'}}>
-          {/* CHANGE 1b: circlesRef attached to the 6-circle grid */}
+          {/* Change 1: circlesRef on the 6-circle grid */}
           <div ref={circlesRef} style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'1rem',marginBottom:'1rem'}}>
             {customers.map((customer,index)=>{
               const col=circleColor(customer);const cb=calculateCB(customer,index);
               const showHAB=customer.type==='homeowner'&&(customer.services===3||customer.services===4)&&highActivityCustomers>=2;
               const isC5=index===c5Index;
               const glowStyle=circleGlow&&customer.type!==null?{animation:'softGlow 2s ease-in-out 1'}:{};
+              // Change 8: grey (not yet gold) P badges get the glow class when pBadgeGlow is true
+              const badgeGlowClass=pBadgeGlow&&!customer.isPartner&&customer.type!==null?'p-badge-glow':'';
               return(
                 <div key={index} ref={isC5?customer5Ref:null} style={{display:'flex',flexDirection:'column',alignItems:'center',position:'relative'}}>
                   <div onClick={()=>handleCircleClick(index)} style={{width:'5rem',height:'5rem',borderRadius:'50%',border:`4px solid ${col.border}`,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',fontSize:'1.125rem',fontWeight:'700',position:'relative',background:col.bg,color:col.text,cursor:canSelectCircle(index)?'pointer':'not-allowed',opacity:getCircleOpacity(index),transition:'transform 0.15s',boxSizing:'border-box',...glowStyle}}>
@@ -630,13 +657,12 @@ const UWTracker=()=>{
                     :customer.type?(
                       <><span style={{fontSize:'0.875rem',fontWeight:'700'}}>£{cb.toLocaleString()}</span>
                       {showHAB&&<div style={{position:'absolute',top:'-0.25rem',right:'-0.25rem',padding:'0.125rem 0.25rem',background:'#f97316',color:'white',fontSize:'0.625rem',fontWeight:'700',borderRadius:'0.25rem',zIndex:10}}>+£{habPerCustomer}</div>}
-                      {/* CHANGE 8f: glow ring on grey P badges when partner prompt fires */}
-                      <div onClick={(e)=>handlePartnerBadgeClick(e,index)} className={!customer.isPartner&&pBadgeGlow?'p-badge-glow':''} style={{position:'absolute',bottom:'-0.25rem',right:'-0.25rem',width:'1.5rem',height:'1.5rem',borderRadius:'50%',border:`2px solid ${customer.isPartner?'#ca8a04':'#9ca3af'}`,display:'flex',alignItems:'center',justifyContent:'center',zIndex:10,cursor:'pointer',background:customer.isPartner?'#facc15':'#e5e7eb',transition:'transform 0.15s'}}>
+                      <div onClick={(e)=>handlePartnerBadgeClick(e,index)} className={badgeGlowClass} style={{position:'absolute',bottom:'-0.25rem',right:'-0.25rem',width:'1.5rem',height:'1.5rem',borderRadius:'50%',border:`2px solid ${customer.isPartner?'#ca8a04':'#9ca3af'}`,display:'flex',alignItems:'center',justifyContent:'center',zIndex:10,cursor:'pointer',background:customer.isPartner?'#facc15':'#e5e7eb',transition:'transform 0.15s'}}>
                         <span style={{fontSize:'0.625rem',fontWeight:'700',color:customer.isPartner?'#713f12':'#6b7280'}}>P</span>
                       </div></>
                     ):(
                       <><span style={{fontSize:'0.875rem'}}>{includeYou?ordinal(index):ordinal(index+1)}</span>
-                      <div className={pBadgeGlow?'p-badge-glow':''} style={{position:'absolute',bottom:'-0.25rem',right:'-0.25rem',width:'1.5rem',height:'1.5rem',borderRadius:'50%',border:'2px solid #9ca3af',display:'flex',alignItems:'center',justifyContent:'center',zIndex:10,background:'#e5e7eb'}}>
+                      <div style={{position:'absolute',bottom:'-0.25rem',right:'-0.25rem',width:'1.5rem',height:'1.5rem',borderRadius:'50%',border:'2px solid #9ca3af',display:'flex',alignItems:'center',justifyContent:'center',zIndex:10,background:'#e5e7eb'}}>
                         <span style={{fontSize:'0.625rem',fontWeight:'700',color:'#6b7280'}}>P</span>
                       </div></>
                     )}
@@ -646,9 +672,10 @@ const UWTracker=()=>{
             })}
           </div>
 
-          <CoachingLane message={coachMsg} showArrow={coachArrow} customer5Ref={customer5Ref}/>
+          <CoachingLane message={coachMsg} showArrow={coachArrow}/>
 
           <div style={{display:'flex',flexDirection:'column',gap:'0.75rem'}}>
+            {/* Banners sit in normal flow — revenue card (z-index 140) floats above them */}
             <div className="earnings-banner" style={{padding:'0.75rem 1rem',borderRadius:'0.5rem',border:`4px solid ${totalCB>0?'#7c3aed':'#d1d5db'}`,background:totalCB>0?'#f5f3ff':'#f9fafb'}}>
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
                 <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}><span style={{fontSize:'1.25rem',filter:totalCB>0?'none':'grayscale(1)',opacity:totalCB>0?1:0.4}}>💷</span><span style={{fontWeight:'600',color:totalCB>0?'#7c3aed':'#6b7280'}}>Customer Bonus:</span></div>
@@ -658,4 +685,133 @@ const UWTracker=()=>{
 
             <div className="earnings-banner" style={{padding:'0.75rem 1rem',borderRadius:'0.5rem',border:`4px solid ${highActivityCustomers>=2?'#f97316':'#e5e7eb'}`,background:highActivityCustomers>=2?'#fff7ed':'#f9fafb',opacity:highActivityCustomers>=2?1:0.5,transition:'opacity 0.3s,border-color 0.3s,background 0.3s'}}>
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-                <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}><span style={{fontSize:'1.25rem',filter:highActivityCustomers>=2?'none':'graysc
+                <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}><span style={{fontSize:'1.25rem',filter:highActivityCustomers>=2?'none':'grayscale(1)',opacity:highActivityCustomers>=2?1:0.4}}>🔥</span><span style={{fontWeight:'600',color:highActivityCustomers>=2?'#ea580c':'#6b7280'}}>High Activity Bonus:</span></div>
+                <span style={{fontSize:'1.25rem',fontWeight:'700',color:highActivityCustomers>=2?'#ea580c':'#9ca3af'}}>{highActivityCustomers>=2?`£${totalHAB.toLocaleString()}`:'—'}</span>
+              </div>
+              {!highActivityCustomers&&(<p style={{margin:'0.3rem 0 0 1.75rem',fontSize:'0.72rem',color:'#9ca3af',fontStyle:'italic'}}>Add 2 or more homeowners with 3 services</p>)}
+            </div>
+
+            <div className="earnings-banner" style={{padding:'0.75rem 1rem',borderRadius:'0.5rem',border:`2px solid ${qualifiesForFastStarter?'#86efac':'#e5e7eb'}`,background:qualifiesForFastStarter?'#f0fdf4':'#f9fafb'}}>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}><TrendingUp style={{...MD,color:qualifiesForFastStarter?'#16a34a':'#d1d5db'}}/><span style={{fontWeight:'600',color:qualifiesForFastStarter?'#16a34a':'#6b7280'}}>Fast Starter Bonus:</span></div>
+                <span style={{fontSize:'1.25rem',fontWeight:'700',color:qualifiesForFastStarter?'#16a34a':'#9ca3af'}}>£{fastStarterBonus.toLocaleString()}</span>
+              </div>
+            </div>
+
+            <div className="earnings-banner" style={{padding:'0.75rem 1rem',borderRadius:'0.5rem',border:`4px solid ${recurringActive?'#2563eb':'#d1d5db'}`,background:recurringActive?'#eff6ff':'#f9fafb',opacity:recurringActive?1:0.5,transition:'opacity 0.3s,border-color 0.3s'}}>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}><RefreshCw style={{...MD,color:recurringActive?'#2563eb':'#d1d5db'}}/><span style={{fontWeight:'600',color:recurringActive?'#374151':'#6b7280'}}>Recurring Income:</span></div>
+                <div style={{textAlign:'right'}}>
+                  <span style={{fontSize:'1.25rem',fontWeight:'700',color:recurringActive?'#2563eb':'#9ca3af'}}>{recurringActive?`£${residualIncome.toFixed(2)}/m`:'—'}</span>
+                  {recurringActive&&<span style={{display:'block',fontSize:'0.75rem',color:'#3b82f6'}}>(£{(residualIncome*12).toLocaleString()}/yr)</span>}
+                </div>
+              </div>
+              {!recurringActive&&(<p style={{margin:'0.3rem 0 0 1.75rem',fontSize:'0.72rem',color:'#9ca3af',fontStyle:'italic'}}>Add a tenant to activate</p>)}
+            </div>
+
+            {/* Change 1b: totalEarningsRef on TOTAL EARNINGS banner.
+                Change 5: z-index 160 places it above the revenue card (z-index 140), below contact panel (151+). */}
+            <div ref={totalEarningsRef} className="earnings-banner" style={{padding:'1rem',borderRadius:'0.5rem',boxShadow:'0 2px 8px rgba(0,0,0,0.15)',color:'white',position:'relative',overflow:'hidden',zIndex:160}}>
+              <div style={{position:'absolute',inset:0,background:grandTotal>0?'linear-gradient(to right,#7c3aed,#db2777)':'#9ca3af'}}></div>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',position:'relative',zIndex:1}}>
+                <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}>
+                  <span style={{fontWeight:'700',fontSize:'1.125rem'}}>TOTAL EARNINGS:</span>
+                  <button onClick={(e)=>{e.stopPropagation();setShowInfoPopup(true);}} style={{background:'none',border:'none',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',padding:0,lineHeight:1}}>
+                    {infoBulbActive&&!infoBulbPulsed?<PulsingBulb size="1.8rem" onDone={()=>setInfoBulbPulsed(true)}/>:<Bulb size="1.8rem" grey={!infoBulbActive}/>}
+                  </button>
+                </div>
+                <span style={{fontSize:'1.5rem',fontWeight:'700'}}>£{grandTotal.toLocaleString()}</span>
+              </div>
+            </div>
+
+            {/* Change 6: locked placeholder removed from in-flow — rendered as fixed LockedRevenueCard below */}
+          </div>
+        </div>
+
+        <div style={{marginTop:'1rem'}}>
+          <button onClick={()=>setShowResetConfirm(true)} style={{width:'100%',padding:'0.75rem',background:'#e5e7eb',border:'none',borderRadius:'0.5rem',fontWeight:'600',color:'#374151',cursor:'pointer',fontSize:'1rem'}}>Reset</button>
+        </div>
+      </div>
+
+      {/* Change 6: locked card — shown before fastStarterAchieved, same docking as unlocked */}
+      {!fastStarterAchieved&&(
+        <LockedRevenueCard dockedBottom={revenueBottomOffset} dockedMaxHeight={revenueMaxHeight}/>
+      )}
+
+      {/* Changes 4+6: unlocked card with dynamic docking */}
+      {revenueCardVisible&&(
+        <div className="revenue-slide-up" style={{animationFillMode:'forwards'}}>
+          <RevenueCard
+            grandTotal={grandTotal}
+            supportingBonus={supportingBonus}
+            partnerTotalEarnings={partnerTotalEarnings}
+            onInteracted={handleRevenueInteracted}
+            wiggle={revenueWiggle}
+            dockedBottom={revenueBottomOffset}
+            dockedMaxHeight={revenueMaxHeight}
+          />
+        </div>
+      )}
+
+      {showInfoPopup&&<HowPaidPopup onClose={()=>setShowInfoPopup(false)} fastStarterAchieved={fastStarterAchieved} revenueExplored={revenueExplored}/>}
+
+      {selectedCircle!==null&&(
+        <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.3)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:50,padding:'1rem'}} onClick={()=>{setSelectedCircle(null);setShowBestGuess(false);}}>
+          <div className="animate-slideDown" style={{background:'white',borderRadius:'0.75rem',padding:'1.5rem',boxShadow:'0 20px 50px rgba(0,0,0,0.3)',maxWidth:'24rem',width:'100%'}} onClick={e=>e.stopPropagation()}>
+            <p style={{fontSize:'1rem',fontWeight:'700',color:'#111827',marginBottom:'0.15rem',textAlign:'center'}}>Choose a customer example</p>
+            <p style={{fontSize:'0.82rem',color:'#6b7280',marginBottom:'0.75rem',textAlign:'center',fontStyle:'italic'}}>Homeowner or tenant — what would you like to try first?</p>
+            {showBestGuess&&(
+              <p style={{fontSize:'0.82rem',color:'#374151',fontWeight:'700',fontStyle:'italic',textAlign:'center',margin:'0 0 0.85rem',background:'#fef9c3',padding:'0.45rem 0.65rem',borderRadius:'0.4rem',lineHeight:'1.6'}}>
+                💡 Just make your best guess<br/>— you can change this later.
+              </p>
+            )}
+            <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'0.5rem',marginBottom:'0.75rem'}}>
+              {[1,2,3,4].map(num=>{const cb=[50,100,250,300][num-1];const active=customers[selectedCircle]&&customers[selectedCircle].type==='homeowner'&&customers[selectedCircle].services===num;return(
+                <button key={num} onClick={()=>setCustomerType('homeowner',num)} style={{padding:'1rem 0.5rem',border:`2px solid ${active?'#7c3aed':'#c4b5fd'}`,borderRadius:'0.5rem',background:active?'#7c3aed':'#f5f3ff',color:active?'white':'#6d28d9',cursor:'pointer',fontWeight:'600'}}>
+                  <div style={{fontSize:'1rem',fontWeight:'700'}}>{num}</div><div style={{fontSize:'0.75rem',marginTop:'0.25rem'}}>(£{cb})</div>
+                </button>);})}
+            </div>
+            <p style={{textAlign:'center',fontSize:'0.875rem',color:'#6b7280',marginBottom:'0.75rem'}}>or</p>
+            <button onClick={()=>setCustomerType('renting')} style={{width:'100%',padding:'0.75rem',border:`2px solid ${customers[selectedCircle]&&customers[selectedCircle].type==='renting'?'#2563eb':'#93c5fd'}`,borderRadius:'0.5rem',background:customers[selectedCircle]&&customers[selectedCircle].type==='renting'?'#2563eb':'#eff6ff',color:customers[selectedCircle]&&customers[selectedCircle].type==='renting'?'white':'#1d4ed8',cursor:'pointer',fontWeight:'600',marginBottom:'0.75rem'}}>
+              <div style={{fontSize:'1rem',fontWeight:'700'}}>Tenant/Renting</div><div style={{fontSize:'0.75rem',fontWeight:'400'}}>(No customer bonus, just recurring income)</div>
+            </button>
+            {customers[selectedCircle]&&customers[selectedCircle].type!==null&&(
+              <button onClick={removeCustomer} style={{width:'100%',padding:'0.75rem',border:'2px solid #fca5a5',borderRadius:'0.5rem',background:'#fef2f2',color:'#b91c1c',cursor:'pointer',fontWeight:'600'}}>Remove Customer</button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {showResetConfirm&&(
+        <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.3)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:50,padding:'1rem'}}>
+          <div className="animate-slideDown" style={{background:'white',borderRadius:'0.75rem',padding:'1.5rem',boxShadow:'0 20px 50px rgba(0,0,0,0.3)',maxWidth:'24rem',width:'100%'}}>
+            <p style={{fontSize:'1.125rem',fontWeight:'600',color:'#111827',marginBottom:'1rem',textAlign:'center'}}>Are you sure?</p>
+            <p style={{fontSize:'0.875rem',color:'#6b7280',marginBottom:'1.5rem',textAlign:'center'}}>This will reset all customer data and cannot be undone.</p>
+            <div style={{display:'flex',gap:'0.75rem'}}>
+              <button onClick={()=>setShowResetConfirm(false)} style={{flex:1,padding:'0.5rem',background:'#e5e7eb',border:'none',borderRadius:'0.5rem',fontWeight:'600',color:'#374151',cursor:'pointer'}}>No</button>
+              <button onClick={resetTracking} style={{flex:1,padding:'0.5rem',background:'#ef4444',border:'none',borderRadius:'0.5rem',fontWeight:'600',color:'white',cursor:'pointer'}}>Yes, Reset</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showCelebration&&(
+        <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.5)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:40,padding:'1rem'}}>
+          <div className="animate-bounceOnce" style={{background:'white',borderRadius:'1rem',padding:'2rem',maxWidth:'28rem',textAlign:'center',boxShadow:'0 20px 60px rgba(0,0,0,0.3)'}}>
+            <div style={{fontSize:'3.75rem',marginBottom:'1rem'}}>🎉</div>
+            <h2 style={{fontSize:'1.875rem',fontWeight:'700',color:'#7c3aed',marginBottom:'1rem'}}>Congratulations!</h2>
+            <p style={{fontSize:'1.25rem',color:'#374151',marginBottom:'0.5rem'}}>You've qualified for the</p>
+            <p style={{fontSize:'2.25rem',fontWeight:'700',color:'#16a34a',marginBottom:'0.15rem',lineHeight:1.15}}>£500 fast</p>
+            <p style={{fontSize:'2.25rem',fontWeight:'700',color:'#16a34a',marginBottom:'1rem',lineHeight:1.15}}>starter bonus</p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const root=ReactDOM.createRoot(document.getElementById('root'));
+root.render(React.createElement(UWTracker));
+</script>
+</body>
+</html>
