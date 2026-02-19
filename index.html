@@ -16,14 +16,6 @@
   @keyframes tabPulse { 0%,100%{box-shadow:3px 0 14px rgba(124,58,237,0.35)} 25%{box-shadow:3px 0 26px rgba(219,39,119,0.85)} 50%{box-shadow:3px 0 14px rgba(124,58,237,0.35)} 75%{box-shadow:3px 0 26px rgba(219,39,119,0.85)} }
   @keyframes coachFadeIn { 0%{opacity:0;transform:translateY(6px)} 100%{opacity:1;transform:translateY(0)} }
   @keyframes coachFadeOut { 0%{opacity:1;transform:translateY(0)} 100%{opacity:0;transform:translateY(-4px)} }
-  @keyframes fingerPoint {
-    0%   { transform: translate(0, 0) rotate(90deg); }
-    20%  { transform: translate(-3px, 6px) rotate(82deg); }
-    40%  { transform: translate(2px, 3px) rotate(96deg); }
-    60%  { transform: translate(-2px, 7px) rotate(84deg); }
-    80%  { transform: translate(1px, 4px) rotate(93deg); }
-    100% { transform: translate(0, 0) rotate(90deg); }
-  }
   @keyframes revenueSlideUp {
     0%   { opacity:0; transform: translateY(60px) scale(0.97); }
     100% { opacity:1; transform: translateY(0) scale(1); }
@@ -40,6 +32,12 @@
     0%,100% { box-shadow: 0 0 0 0 rgba(124,58,237,0); }
     50%     { box-shadow: 0 0 0 6px rgba(124,58,237,0.25); }
   }
+  @keyframes badgeGlow {
+    0%   { box-shadow: 0 0 0 0px rgba(168,85,247,0.8), 0 0 0 0px rgba(168,85,247,0.3); }
+    33%  { box-shadow: 0 0 0 5px rgba(168,85,247,0.5), 0 0 0 10px rgba(168,85,247,0.12); }
+    66%  { box-shadow: 0 0 0 3px rgba(168,85,247,0.25), 0 0 0 6px rgba(168,85,247,0.06); }
+    100% { box-shadow: 0 0 0 0px rgba(168,85,247,0), 0 0 0 0px rgba(168,85,247,0); }
+  }
   .animate-slideDown { animation: slideDown 0.2s ease-out forwards; }
   .animate-confetti { animation: confetti 3s ease-in forwards; }
   .animate-bounceOnce { animation: bounceOnce 0.6s ease-in-out; }
@@ -47,10 +45,10 @@
   .tab-pulse { animation: tabPulse 0.95s ease-in-out 2; }
   .coach-in  { animation: coachFadeIn  0.55s ease-out forwards; }
   .coach-out { animation: coachFadeOut 0.45s ease-in  forwards; }
-  .finger-point { animation: fingerPoint 1.8s ease-in-out; display:inline-block; }
   .revenue-slide-up { animation: revenueSlideUp 0.7s cubic-bezier(0.22,1,0.36,1) forwards; }
   .revenue-wiggle { animation: revenueWiggle 0.5s ease-in-out 1; }
   .soft-glow { animation: softGlow 2s ease-in-out 1; }
+  .p-badge-glow { animation: badgeGlow 0.7s ease-out 3; animation-fill-mode: forwards; }
   * { box-sizing: border-box; }
   @media (orientation: landscape) and (max-height: 500px) {
     .accordion-list { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 0.4rem !important; align-items: start !important; }
@@ -96,7 +94,7 @@
   .p-badge { width:1.35rem;height:1.35rem;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:800;flex-shrink:0;vertical-align:middle; }
   .p-badge-grey { background:#e5e7eb;border:2px solid #9ca3af;color:#6b7280; }
   .p-badge-gold { background:#facc15;border:2px solid #ca8a04;color:#713f12; }
-  .revenue-card-wrap { position:fixed;bottom:0;left:0;right:0;z-index:120; }
+  .revenue-card-wrap { position:fixed;left:50%;transform:translateX(-50%);z-index:140;width:min(42rem,100vw); }
   .revenue-card { background:linear-gradient(135deg,#7c3aed,#db2777);border-radius:1rem 1rem 0 0;overflow:hidden;cursor:pointer;box-shadow:0 -4px 30px rgba(124,58,237,0.4);transition:border-radius 0.3s; }
   .earnings-banner { min-height:4.5rem;display:flex;flex-direction:column;justify-content:center; }
 </style>
@@ -161,6 +159,7 @@ const IntroModal=({onClose})=>(
   </div>
 );
 
+// CHANGES 7+8: finger pointer removed; permanent message detection added
 const CoachingLane=({message,showArrow,customer5Ref})=>{
   const [visible,setVisible]=useState(false);
   const [displayed,setDisplayed]=useState(null);
@@ -170,23 +169,13 @@ const CoachingLane=({message,showArrow,customer5Ref})=>{
   const clearAll=()=>{clearTimeout(autoTimer.current);clearTimeout(fadeTimer.current);};
   const show=(msg,keepAlive)=>{
     clearAll();setFading(false);setDisplayed(msg);setVisible(true);
-    if(!keepAlive){autoTimer.current=setTimeout(()=>{setFading(true);fadeTimer.current=setTimeout(()=>{setVisible(false);setDisplayed(null);setFading(false);},450);},6200);}
+    const isPermanent=keepAlive||(msg&&msg.includes('🔁'));
+    if(!isPermanent){autoTimer.current=setTimeout(()=>{setFading(true);fadeTimer.current=setTimeout(()=>{setVisible(false);setDisplayed(null);setFading(false);},450);},6200);}
   };
   const hide=()=>{clearAll();setFading(true);fadeTimer.current=setTimeout(()=>{setVisible(false);setDisplayed(null);setFading(false);},450);};
   useEffect(()=>{if(message){show(message,showArrow);}else{if(visible)hide();}return clearAll;},[message]);
-  useEffect(()=>{if(!showArrow&&visible&&displayed){clearAll();autoTimer.current=setTimeout(()=>{setFading(true);fadeTimer.current=setTimeout(()=>{setVisible(false);setDisplayed(null);setFading(false);},450);},6200);}},[showArrow]);
+  useEffect(()=>{if(!showArrow&&visible&&displayed&&!(displayed&&displayed.includes('🔁'))){clearAll();autoTimer.current=setTimeout(()=>{setFading(true);fadeTimer.current=setTimeout(()=>{setVisible(false);setDisplayed(null);setFading(false);},450);},6200);}},[showArrow]);
   const isActive=visible&&displayed;
-  const [arrowPos,setArrowPos]=useState(null);
-  const [fingerVisible,setFingerVisible]=useState(false);
-  const fingerTimer=useRef(null);
-  useEffect(()=>{
-    if(!showArrow||!customer5Ref||!customer5Ref.current)return;
-    const update=()=>{const r=customer5Ref.current.getBoundingClientRect();setArrowPos({x:Math.round(r.right+4),y:Math.round(r.top+r.height/2)});};
-    update();setFingerVisible(true);clearTimeout(fingerTimer.current);
-    fingerTimer.current=setTimeout(()=>setFingerVisible(false),6000);
-    window.addEventListener('scroll',update,{passive:true});window.addEventListener('resize',update,{passive:true});
-    return()=>{window.removeEventListener('scroll',update);window.removeEventListener('resize',update);clearTimeout(fingerTimer.current);};
-  },[showArrow,customer5Ref]);
   const renderLines=(msg)=>msg.split('\n').map((line,i)=>(<span key={i} style={{display:'block',lineHeight:1.55}}>{line}</span>));
   return(
     <div className={`coaching-lane ${isActive?'active':'inactive'}`}>
@@ -210,9 +199,6 @@ const CoachingLane=({message,showArrow,customer5Ref})=>{
             <span style={{fontSize:'0.85rem',fontWeight:'700',fontStyle:'italic',color:'#374151',textAlign:'center',width:'100%'}}>{renderLines(displayed)}</span>
           )}
         </span>
-      )}
-      {showArrow&&isActive&&arrowPos&&fingerVisible&&(
-        <span className="finger-point" style={{position:'fixed',left:arrowPos.x,top:arrowPos.y-20,fontSize:'1.6rem',pointerEvents:'none',zIndex:30,filter:'drop-shadow(0 2px 4px rgba(124,58,237,0.5))'}}>👆</span>
       )}
     </div>
   );
@@ -243,8 +229,8 @@ const ContactPanel=({grandTotal,isOpen,onClose,tabColoured,onTabClick})=>{
         </div>
         <div style={{padding:'1rem',display:'flex',flexDirection:'column',gap:'0.5rem',flex:1}}>
           {[
-            {href:CONTACT.registrationUrl,icon:'🔥',title:'Jump in',sub:'"I\'m ready to get registered and start earning"',shadow:'rgba(109,40,217,0.3)'},
-            {href:CONTACT.calendarUrl,icon:'🗓️',title:'Book in',sub:'"I\'ve got questions and I\'d love a chat"',shadow:'rgba(168,85,247,0.3)'},
+            {href:CONTACT.registrationUrl,icon:'🔥',title:'Jump in',sub:"I'm ready to get registered and start earning",shadow:'rgba(109,40,217,0.3)'},
+            {href:CONTACT.calendarUrl,icon:'🗓️',title:'Book in',sub:"I've got questions and I'd love a chat",shadow:'rgba(168,85,247,0.3)'},
             {href:CONTACT.savingsUrl,icon:'💡',title:'Explore Savings',sub:"I'd like to see the customer benefits.",shadow:'rgba(234,179,8,0.3)'},
           ].map(btn=>(
             <a key={btn.title} href={btn.href} target="_blank" rel="noopener noreferrer" style={{minHeight:'5.5rem',borderRadius:'0.75rem',display:'flex',alignItems:'center',gap:'0.7rem',padding:'0.8rem 0.9rem',background:'white',boxShadow:`3px 3px 10px ${btn.shadow}`,textDecoration:'none',transition:'transform 0.15s'}} onMouseEnter={e=>e.currentTarget.style.transform='scale(1.02)'} onMouseLeave={e=>e.currentTarget.style.transform='scale(1)'} onClick={onClose}>
@@ -255,7 +241,7 @@ const ContactPanel=({grandTotal,isOpen,onClose,tabColoured,onTabClick})=>{
           <div style={{borderRadius:'0.75rem',background:'white',boxShadow:'3px 3px 10px rgba(219,39,119,0.3)',padding:'0.8rem 0.9rem 0.85rem'}}>
             <div style={{display:'flex',alignItems:'center',gap:'0.7rem',marginBottom:'0.65rem'}}>
               <span style={{fontSize:'1.3rem',lineHeight:1,flexShrink:0}}>👋</span>
-              <span style={{flex:1}}><span style={{fontWeight:'700',fontSize:'0.9rem',display:'block',color:'#1f2937'}}>Say hi</span><span style={{fontSize:'0.73rem',marginTop:'0.2rem',display:'block',fontStyle:'italic',lineHeight:'1.35',color:'#6b7280'}}>"I'd love help with my next step"</span></span>
+              <span style={{flex:1}}><span style={{fontWeight:'700',fontSize:'0.9rem',display:'block',color:'#1f2937'}}>Say hi</span><span style={{fontSize:'0.73rem',marginTop:'0.2rem',display:'block',fontStyle:'italic',lineHeight:'1.35',color:'#6b7280'}}>I'd love help with my next step</span></span>
             </div>
             <div style={{display:'flex',gap:'0.6rem',justifyContent:'center'}}>
               {[{href:whatsappUrl(),icon:<WaIcon/>,title:'WhatsApp'},{href:emailUrl(),icon:<EmailIcon/>,title:'Email'},{href:phoneUrl(),icon:<PhoneIcon/>,title:'Call'}].map(btn=>(
@@ -345,7 +331,9 @@ const HowPaidPopup=({onClose,fastStarterAchieved,revenueExplored})=>{
   );
 };
 
-const RevenueCard=({grandTotal,supportingBonus,partnerTotalEarnings,onInteracted,wiggle})=>{
+// CHANGES 2+4: revenue-card-wrap now uses left/transform positioning, not bottom:0
+// dockedBottom + dockedMaxHeight props control dynamic docking
+const RevenueCard=({grandTotal,supportingBonus,partnerTotalEarnings,onInteracted,wiggle,dockedBottom,dockedMaxHeight})=>{
   const [expanded,setExpanded]=useState(false);
   const collapseTimer=useRef(null);
   const handleToggle=()=>{
@@ -360,7 +348,7 @@ const RevenueCard=({grandTotal,supportingBonus,partnerTotalEarnings,onInteracted
   };
   useEffect(()=>()=>clearTimeout(collapseTimer.current),[]);
   return(
-    <div className="revenue-card-wrap">
+    <div className="revenue-card-wrap" style={{bottom:`${dockedBottom}px`,maxHeight:`${dockedMaxHeight}px`,overflowY:'auto'}}>
       <div className={`revenue-card${wiggle?' revenue-wiggle':''}`}>
         <div onClick={handleToggle} style={{padding:'0.85rem 1rem',display:'flex',alignItems:'center',justifyContent:'space-between',gap:'0.5rem',cursor:'pointer',userSelect:'none'}}>
           <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}>
@@ -417,6 +405,32 @@ const UWTracker=()=>{
   const [revenueCardVisible,setRevenueCardVisible]=useState(false);
   const [revenueWiggle,setRevenueWiggle]=useState(false);
   const [circleGlow,setCircleGlow]=useState(false);
+  const [pBadgeGlow,setPBadgeGlow]=useState(false);
+
+  // CHANGES 1+3: refs for docking measurement, docking state + effect
+  const circlesRef=useRef(null);
+  const totalEarningsRef=useRef(null);
+  const [revenueBottomOffset,setRevenueBottomOffset]=useState(0);
+  const [revenueMaxHeight,setRevenueMaxHeight]=useState(200);
+
+  useEffect(()=>{
+    const updateDocking=()=>{
+      if(!circlesRef.current||!totalEarningsRef.current)return;
+      const circlesRect=circlesRef.current.getBoundingClientRect();
+      const earningsRect=totalEarningsRef.current.getBoundingClientRect();
+      const gap=earningsRect.top-circlesRect.bottom;
+      setRevenueBottomOffset(window.innerHeight-earningsRect.top);
+      setRevenueMaxHeight(Math.max(60,gap-12));
+    };
+    updateDocking();
+    window.addEventListener('resize',updateDocking);
+    window.addEventListener('scroll',updateDocking,{passive:true});
+    return()=>{
+      window.removeEventListener('resize',updateDocking);
+      window.removeEventListener('scroll',updateDocking);
+    };
+  },[]);
+
   const qdShown=useRef(false);
   const mixShown=useRef(false);
   const inactivityTimer=useRef(null);
@@ -470,8 +484,12 @@ const UWTracker=()=>{
     }
   },[totalForQD,oneRemaining,allHomeowners,allTenants,qualifiesForFastStarter]);
 
+  // CHANGE 8e: P badge glow fires when partner prompt appears
   useEffect(()=>{
-    if(allCirclesFilled&&!hasPartner&&!qualifiesForFastStarter){setCoachArrow(true);setCoachMsg('__partner_prompt__');}
+    if(allCirclesFilled&&!hasPartner&&!qualifiesForFastStarter){
+      setCoachArrow(true);setCoachMsg('__partner_prompt__');
+      setPBadgeGlow(true);setTimeout(()=>setPBadgeGlow(false),2100);
+    }
     else if(allCirclesFilled&&hasPartner){setCoachArrow(false);if(coachMsg==='__partner_prompt__')setCoachMsg(null);}
   },[allCirclesFilled,hasPartner,qualifiesForFastStarter]);
 
@@ -509,6 +527,7 @@ const UWTracker=()=>{
       setStageRevealShown(true);
       setTabColoured(true);
       setCircleGlow(true);setTimeout(()=>setCircleGlow(false),2000);
+      // CHANGE 7: message contains 🔁 — CoachingLane will NOT auto-hide it
       setCoachMsg("🔁 Keep exploring customer types\n💡 Learn how it works\n🧭 Next steps");
     },5000);
     resetInactivity();
@@ -555,7 +574,7 @@ const UWTracker=()=>{
     setHasInteracted(false);setShowBestGuess(false);setCoachMsg(null);setCoachArrow(false);
     setTabColoured(false);setFastStarterAchieved(false);setInfoBulbPulsed(false);
     setStageRevealShown(false);setYouBulbPulsed(false);setRevenueCardVisible(false);setRevenueExplored(false);
-    setFirstCustomerDone(false);setCircleGlow(false);setRevenueWiggle(false);
+    setFirstCustomerDone(false);setCircleGlow(false);setRevenueWiggle(false);setPBadgeGlow(false);
     clearTimeout(inactivityTimer.current);clearTimeout(tooltipTimer.current);clearTimeout(stageRevealTimer.current);
     setYouTooltipVisible(false);
   };
@@ -597,7 +616,8 @@ const UWTracker=()=>{
         </div>
 
         <div style={{background:'white',borderRadius:'1rem',boxShadow:'0 4px 16px rgba(0,0,0,0.08)',padding:'1.5rem'}}>
-          <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'1rem',marginBottom:'1rem'}}>
+          {/* CHANGE 1b: circlesRef attached to the 6-circle grid */}
+          <div ref={circlesRef} style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'1rem',marginBottom:'1rem'}}>
             {customers.map((customer,index)=>{
               const col=circleColor(customer);const cb=calculateCB(customer,index);
               const showHAB=customer.type==='homeowner'&&(customer.services===3||customer.services===4)&&highActivityCustomers>=2;
@@ -610,12 +630,13 @@ const UWTracker=()=>{
                     :customer.type?(
                       <><span style={{fontSize:'0.875rem',fontWeight:'700'}}>£{cb.toLocaleString()}</span>
                       {showHAB&&<div style={{position:'absolute',top:'-0.25rem',right:'-0.25rem',padding:'0.125rem 0.25rem',background:'#f97316',color:'white',fontSize:'0.625rem',fontWeight:'700',borderRadius:'0.25rem',zIndex:10}}>+£{habPerCustomer}</div>}
-                      <div onClick={(e)=>handlePartnerBadgeClick(e,index)} style={{position:'absolute',bottom:'-0.25rem',right:'-0.25rem',width:'1.5rem',height:'1.5rem',borderRadius:'50%',border:`2px solid ${customer.isPartner?'#ca8a04':'#9ca3af'}`,display:'flex',alignItems:'center',justifyContent:'center',zIndex:10,cursor:'pointer',background:customer.isPartner?'#facc15':'#e5e7eb',transition:'transform 0.15s'}}>
+                      {/* CHANGE 8f: glow ring on grey P badges when partner prompt fires */}
+                      <div onClick={(e)=>handlePartnerBadgeClick(e,index)} className={!customer.isPartner&&pBadgeGlow?'p-badge-glow':''} style={{position:'absolute',bottom:'-0.25rem',right:'-0.25rem',width:'1.5rem',height:'1.5rem',borderRadius:'50%',border:`2px solid ${customer.isPartner?'#ca8a04':'#9ca3af'}`,display:'flex',alignItems:'center',justifyContent:'center',zIndex:10,cursor:'pointer',background:customer.isPartner?'#facc15':'#e5e7eb',transition:'transform 0.15s'}}>
                         <span style={{fontSize:'0.625rem',fontWeight:'700',color:customer.isPartner?'#713f12':'#6b7280'}}>P</span>
                       </div></>
                     ):(
                       <><span style={{fontSize:'0.875rem'}}>{includeYou?ordinal(index):ordinal(index+1)}</span>
-                      <div style={{position:'absolute',bottom:'-0.25rem',right:'-0.25rem',width:'1.5rem',height:'1.5rem',borderRadius:'50%',border:'2px solid #9ca3af',display:'flex',alignItems:'center',justifyContent:'center',zIndex:10,background:'#e5e7eb'}}>
+                      <div className={pBadgeGlow?'p-badge-glow':''} style={{position:'absolute',bottom:'-0.25rem',right:'-0.25rem',width:'1.5rem',height:'1.5rem',borderRadius:'50%',border:'2px solid #9ca3af',display:'flex',alignItems:'center',justifyContent:'center',zIndex:10,background:'#e5e7eb'}}>
                         <span style={{fontSize:'0.625rem',fontWeight:'700',color:'#6b7280'}}>P</span>
                       </div></>
                     )}
@@ -637,124 +658,4 @@ const UWTracker=()=>{
 
             <div className="earnings-banner" style={{padding:'0.75rem 1rem',borderRadius:'0.5rem',border:`4px solid ${highActivityCustomers>=2?'#f97316':'#e5e7eb'}`,background:highActivityCustomers>=2?'#fff7ed':'#f9fafb',opacity:highActivityCustomers>=2?1:0.5,transition:'opacity 0.3s,border-color 0.3s,background 0.3s'}}>
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-                <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}><span style={{fontSize:'1.25rem',filter:highActivityCustomers>=2?'none':'grayscale(1)',opacity:highActivityCustomers>=2?1:0.4}}>🔥</span><span style={{fontWeight:'600',color:highActivityCustomers>=2?'#ea580c':'#6b7280'}}>High Activity Bonus:</span></div>
-                <span style={{fontSize:'1.25rem',fontWeight:'700',color:highActivityCustomers>=2?'#ea580c':'#9ca3af'}}>{highActivityCustomers>=2?`£${totalHAB.toLocaleString()}`:'—'}</span>
-              </div>
-              {!highActivityCustomers&&(<p style={{margin:'0.3rem 0 0 1.75rem',fontSize:'0.72rem',color:'#9ca3af',fontStyle:'italic'}}>Add 2 or more homeowners with 3 services</p>)}
-            </div>
-
-            <div className="earnings-banner" style={{padding:'0.75rem 1rem',borderRadius:'0.5rem',border:`2px solid ${qualifiesForFastStarter?'#86efac':'#e5e7eb'}`,background:qualifiesForFastStarter?'#f0fdf4':'#f9fafb'}}>
-              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-                <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}><TrendingUp style={{...MD,color:qualifiesForFastStarter?'#16a34a':'#d1d5db'}}/><span style={{fontWeight:'600',color:qualifiesForFastStarter?'#16a34a':'#6b7280'}}>Fast Starter Bonus:</span></div>
-                <span style={{fontSize:'1.25rem',fontWeight:'700',color:qualifiesForFastStarter?'#16a34a':'#9ca3af'}}>£{fastStarterBonus.toLocaleString()}</span>
-              </div>
-            </div>
-
-            <div className="earnings-banner" style={{padding:'0.75rem 1rem',borderRadius:'0.5rem',border:`4px solid ${recurringActive?'#2563eb':'#d1d5db'}`,background:recurringActive?'#eff6ff':'#f9fafb',opacity:recurringActive?1:0.5,transition:'opacity 0.3s,border-color 0.3s'}}>
-              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-                <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}><RefreshCw style={{...MD,color:recurringActive?'#2563eb':'#d1d5db'}}/><span style={{fontWeight:'600',color:recurringActive?'#374151':'#6b7280'}}>Recurring Income:</span></div>
-                <div style={{textAlign:'right'}}>
-                  <span style={{fontSize:'1.25rem',fontWeight:'700',color:recurringActive?'#2563eb':'#9ca3af'}}>{recurringActive?`£${residualIncome.toFixed(2)}/m`:'—'}</span>
-                  {recurringActive&&<span style={{display:'block',fontSize:'0.75rem',color:'#3b82f6'}}>(£{(residualIncome*12).toLocaleString()}/yr)</span>}
-                </div>
-              </div>
-              {!recurringActive&&(<p style={{margin:'0.3rem 0 0 1.75rem',fontSize:'0.72rem',color:'#9ca3af',fontStyle:'italic'}}>Add a tenant to activate</p>)}
-            </div>
-
-            <div className="earnings-banner" style={{padding:'1rem',borderRadius:'0.5rem',boxShadow:'0 2px 8px rgba(0,0,0,0.15)',color:'white',position:'relative',overflow:'hidden'}}>
-              <div style={{position:'absolute',inset:0,background:grandTotal>0?'linear-gradient(to right,#7c3aed,#db2777)':'#9ca3af'}}></div>
-              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',position:'relative',zIndex:1}}>
-                <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}>
-                  <span style={{fontWeight:'700',fontSize:'1.125rem'}}>TOTAL EARNINGS:</span>
-                  <button onClick={(e)=>{e.stopPropagation();setShowInfoPopup(true);}} style={{background:'none',border:'none',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',padding:0,lineHeight:1}}>
-                    {infoBulbActive&&!infoBulbPulsed?<PulsingBulb size="1.8rem" onDone={()=>setInfoBulbPulsed(true)}/>:<Bulb size="1.8rem" grey={!infoBulbActive}/>}
-                  </button>
-                </div>
-                <span style={{fontSize:'1.5rem',fontWeight:'700'}}>£{grandTotal.toLocaleString()}</span>
-              </div>
-            </div>
-
-            {!qualifiesForFastStarter&&(
-              <div style={{borderRadius:'0.75rem',border:'2px solid #e5e7eb',overflow:'hidden'}}>
-                <div style={{padding:'1rem',background:'#f9fafb',display:'flex',alignItems:'center',gap:'0.5rem'}}>
-                  <span style={{fontSize:'1.1rem',filter:'grayscale(1)',opacity:0.5,lineHeight:1}}>🔒</span>
-                  <span style={{fontWeight:'700',fontSize:'0.95rem',color:'#9ca3af'}}>Three revenue streams (locked)</span>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div style={{marginTop:'1rem'}}>
-          <button onClick={()=>setShowResetConfirm(true)} style={{width:'100%',padding:'0.75rem',background:'#e5e7eb',border:'none',borderRadius:'0.5rem',fontWeight:'600',color:'#374151',cursor:'pointer',fontSize:'1rem'}}>Reset</button>
-        </div>
-      </div>
-
-      {revenueCardVisible&&(
-        <div className="revenue-slide-up" style={{animationFillMode:'forwards'}}>
-          <RevenueCard grandTotal={grandTotal} supportingBonus={supportingBonus} partnerTotalEarnings={partnerTotalEarnings} onInteracted={handleRevenueInteracted} wiggle={revenueWiggle}/>
-        </div>
-      )}
-
-      {showInfoPopup&&<HowPaidPopup onClose={()=>setShowInfoPopup(false)} fastStarterAchieved={fastStarterAchieved} revenueExplored={revenueExplored}/>}
-
-      {selectedCircle!==null&&(
-        <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.3)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:50,padding:'1rem'}} onClick={()=>{setSelectedCircle(null);setShowBestGuess(false);}}>
-          <div className="animate-slideDown" style={{background:'white',borderRadius:'0.75rem',padding:'1.5rem',boxShadow:'0 20px 50px rgba(0,0,0,0.3)',maxWidth:'24rem',width:'100%'}} onClick={e=>e.stopPropagation()}>
-            <p style={{fontSize:'1rem',fontWeight:'700',color:'#111827',marginBottom:'0.15rem',textAlign:'center'}}>Choose a customer example</p>
-            <p style={{fontSize:'0.82rem',color:'#6b7280',marginBottom:'0.75rem',textAlign:'center',fontStyle:'italic'}}>Homeowner or tenant — what would you like to try first?</p>
-            {showBestGuess&&(
-              <p style={{fontSize:'0.82rem',color:'#374151',fontWeight:'700',fontStyle:'italic',textAlign:'center',margin:'0 0 0.85rem',background:'#fef9c3',padding:'0.45rem 0.65rem',borderRadius:'0.4rem',lineHeight:'1.6'}}>
-                💡 Just make your best guess<br/>— you can change this later.
-              </p>
-            )}
-            <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'0.5rem',marginBottom:'0.75rem'}}>
-              {[1,2,3,4].map(num=>{const cb=[50,100,250,300][num-1];const active=customers[selectedCircle]&&customers[selectedCircle].type==='homeowner'&&customers[selectedCircle].services===num;return(
-                <button key={num} onClick={()=>setCustomerType('homeowner',num)} style={{padding:'1rem 0.5rem',border:`2px solid ${active?'#7c3aed':'#c4b5fd'}`,borderRadius:'0.5rem',background:active?'#7c3aed':'#f5f3ff',color:active?'white':'#6d28d9',cursor:'pointer',fontWeight:'600'}}>
-                  <div style={{fontSize:'1rem',fontWeight:'700'}}>{num}</div><div style={{fontSize:'0.75rem',marginTop:'0.25rem'}}>(£{cb})</div>
-                </button>);})}
-            </div>
-            <p style={{textAlign:'center',fontSize:'0.875rem',color:'#6b7280',marginBottom:'0.75rem'}}>or</p>
-            <button onClick={()=>setCustomerType('renting')} style={{width:'100%',padding:'0.75rem',border:`2px solid ${customers[selectedCircle]&&customers[selectedCircle].type==='renting'?'#2563eb':'#93c5fd'}`,borderRadius:'0.5rem',background:customers[selectedCircle]&&customers[selectedCircle].type==='renting'?'#2563eb':'#eff6ff',color:customers[selectedCircle]&&customers[selectedCircle].type==='renting'?'white':'#1d4ed8',cursor:'pointer',fontWeight:'600',marginBottom:'0.75rem'}}>
-              <div style={{fontSize:'1rem',fontWeight:'700'}}>Tenant/Renting</div><div style={{fontSize:'0.75rem',fontWeight:'400'}}>(No customer bonus, just recurring income)</div>
-            </button>
-            {customers[selectedCircle]&&customers[selectedCircle].type!==null&&(
-              <button onClick={removeCustomer} style={{width:'100%',padding:'0.75rem',border:'2px solid #fca5a5',borderRadius:'0.5rem',background:'#fef2f2',color:'#b91c1c',cursor:'pointer',fontWeight:'600'}}>Remove Customer</button>
-            )}
-          </div>
-        </div>
-      )}
-
-      {showResetConfirm&&(
-        <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.3)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:50,padding:'1rem'}}>
-          <div className="animate-slideDown" style={{background:'white',borderRadius:'0.75rem',padding:'1.5rem',boxShadow:'0 20px 50px rgba(0,0,0,0.3)',maxWidth:'24rem',width:'100%'}}>
-            <p style={{fontSize:'1.125rem',fontWeight:'600',color:'#111827',marginBottom:'1rem',textAlign:'center'}}>Are you sure?</p>
-            <p style={{fontSize:'0.875rem',color:'#6b7280',marginBottom:'1.5rem',textAlign:'center'}}>This will reset all customer data and cannot be undone.</p>
-            <div style={{display:'flex',gap:'0.75rem'}}>
-              <button onClick={()=>setShowResetConfirm(false)} style={{flex:1,padding:'0.5rem',background:'#e5e7eb',border:'none',borderRadius:'0.5rem',fontWeight:'600',color:'#374151',cursor:'pointer'}}>No</button>
-              <button onClick={resetTracking} style={{flex:1,padding:'0.5rem',background:'#ef4444',border:'none',borderRadius:'0.5rem',fontWeight:'600',color:'white',cursor:'pointer'}}>Yes, Reset</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {showCelebration&&(
-        <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.5)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:40,padding:'1rem'}}>
-          <div className="animate-bounceOnce" style={{background:'white',borderRadius:'1rem',padding:'2rem',maxWidth:'28rem',textAlign:'center',boxShadow:'0 20px 60px rgba(0,0,0,0.3)'}}>
-            <div style={{fontSize:'3.75rem',marginBottom:'1rem'}}>🎉</div>
-            <h2 style={{fontSize:'1.875rem',fontWeight:'700',color:'#7c3aed',marginBottom:'1rem'}}>Congratulations!</h2>
-            <p style={{fontSize:'1.25rem',color:'#374151',marginBottom:'0.5rem'}}>You've qualified for the</p>
-            <p style={{fontSize:'2.25rem',fontWeight:'700',color:'#16a34a',marginBottom:'0.15rem',lineHeight:1.15}}>£500 fast</p>
-            <p style={{fontSize:'2.25rem',fontWeight:'700',color:'#16a34a',marginBottom:'1rem',lineHeight:1.15}}>starter bonus</p>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
-const root=ReactDOM.createRoot(document.getElementById('root'));
-root.render(React.createElement(UWTracker));
-</script>
-</body>
-</html>
+                <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}><span style={{fontSize:'1.25rem',filter:highActivityCustomers>=2?'none':'graysc
