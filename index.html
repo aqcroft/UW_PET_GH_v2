@@ -17,27 +17,60 @@
   @keyframes tabPulse { 0%,100%{box-shadow:3px 0 14px rgba(124,58,237,0.35)} 25%{box-shadow:3px 0 26px rgba(219,39,119,0.85)} 50%{box-shadow:3px 0 14px rgba(124,58,237,0.35)} 75%{box-shadow:3px 0 26px rgba(219,39,119,0.85)} }
   @keyframes coachFadeIn { 0%{opacity:0;transform:translateY(6px)} 100%{opacity:1;transform:translateY(0)} }
   @keyframes coachFadeOut { 0%{opacity:1;transform:translateY(0)} 100%{opacity:0;transform:translateY(-4px)} }
-  /* Change 8: fingerPoint removed. badgeGlow added. */
   @keyframes badgeGlow {
-    0%   { box-shadow: 0 0 0 0px rgba(168,85,247,0.9), 0 0 0 0px rgba(168,85,247,0.3); }
-    40%  { box-shadow: 0 0 0 5px rgba(168,85,247,0.55), 0 0 0 10px rgba(168,85,247,0.15); }
+    0%   { box-shadow: 0 0 0 0px rgba(168,85,247,0.7), 0 0 0 0px rgba(168,85,247,0.2); }
+    50%  { box-shadow: 0 0 0 6px rgba(168,85,247,0.4), 0 0 0 12px rgba(168,85,247,0.1); }
     100% { box-shadow: 0 0 0 0px rgba(168,85,247,0), 0 0 0 0px rgba(168,85,247,0); }
   }
-  @keyframes revenueSlideUp {
-    0%   { opacity:0; transform: translateY(60px) scale(0.97); }
-    100% { opacity:1; transform: translateY(0) scale(1); }
+  @keyframes circleGlowAnim {
+    0%,100% { box-shadow: 0 0 0 0 rgba(124,58,237,0); }
+    50%     { box-shadow: 0 0 0 8px rgba(124,58,237,0.3); }
+  }
+  @keyframes revenueSlideIn {
+    0%   { opacity:0; transform: translateX(80px) scale(0.96); }
+    100% { opacity:1; transform: translateX(0) scale(1); }
   }
   @keyframes revenueWiggle {
     0%   { transform: translateX(0); }
-    20%  { transform: translateX(-6px); }
-    40%  { transform: translateX(6px); }
-    60%  { transform: translateX(-4px); }
-    80%  { transform: translateX(4px); }
+    20%  { transform: translateX(-5px); }
+    40%  { transform: translateX(5px); }
+    60%  { transform: translateX(-3px); }
+    80%  { transform: translateX(3px); }
     100% { transform: translateX(0); }
   }
-  @keyframes softGlow {
-    0%,100% { box-shadow: 0 0 0 0 rgba(124,58,237,0); }
-    50%     { box-shadow: 0 0 0 6px rgba(124,58,237,0.25); }
+  /* Double pulse — two gentle waves */
+  @keyframes linePulse {
+    0%   { transform:scale(1); }
+    20%  { transform:scale(1.055); }
+    40%  { transform:scale(1); }
+    65%  { transform:scale(1.04); }
+    85%  { transform:scale(1); }
+    100% { transform:scale(1); }
+  }
+  /* Slow gentle tab shimmer — not urgent */
+  @keyframes tabShimmer {
+    0%,100% { box-shadow:3px 0 14px rgba(124,58,237,0.3); opacity:1; }
+    40%     { box-shadow:3px 0 22px rgba(219,39,119,0.6); opacity:0.88; }
+  }
+  /* Synchronized gentle pulse — used by arrow, revenue tab, and coaching lines together */
+  @keyframes gentlePulse {
+    0%,100% { transform:scale(1); opacity:1; }
+    50%     { transform:scale(1.22); opacity:0.78; }
+  }
+  /* Arrow emoji pulse — same timing as gentlePulse */
+  @keyframes arrowPulse {
+    0%,100% { transform:scale(1); opacity:1; }
+    50%     { transform:scale(1.25); opacity:0.75; }
+  }
+  /* Revenue tab unlock pulse — synced with arrow */
+  @keyframes revTabPulse {
+    0%,100% { box-shadow:-3px 0 12px rgba(124,58,237,0.3); }
+    50%     { box-shadow:-8px 0 32px rgba(219,39,119,0.85); }
+  }
+  /* Tab shimmer — more pronounced */
+  @keyframes tabShimmerStrong {
+    0%,100% { box-shadow:3px 0 14px rgba(124,58,237,0.3); filter:brightness(1); }
+    50%     { box-shadow:3px 0 28px rgba(219,39,119,0.85); filter:brightness(1.18); }
   }
   .animate-slideDown { animation: slideDown 0.2s ease-out forwards; }
   .animate-confetti { animation: confetti 3s ease-in forwards; }
@@ -46,11 +79,21 @@
   .tab-pulse { animation: tabPulse 0.95s ease-in-out 2; }
   .coach-in  { animation: coachFadeIn  0.55s ease-out forwards; }
   .coach-out { animation: coachFadeOut 0.45s ease-in  forwards; }
-  /* Change 8: .finger-point removed. .p-badge-glow replaces it. */
-  .p-badge-glow { animation: badgeGlow 0.67s ease-out 3; animation-fill-mode: forwards; }
-  .revenue-slide-up { animation: revenueSlideUp 0.7s cubic-bezier(0.22,1,0.36,1) forwards; }
+  .p-badge-glow { animation: badgeGlow 1.4s ease-in-out 3; animation-fill-mode: forwards; }
+  .circle-glow-anim { animation: circleGlowAnim 1.2s ease-in-out 2; }
+  .revenue-slide-in { animation: revenueSlideIn 1.6s cubic-bezier(0.22,1,0.36,1) forwards; }
   .revenue-wiggle { animation: revenueWiggle 0.5s ease-in-out 1; }
-  .soft-glow { animation: softGlow 2s ease-in-out 1; }
+  .line-pulse { animation: gentlePulse 1.4s ease-in-out 1; }
+  .line-pulse-double { animation: gentlePulse 1.4s ease-in-out 2; }
+  .tab-shimmer { animation: tabShimmerStrong 1.4s ease-in-out 2; }
+  .rev-tab-pulse { animation: revTabPulse 1.4s ease-in-out 3; }
+  .rev-tab-pulse-double { animation: revTabPulse 1.4s ease-in-out 2; }
+  .rev-tab-pulse-single { animation: revTabPulse 1.4s ease-in-out 1; }
+  .arrow-pulse { animation: arrowPulse 1.4s ease-in-out 3; }
+  .bulb-pulse-double { animation: gentlePulse 1.4s ease-in-out 2; }
+  .bulb-pulse-single { animation: gentlePulse 1.4s ease-in-out 1; }
+  .tab-pulse-double { animation: tabShimmerStrong 1.4s ease-in-out 2; }
+  .tab-pulse-single { animation: tabShimmerStrong 1.4s ease-in-out 1; }
   * { box-sizing: border-box; }
   @media (orientation: landscape) and (max-height: 500px) {
     .accordion-list { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 0.4rem !important; align-items: start !important; }
@@ -82,24 +125,25 @@
   .contact-panel-overlay.visible { opacity:1;pointer-events:auto; }
   .contact-panel { position:fixed;top:0;left:0;height:100%;width:min(22rem,88vw);background:white;box-shadow:6px 0 32px rgba(0,0,0,0.22);transform:translateX(-100%);transition:transform 0.38s cubic-bezier(0.4,0,0.2,1);z-index:151;display:flex;flex-direction:column;overflow-y:auto; }
   .contact-panel.open { transform:translateX(0); }
-  .left-pull-tab { position:fixed;top:50%;left:0;transform:translateY(-50%);z-index:152;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.2rem;color:white;border-radius:0 0.6rem 0.6rem 0;padding:0.7rem 0.45rem;cursor:pointer;transition:transform 0.38s cubic-bezier(0.4,0,0.2,1),filter 0.2s,background 0.45s;user-select:none; }
+  .left-pull-tab { position:fixed;top:50%;left:0;transform:translateY(-50%);z-index:165;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.2rem;color:white;border-radius:0 0.6rem 0.6rem 0;padding:0.7rem 0.45rem;cursor:pointer;transition:transform 0.38s cubic-bezier(0.4,0,0.2,1),filter 0.2s,background 0.45s;user-select:none; }
   .left-pull-tab.tab-grey { background:#9ca3af;box-shadow:3px 0 10px rgba(0,0,0,0.15); }
   .left-pull-tab.tab-coloured { background:linear-gradient(135deg,#7c3aed,#db2777);box-shadow:3px 0 14px rgba(124,58,237,0.35); }
   .left-pull-tab:hover { filter:brightness(1.1); }
   .left-pull-tab.panel-open { transform:translateY(-50%) translateX(min(22rem,88vw)); }
   .pull-tab-emoji { font-size:1.15rem;line-height:1;margin-bottom:0.3rem; }
-  .pull-tab-label { writing-mode:vertical-rl;text-orientation:mixed;font-size:0.6rem;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;line-height:1.2; }
+  .pull-tab-label { writing-mode:vertical-rl;text-orientation:mixed;font-size:0.65rem;font-weight:400;letter-spacing:0.08em;text-transform:uppercase;line-height:1.2; }
   .intro-modal-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:300;padding:1rem; }
-  .coaching-lane { border-radius:0.6rem;padding:0.6rem 0.9rem;margin-bottom:0.85rem;min-height:5.2rem;display:flex;align-items:center;gap:0.5rem;transition:border-color 0.3s,background 0.3s; }
+  .coaching-lane { border-radius:0.6rem;padding:0.5rem 0.75rem;margin-bottom:0.5rem;height:4.8rem;display:flex;align-items:center;gap:0.45rem;transition:border-color 0.3s,background 0.3s;flex-shrink:0; }
   .coaching-lane.inactive { border:1.5px dashed #d1d5db;background:#f9fafb; }
   .coaching-lane.active   { border:1.5px solid #c4b5fd;background:linear-gradient(135deg,#f5f3ff,#eff6ff); }
   .p-badge { width:1.35rem;height:1.35rem;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:800;flex-shrink:0;vertical-align:middle; }
   .p-badge-grey { background:#e5e7eb;border:2px solid #9ca3af;color:#6b7280; }
   .p-badge-gold { background:#facc15;border:2px solid #ca8a04;color:#713f12; }
-  /* Change 2: revenue-card-wrap — centred, no bottom:0. bottom set dynamically via inline style. */
-  .revenue-card-wrap { position:fixed;left:50%;transform:translateX(-50%);z-index:140;width:min(42rem,100vw);overflow-y:auto; }
-  .revenue-card { background:linear-gradient(135deg,#7c3aed,#db2777);border-radius:1rem 1rem 0 0;overflow:hidden;cursor:pointer;box-shadow:0 -4px 30px rgba(124,58,237,0.4);transition:border-radius 0.3s; }
-  .earnings-banner { min-height:4.5rem;display:flex;flex-direction:column;justify-content:center; }
+  .revenue-card-wrap { position:fixed;right:0;z-index:140;width:2.8rem;transition:width 0.4s cubic-bezier(0.22,1,0.36,1); }
+  .revenue-card-wrap.expanded { width:min(28rem,90vw); }
+  .revenue-card-locked { background:#9ca3af;border-radius:0.6rem 0 0 0.6rem;overflow:hidden;box-shadow:-3px 0 10px rgba(0,0,0,0.15); }
+  .revenue-card-unlocked { background:linear-gradient(135deg,#7c3aed,#db2777);border-radius:0.6rem 0 0 0.6rem;overflow:hidden;box-shadow:-4px 0 24px rgba(124,58,237,0.4);cursor:pointer; }
+  .earnings-banner { min-height:3.5rem;display:flex;flex-direction:column;justify-content:center; }
 </style>
 </head>
 <body>
@@ -127,6 +171,8 @@ const RefreshCw=({style})=>(<svg style={style||{width:'1rem',height:'1rem',flexS
 const X=({style})=>(<svg style={style||{width:'1rem',height:'1rem',flexShrink:0}} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/></svg>);
 const ChevronDown=({style})=>(<svg style={style||{width:'1rem',height:'1rem',flexShrink:0}} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7"/></svg>);
 const ChevronUp=({style})=>(<svg style={style||{width:'1rem',height:'1rem',flexShrink:0}} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7"/></svg>);
+const ChevronLeft=({style})=>(<svg style={style||{width:'1rem',height:'1rem',flexShrink:0}} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7"/></svg>);
+const ChevronRight=({style})=>(<svg style={style||{width:'1rem',height:'1rem',flexShrink:0}} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7"/></svg>);
 const SM={width:'1rem',height:'1rem',flexShrink:0};
 const MD={width:'1.25rem',height:'1.25rem',flexShrink:0};
 const XS={width:'0.875rem',height:'0.875rem',flexShrink:0};
@@ -162,70 +208,133 @@ const IntroModal=({onClose})=>(
   </div>
 );
 
-// Changes 7+8: permanent message detection via 🔁 prefix. Finger pointer logic fully removed.
-const CoachingLane=({message,showArrow})=>{
+const CoachingLane=({message,showArrow,stagedActiveCount,stagedPulseIndex,postCelebArrow,postCelebArrowPulseKey,stagedIsFirstReveal})=>{
   const [visible,setVisible]=useState(false);
   const [displayed,setDisplayed]=useState(null);
   const [fading,setFading]=useState(false);
+  const [arrowPulseKey,setArrowPulseKey]=useState(0);
   const autoTimer=useRef(null);
   const fadeTimer=useRef(null);
   const clearAll=()=>{clearTimeout(autoTimer.current);clearTimeout(fadeTimer.current);};
-  const isPermanent=(msg)=>msg&&msg.includes('🔁');
+  const isPermanent=(msg)=>msg&&(msg==='__staged__');
   const show=(msg,keepAlive)=>{
     clearAll();setFading(false);setDisplayed(msg);setVisible(true);
     if(!keepAlive&&!isPermanent(msg)){
-      autoTimer.current=setTimeout(()=>{setFading(true);fadeTimer.current=setTimeout(()=>{setVisible(false);setDisplayed(null);setFading(false);},450);},6200);
+      autoTimer.current=setTimeout(()=>{setFading(true);fadeTimer.current=setTimeout(()=>{setVisible(false);setDisplayed(null);setFading(false);},450);},10000);
     }
   };
   const hide=()=>{clearAll();setFading(true);fadeTimer.current=setTimeout(()=>{setVisible(false);setDisplayed(null);setFading(false);},450);};
-  useEffect(()=>{if(message){show(message,showArrow);}else{if(visible)hide();}return clearAll;},[message]);
+  useEffect(()=>{if(message){show(message,showArrow||isPermanent(message));}else{if(visible)hide();}return clearAll;},[message]);
   useEffect(()=>{
     if(!showArrow&&visible&&displayed&&!isPermanent(displayed)){
       clearAll();
-      autoTimer.current=setTimeout(()=>{setFading(true);fadeTimer.current=setTimeout(()=>{setVisible(false);setDisplayed(null);setFading(false);},450);},6200);
+      autoTimer.current=setTimeout(()=>{setFading(true);fadeTimer.current=setTimeout(()=>{setVisible(false);setDisplayed(null);setFading(false);},450);},10000);
     }
   },[showArrow]);
+  useEffect(()=>{if(showArrow&&visible)setArrowPulseKey(k=>k+1);},[showArrow,visible]);
+
+  const isStaged=displayed==='__staged__';
   const isActive=visible&&displayed;
-  const renderLines=(msg)=>msg.split('\n').map((line,i)=>(<span key={i} style={{display:'block',lineHeight:1.55}}>{line}</span>));
+
+  // "So... what's next?" header appears immediately; lines build after 2.5s pause
+  // stagedActiveCount drives visibility: 0=header only, 1/2/3=lines visible
+  const lineData=[
+    {text:'🔁 Keep exploring customer types'},
+    {text:'🔍 Understand how we\'re paid'},
+    {text:'🧭 See Next Steps'},
+  ];
+
   return(
     <div className={`coaching-lane ${isActive?'active':'inactive'}`}>
-      <span style={{fontSize:'1.9rem',lineHeight:1,flexShrink:0,filter:isActive?'none':'grayscale(1)',opacity:isActive?1:0.3,transition:'filter 0.3s,opacity 0.3s'}}>💡</span>
+      <span style={{fontSize:'1.5rem',lineHeight:1,flexShrink:0,filter:isActive?'none':'grayscale(1)',opacity:isActive?1:0.25,transition:'none'}}>💡</span>
       {isActive&&(
         <span className={fading?'coach-out':'coach-in'} style={{display:'flex',alignItems:'center',flex:1}}>
           {showArrow?(
-            <span style={{display:'flex',flexDirection:'column',alignItems:'center',gap:'0.25rem',width:'100%'}}>
-              <span style={{display:'flex',alignItems:'center',gap:'0.35rem',justifyContent:'center'}}>
-                <span style={{fontSize:'0.85rem',fontWeight:'700',fontStyle:'italic',color:'#374151'}}>Tap one</span>
+            /* Partner prompt — 3 lines */
+            <span style={{display:'flex',flexDirection:'column',gap:'0.15rem',width:'100%',textAlign:'center'}}>
+              <span style={{fontSize:'0.78rem',fontWeight:'700',fontStyle:'italic',color:'#374151',lineHeight:1.5}}>🙌 Six customers done — nearly there!</span>
+              <span style={{fontSize:'0.78rem',fontWeight:'700',fontStyle:'italic',color:'#374151',lineHeight:1.5}}>Upgrade one to Partner to unlock QD*</span>
+              <span style={{display:'flex',flexWrap:'wrap',alignItems:'center',gap:'0.3rem',justifyContent:'center',lineHeight:1.8}}>
+                <span style={{fontSize:'0.78rem',fontWeight:'700',fontStyle:'italic',color:'#374151'}}>Tap a</span>
                 <span className="p-badge p-badge-grey">P</span>
-                <span style={{fontSize:'0.85rem',fontWeight:'700',fontStyle:'italic',color:'#374151'}}>above to</span>
-              </span>
-              <span style={{display:'flex',alignItems:'center',gap:'0.35rem',justifyContent:'center'}}>
-                <span style={{fontSize:'0.85rem',fontWeight:'700',fontStyle:'italic',color:'#374151'}}>upgrade a customer</span>
-                <span style={{fontSize:'0.75rem',color:'#9ca3af',fontWeight:'700'}}>→</span>
+                <span style={{fontSize:'0.78rem',fontWeight:'700',fontStyle:'italic',color:'#374151'}}>to upgrade:</span>
+                <span key={`arrow-${arrowPulseKey}`} className={`p-badge p-badge-grey${arrowPulseKey>0?' p-badge-glow':''}`}>P</span>
+                <span style={{fontSize:'1.1rem',lineHeight:1}}>➡️</span>
                 <span className="p-badge p-badge-gold">P</span>
               </span>
             </span>
+          ):isStaged?(
+            /* 3 fixed rows. stagedActiveCount=0: "So... what's next?" in row 2.
+               stagedActiveCount 1/2/3: option lines fill rows 1/2/3, header gone */
+            <span style={{display:'flex',flexDirection:'column',width:'100%',textAlign:'center',height:'100%',justifyContent:'space-between'}}>
+              {stagedActiveCount===0?(
+                /* Header phase — centred in the middle row */
+                <>
+                  <span style={{display:'block',fontSize:'0.78rem',lineHeight:1.5,color:'transparent',userSelect:'none'}}>placeholder</span>
+                  <span className="coach-in" style={{display:'block',fontSize:'1.17rem',fontWeight:'700',fontStyle:'italic',color:'#374151',lineHeight:1.4,textAlign:'center'}}>
+                    So... what's next?
+                  </span>
+                  <span style={{display:'block',fontSize:'0.78rem',lineHeight:1.5,color:'transparent',userSelect:'none'}}>placeholder</span>
+                </>
+              ):(
+                /* Option lines phase — 3 rows, each reveals in turn */
+                lineData.map((line,i)=>{
+                  const isPulsing=stagedPulseIndex===i;
+                  const isVisible=i<stagedActiveCount;
+                  return(
+                    <span key={i} className={isPulsing?(stagedIsFirstReveal?'line-pulse-double':'line-pulse'):''} style={{
+                      display:'block',fontSize:'0.78rem',fontWeight:'700',fontStyle:'italic',
+                      color:isVisible?'#374151':'transparent',
+                      lineHeight:1.5,transformOrigin:'center center',
+                      transition:'color 0.5s ease',
+                      userSelect:'none'
+                    }}>{line.text}</span>
+                  );
+                })
+              )}
+            </span>
           ):(
-            <span style={{fontSize:'0.85rem',fontWeight:'700',fontStyle:'italic',color:'#374151',textAlign:'center',width:'100%'}}>{renderLines(displayed)}</span>
+            /* Standard message — check for post-celebration arrow */
+            <span style={{fontSize:'0.78rem',fontWeight:'700',fontStyle:'italic',color:'#374151',textAlign:'center',width:'100%'}}>
+              {displayed&&displayed.split('\n').map((line,i,arr)=>{
+                const isLast=i===arr.length-1;
+                return(
+                  <span key={i} style={{display:'block',lineHeight:1.55}}>
+                    {line}
+                    {isLast&&postCelebArrow&&(
+                      <span key={`pcArrow-${postCelebArrowPulseKey}`} className={postCelebArrowPulseKey>0?'arrow-pulse':''} style={{fontSize:'1.1rem',marginLeft:'0.3rem',display:'inline-block',lineHeight:1,verticalAlign:'middle'}}>➡️</span>
+                    )}
+                  </span>
+                );
+              })}
+            </span>
           )}
+        </span>
+      )}
+      {/* Ghost — always reserves fixed 3-row height, invisible */}
+      {!isActive&&(
+        <span style={{display:'flex',flexDirection:'column',width:'100%',height:'100%',justifyContent:'space-between',visibility:'hidden',pointerEvents:'none'}}>
+          {lineData.map((_,i)=>(<span key={i} style={{display:'block',fontSize:'0.78rem',lineHeight:1.5}}>placeholder</span>))}
         </span>
       )}
     </div>
   );
 };
 
-const ContactPanel=({grandTotal,isOpen,onClose,tabColoured,onTabClick})=>{
+const ContactPanel=({grandTotal,isOpen,onClose,tabColoured,onTabClick,tabPulseExternal,tabPulseCount})=>{
   const initials=CONTACT.fullName.split(' ').map(n=>n[0]).join('').slice(0,2);
   const [tabPulseKey,setTabPulseKey]=useState(0);
   const prevColoured=useRef(false);
   useEffect(()=>{if(tabColoured&&!prevColoured.current){setTimeout(()=>setTabPulseKey(k=>k+1),300);}prevColoured.current=tabColoured;},[tabColoured]);
+  useEffect(()=>{if(tabPulseExternal>0)setTabPulseKey(k=>k+1);},[tabPulseExternal]);
   const tabClass=`left-pull-tab${isOpen?' panel-open':''} ${tabColoured?'tab-coloured':'tab-grey'}`;
+  const pulseClass=tabPulseKey>0?(tabPulseCount>=2?'tab-pulse-double':'tab-pulse-single'):'';
   return(
     <>
       <div className={`contact-panel-overlay${isOpen?' visible':''}`} onClick={onClose}/>
-      <div key={`tab-${tabPulseKey}`} className={`${tabClass}${tabPulseKey>0?' tab-pulse':''}`} onClick={onTabClick}>
-        <span className="pull-tab-emoji" style={{filter:tabColoured?'none':'grayscale(1)'}}>{isOpen?'✕':tabColoured?'🧭':'👋'}</span>
-        <span className="pull-tab-label">{isOpen?'Close':tabColoured?'Next Steps':'Get in touch'}</span>
+      <div key={`tab-${tabPulseKey}`} className={`${tabClass}${pulseClass?' '+pulseClass:''}`} onClick={onTabClick}>
+        <span style={{fontSize:'1.1rem',lineHeight:1,display:'block',marginBottom:'0.25rem',filter:tabColoured?'none':'grayscale(1)',opacity:tabColoured?1:0.6,transform:'rotate(90deg)'}}>{isOpen?'':tabColoured?'🔓':'🔐'}</span>
+        <span className="pull-tab-label" style={{transform:'none'}}>{isOpen?'Close':tabColoured?'Next Steps':'Get in touch'}</span>
       </div>
       <div className={`contact-panel${isOpen?' open':''}`}>
         <div style={{background:'linear-gradient(135deg,rgba(124,58,237,0.75),rgba(219,39,119,0.75))',padding:'1.6rem 1.25rem 1.3rem',textAlign:'center',position:'relative',flexShrink:0}}>
@@ -239,19 +348,19 @@ const ContactPanel=({grandTotal,isOpen,onClose,tabColoured,onTabClick})=>{
         </div>
         <div style={{padding:'1rem',display:'flex',flexDirection:'column',gap:'0.5rem',flex:1}}>
           {[
-            {href:CONTACT.registrationUrl,icon:'🔥',title:'Jump in',sub:"I'm ready to get registered and start earning",shadow:'rgba(109,40,217,0.3)'},
-            {href:CONTACT.calendarUrl,icon:'🗓️',title:'Book in',sub:"I've got questions and I'd love a chat",shadow:'rgba(168,85,247,0.3)'},
-            {href:CONTACT.savingsUrl,icon:'💡',title:'Explore Savings',sub:"I'd like to see the customer benefits.",shadow:'rgba(234,179,8,0.3)'},
+            {href:CONTACT.registrationUrl,icon:'🔥',title:'Jump in',sub:"'I'm ready to get registered and start earning'",shadow:'rgba(109,40,217,0.3)'},
+            {href:CONTACT.calendarUrl,icon:'🗓️',title:'Book in',sub:"'I've got questions and I'd love a chat'",shadow:'rgba(168,85,247,0.3)'},
+            {href:CONTACT.savingsUrl,icon:'💡',title:'Explore Savings',sub:"'I'd like to see the customer benefits.'",shadow:'rgba(234,179,8,0.3)'},
           ].map(btn=>(
             <a key={btn.title} href={btn.href} target="_blank" rel="noopener noreferrer" style={{minHeight:'5.5rem',borderRadius:'0.75rem',display:'flex',alignItems:'center',gap:'0.7rem',padding:'0.8rem 0.9rem',background:'white',boxShadow:`3px 3px 10px ${btn.shadow}`,textDecoration:'none',transition:'transform 0.15s'}} onMouseEnter={e=>e.currentTarget.style.transform='scale(1.02)'} onMouseLeave={e=>e.currentTarget.style.transform='scale(1)'} onClick={onClose}>
               <span style={{fontSize:'1.3rem',lineHeight:1,flexShrink:0}}>{btn.icon}</span>
               <span style={{flex:1}}><span style={{fontWeight:'700',fontSize:'0.9rem',display:'block',color:'#1f2937'}}>{btn.title}</span><span style={{fontSize:'0.73rem',marginTop:'0.2rem',display:'block',fontStyle:'italic',lineHeight:'1.35',color:'#6b7280'}}>{btn.sub}</span></span>
             </a>
           ))}
-          <div style={{borderRadius:'0.75rem',background:'white',boxShadow:'3px 3px 10px rgba(219,39,119,0.3)',padding:'0.8rem 0.9rem 0.85rem'}}>
+          <div style={{borderRadius:'0.75rem',background:'white',boxShadow:'3px 3px 10px rgba(219,39,119,0.3)',padding:'0.8rem 0.9rem 0.85rem',transition:'transform 0.15s'}} onMouseEnter={e=>e.currentTarget.style.transform='scale(1.02)'} onMouseLeave={e=>e.currentTarget.style.transform='scale(1)'}>
             <div style={{display:'flex',alignItems:'center',gap:'0.7rem',marginBottom:'0.65rem'}}>
               <span style={{fontSize:'1.3rem',lineHeight:1,flexShrink:0}}>👋</span>
-              <span style={{flex:1}}><span style={{fontWeight:'700',fontSize:'0.9rem',display:'block',color:'#1f2937'}}>Say hi</span><span style={{fontSize:'0.73rem',marginTop:'0.2rem',display:'block',fontStyle:'italic',lineHeight:'1.35',color:'#6b7280'}}>I'd love help with my next step</span></span>
+              <span style={{flex:1}}><span style={{fontWeight:'700',fontSize:'0.9rem',display:'block',color:'#1f2937'}}>Say hi</span><span style={{fontSize:'0.73rem',marginTop:'0.2rem',display:'block',fontStyle:'italic',lineHeight:'1.35',color:'#6b7280'}}>'I'd love help with my next step'</span></span>
             </div>
             <div style={{display:'flex',gap:'0.6rem',justifyContent:'center'}}>
               {[{href:whatsappUrl(),icon:<WaIcon/>,title:'WhatsApp'},{href:emailUrl(),icon:<EmailIcon/>,title:'Email'},{href:phoneUrl(),icon:<PhoneIcon/>,title:'Call'}].map(btn=>(
@@ -341,74 +450,77 @@ const HowPaidPopup=({onClose,fastStarterAchieved,revenueExplored})=>{
   );
 };
 
-// Changes 4+6: both unlocked and locked cards receive dockedBottom + dockedMaxHeight props.
-const RevenueCard=({grandTotal,supportingBonus,partnerTotalEarnings,onInteracted,wiggle,dockedBottom,dockedMaxHeight})=>{
+// Right-side revenue tab — always present, grey until unlocked, expands on tap. Never disappears.
+const RevenueCard=({grandTotal,supportingBonus,partnerTotalEarnings,onInteracted,wiggle,topOffset,cardHeight,unlocked,revTabPulseKey,revTabPulseCount,closeKey})=>{
   const [expanded,setExpanded]=useState(false);
-  const collapseTimer=useRef(null);
+  useEffect(()=>{if(closeKey>0)setExpanded(false);},[closeKey]);
   const handleToggle=()=>{
-    if(!expanded){
-      setExpanded(true);
-      onInteracted&&onInteracted();
-      collapseTimer.current=setTimeout(()=>setExpanded(false),5000);
-    }else{
-      clearTimeout(collapseTimer.current);
-      setExpanded(false);
-    }
+    if(!unlocked)return;
+    if(!expanded){setExpanded(true);onInteracted&&onInteracted();}
+    else{setExpanded(false);}
   };
-  useEffect(()=>()=>clearTimeout(collapseTimer.current),[]);
-  const innerMax=Math.max(0,dockedMaxHeight-54);
   return(
-    <div className="revenue-card-wrap" style={{bottom:`${dockedBottom}px`,maxHeight:`${dockedMaxHeight}px`}}>
-      <div className={`revenue-card${wiggle?' revenue-wiggle':''}`}>
-        <div onClick={handleToggle} style={{padding:'0.85rem 1rem',display:'flex',alignItems:'center',justifyContent:'space-between',gap:'0.5rem',cursor:'pointer',userSelect:'none'}}>
-          <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}>
-            <span style={{fontSize:'1.15rem',lineHeight:1}}>🔓</span>
-            <span style={{fontWeight:'700',fontSize:'0.95rem',color:'white'}}>Three new revenue streams unlocked!</span>
+    <div
+      className={`revenue-card-wrap${expanded?' expanded':''}${wiggle?' revenue-wiggle':''}`}
+      style={{top:`${topOffset}px`,height:`${cardHeight}px`,transition:'width 0.4s cubic-bezier(0.22,1,0.36,1)'}}
+    >
+      {unlocked?(
+        /* Unlocked — gradient */
+        <div className="revenue-card-unlocked" style={{height:'100%',display:'flex',overflow:'hidden'}}>
+          <div key={`rtab-${revTabPulseKey}`} className={revTabPulseKey>0?(revTabPulseCount>=2?'rev-tab-pulse-double':'rev-tab-pulse-single'):''} onClick={handleToggle} style={{flexShrink:0,width:'2.8rem',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:'0.35rem',cursor:'pointer',userSelect:'none'}}>
+            {expanded
+              ?<ChevronRight style={{...SM,color:'rgba(255,255,255,0.9)'}}/>
+              :<ChevronLeft style={{...SM,color:'rgba(255,255,255,0.9)'}}/>
+            }
+            {!expanded&&(
+              <span style={{writingMode:'vertical-rl',textOrientation:'mixed',fontSize:'0.62rem',fontWeight:'400',color:'rgba(255,255,255,0.95)',letterSpacing:'0.08em',textTransform:'uppercase',lineHeight:1.3,textAlign:'center'}}>
+                🔓 3 Revenue Streams
+              </span>
+            )}
           </div>
-          <div style={{display:'flex',alignItems:'center',gap:'0.4rem'}}>
-            <span style={{fontSize:'0.72rem',color:'rgba(255,255,255,0.7)',fontStyle:'italic',whiteSpace:'nowrap'}}>{expanded?'Push down':'Tap to explore ↑'}</span>
-            {expanded?<ChevronDown style={{...SM,color:'rgba(255,255,255,0.8)'}}/>:<ChevronUp style={{...SM,color:'rgba(255,255,255,0.8)'}}/>}
+          <div style={{flex:1,overflowY:'auto',opacity:expanded?1:0,transition:'opacity 0.3s 0.1s',pointerEvents:expanded?'auto':'none',minWidth:0}}>
+            <div style={{padding:'0.75rem 0.9rem 0.9rem'}}>
+              <p style={{color:'white',fontWeight:'700',fontSize:'0.82rem',margin:'0 0 0.5rem',lineHeight:1.3}}>🔓 Three new revenue streams unlocked!</p>
+              <div style={{display:'flex',flexDirection:'column',gap:'0.25rem',marginBottom:'0.65rem'}}>
+                {[
+                  {icon:'🤝',label:'Supporting Customer Bonus',val:`£${supportingBonus.toLocaleString()}`},
+                  {icon:'🎓',label:'Mentor Bonus',val:'£100'},
+                  {icon:null,label:'Fast Starter Mentor Bonus',val:'£300'}
+                ].map(s=>(
+                  <div key={s.label} style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:'0.4rem',fontSize:'0.78rem',background:'rgba(255,255,255,0.12)',borderRadius:'0.4rem',padding:'0.3rem 0.6rem'}}>
+                    <span style={{color:'#fbcfe8',display:'flex',alignItems:'center',gap:'0.35rem'}}>{s.icon?<span style={{fontSize:'0.85rem',lineHeight:1,flexShrink:0}}>{s.icon}</span>:<TrendingUp style={{width:'0.75rem',height:'0.75rem',flexShrink:0,color:'#fbcfe8'}}/>}{s.label}</span>
+                    <span style={{color:'#fde68a',fontWeight:'700',flexShrink:0}}>{s.val}</span>
+                  </div>
+                ))}
+              </div>
+              <div style={{background:'rgba(255,255,255,0.1)',borderRadius:'0.5rem',padding:'0.55rem 0.65rem'}}>
+                <p style={{color:'white',fontWeight:'600',fontSize:'0.72rem',margin:'0 0 0.35rem'}}>For each Partner you recruit and support to QD*:</p>
+                <div style={{display:'flex',justifyContent:'space-between',color:'white',fontSize:'0.76rem',marginBottom:'0.15rem'}}><span style={{color:'#fbcfe8'}}>You earn (in this example)</span><span style={{fontWeight:'700',color:'#fde68a'}}>£{partnerTotalEarnings.toLocaleString()}</span></div>
+                <div style={{borderTop:'1px solid rgba(255,255,255,0.25)',paddingTop:'0.2rem',display:'flex',justifyContent:'space-between',fontSize:'0.8rem'}}><span style={{color:'#fbcfe8'}}>They earn (same as you did)</span><span style={{fontWeight:'700',color:'#fde68a'}}>£{grandTotal.toLocaleString()}</span></div>
+              </div>
+            </div>
           </div>
         </div>
-        <div style={{maxHeight:expanded?`${innerMax}px`:'0',overflow:'hidden',transition:'max-height 0.5s cubic-bezier(0.22,1,0.36,1)'}}>
-          <div style={{padding:'0 1rem 1rem'}}>
-            <div style={{display:'flex',flexDirection:'column',gap:'0.3rem',marginBottom:'0.75rem'}}>
-              {[{icon:'🤝',label:'Supporting Customer Bonus',val:`£${supportingBonus.toLocaleString()}`},{icon:'🎓',label:'Mentor Bonus',val:'£100'},{icon:null,label:'Fast Starter Mentor Bonus',val:'£300'}].map(s=>(
-                <div key={s.label} style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:'0.5rem',fontSize:'0.875rem',background:'rgba(255,255,255,0.12)',borderRadius:'0.4rem',padding:'0.35rem 0.7rem'}}>
-                  <span style={{color:'#fbcfe8',display:'flex',alignItems:'center',gap:'0.4rem'}}>{s.icon?<span style={{fontSize:'0.95rem',lineHeight:1,flexShrink:0}}>{s.icon}</span>:<TrendingUp style={{...SM,color:'#fbcfe8'}}/>}{s.label}</span>
-                  <span style={{color:'#fde68a',fontWeight:'700',flexShrink:0}}>{s.val}</span>
-                </div>
-              ))}
-            </div>
-            <div style={{background:'rgba(255,255,255,0.1)',borderRadius:'0.5rem',padding:'0.65rem 0.75rem'}}>
-              <p style={{color:'white',fontWeight:'600',fontSize:'0.78rem',margin:'0 0 0.45rem'}}>For each Partner you support to QD:</p>
-              <div style={{display:'flex',justifyContent:'space-between',color:'white',fontSize:'0.82rem',marginBottom:'0.2rem'}}><span>They earn (same as above)</span><span style={{fontWeight:'700'}}>£{grandTotal.toLocaleString()}</span></div>
-              <div style={{borderTop:'1px solid rgba(255,255,255,0.25)',paddingTop:'0.25rem',display:'flex',justifyContent:'space-between',fontSize:'0.85rem'}}><span style={{color:'#fbcfe8'}}>You earn</span><span style={{fontWeight:'700',color:'#fde68a'}}>£{partnerTotalEarnings.toLocaleString()}</span></div>
-            </div>
-          </div>
+      ):(
+        /* Locked — same grey as left tab, padlock at top then text */
+        <div className="revenue-card-locked" style={{height:'100%',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',padding:'0.5rem 0.2rem',gap:'0.4rem'}}>
+          <span style={{fontSize:'1.05rem',lineHeight:1,filter:'grayscale(1)',opacity:0.5,transform:'rotate(90deg)',display:'block',marginBottom:'0.3rem'}}>🔐</span>
+          <span style={{writingMode:'vertical-rl',textOrientation:'mixed',fontSize:'0.62rem',fontWeight:'400',color:'#f9fafb',letterSpacing:'0.08em',textTransform:'uppercase',lineHeight:1.3,textAlign:'center',opacity:0.85}}>
+            3 New Revenue Streams
+          </span>
         </div>
-      </div>
+      )}
     </div>
   );
 };
-
-// Change 6: locked placeholder uses identical docking.
-const LockedRevenueCard=({dockedBottom,dockedMaxHeight})=>(
-  <div className="revenue-card-wrap" style={{bottom:`${dockedBottom}px`,maxHeight:`${dockedMaxHeight}px`}}>
-    <div style={{background:'#e5e7eb',borderRadius:'1rem 1rem 0 0',overflow:'hidden',boxShadow:'0 -4px 20px rgba(0,0,0,0.1)'}}>
-      <div style={{padding:'0.85rem 1rem',display:'flex',alignItems:'center',gap:'0.5rem'}}>
-        <span style={{fontSize:'1.1rem',filter:'grayscale(1)',opacity:0.5,lineHeight:1}}>🔒</span>
-        <span style={{fontWeight:'700',fontSize:'0.95rem',color:'#9ca3af'}}>Three revenue streams (locked)</span>
-      </div>
-    </div>
-  </div>
-);
 
 const UWTracker=()=>{
   const [showIntro,setShowIntro]=useState(true);
   const [showCelebration,setShowCelebration]=useState(false);
   const [showContactPanel,setShowContactPanel]=useState(false);
   const [tabColoured,setTabColoured]=useState(false);
+  const [tabPulseExternal,setTabPulseExternal]=useState(0);
+  const [tabPulseCount,setTabPulseCount]=useState(2);
   const [selectedCircle,setSelectedCircle]=useState(null);
   const [showResetConfirm,setShowResetConfirm]=useState(false);
   const [showInfoPopup,setShowInfoPopup]=useState(false);
@@ -417,50 +529,60 @@ const UWTracker=()=>{
   const [youBulbPulsed,setYouBulbPulsed]=useState(false);
   const [fastStarterAchieved,setFastStarterAchieved]=useState(false);
   const [infoBulbPulsed,setInfoBulbPulsed]=useState(false);
+  const [infoBulbPulseKey,setInfoBulbPulseKey]=useState(0);
+  const [infoBulbPulseCount,setInfoBulbPulseCount]=useState(2);
+  const [infoBulbColoured,setInfoBulbColoured]=useState(false);
   const [showBestGuess,setShowBestGuess]=useState(false);
   const [hasInteracted,setHasInteracted]=useState(false);
   const [firstCustomerDone,setFirstCustomerDone]=useState(false);
   const [coachMsg,setCoachMsg]=useState(null);
   const [coachArrow,setCoachArrow]=useState(false);
-  const [stageRevealShown,setStageRevealShown]=useState(false);
   const [revenueExplored,setRevenueExplored]=useState(false);
   const [revenueCardVisible,setRevenueCardVisible]=useState(false);
   const [revenueWiggle,setRevenueWiggle]=useState(false);
-  const [circleGlow,setCircleGlow]=useState(false);
-  // Change 8: pBadgeGlow triggers the glowing ring on grey P badges
+  const [circleGlowKey,setCircleGlowKey]=useState(0);
+  const [circleGlowCount,setCircleGlowCount]=useState(2);
   const [pBadgeGlow,setPBadgeGlow]=useState(false);
+  const [postCelebArrow,setPostCelebArrow]=useState(false);
+  const [postCelebArrowPulseKey,setPostCelebArrowPulseKey]=useState(0);
+  const [revTabPulseKey,setRevTabPulseKey]=useState(0);
+  const [revTabPulseCount,setRevTabPulseCount]=useState(2);
+  const [revenueCloseKey,setRevenueCloseKey]=useState(0);
 
-  // Changes 1+3: refs for dynamic docking measurement
-  const circlesRef=useRef(null);
-  const totalEarningsRef=useRef(null);
-  const [revenueBottomOffset,setRevenueBottomOffset]=useState(0);
-  const [revenueMaxHeight,setRevenueMaxHeight]=useState(200);
+  // Staged coaching sequence
+  const [stagedActiveCount,setStagedActiveCount]=useState(0);
+  const [stagedPulseIndex,setStagedPulseIndex]=useState(-1);
+  const [stagedIsFirstReveal,setStagedIsFirstReveal]=useState(true);
+  const stagedStarted=useRef(false);
 
-  // Change 3: dynamic docking useEffect
+  // Separate refs for precise right-card positioning: top of CB banner → bottom of RI banner
+  const cbBannerRef=useRef(null);
+  const riBannerRef=useRef(null);
+  const bannersRef=useRef(null);
+  const [cardTopOffset,setCardTopOffset]=useState(200);
+  const [cardHeight,setCardHeight]=useState(200);
+
   useEffect(()=>{
-    const updateDocking=()=>{
-      if(!circlesRef.current||!totalEarningsRef.current)return;
-      const circlesRect=circlesRef.current.getBoundingClientRect();
-      const earningsRect=totalEarningsRef.current.getBoundingClientRect();
-      const gap=earningsRect.top-circlesRect.bottom;
-      setRevenueBottomOffset(window.innerHeight-earningsRect.top);
-      setRevenueMaxHeight(Math.max(60,gap-12));
+    const updatePos=()=>{
+      if(!cbBannerRef.current||!riBannerRef.current)return;
+      const cbRect=cbBannerRef.current.getBoundingClientRect();
+      const riRect=riBannerRef.current.getBoundingClientRect();
+      setCardTopOffset(cbRect.top+window.scrollY);
+      setCardHeight(riRect.bottom-cbRect.top);
     };
-    updateDocking();
-    window.addEventListener('resize',updateDocking);
-    window.addEventListener('scroll',updateDocking,{passive:true});
-    return()=>{
-      window.removeEventListener('resize',updateDocking);
-      window.removeEventListener('scroll',updateDocking);
-    };
+    updatePos();
+    window.addEventListener('resize',updatePos);
+    window.addEventListener('scroll',updatePos,{passive:true});
+    return()=>{window.removeEventListener('resize',updatePos);window.removeEventListener('scroll',updatePos);};
   },[]);
 
   const qdShown=useRef(false);
   const mixShown=useRef(false);
-  const inactivityTimer=useRef(null);
+  const habAShown=useRef(false);
+  const habBShown=useRef(false);
+  const habCShown=useRef(false);
   const previouslyQualified=useRef(false);
   const tooltipTimer=useRef(null);
-  const customer5Ref=useRef(null);
   const stageRevealTimer=useRef(null);
 
   const [customers,setCustomers]=useState([
@@ -487,44 +609,107 @@ const UWTracker=()=>{
   const residualIncome=tenantCount*2.5;
   const supportingBonus=Math.round(totalCB/2);
   const partnerTotalEarnings=supportingBonus+100+300;
-  const recurringActive=tenantCount>0;
   const filledNonYou=customers.filter((c,i)=>includeYou?i>0&&c.type!==null:c.type!==null).length;
   const totalForQD=(includeYou?1:0)+filledNonYou;
+  const recurringActive=tenantCount>0&&totalForQD>=3;
   const nonYouFilled=customers.filter((c,i)=>includeYou?i>0&&c.type!==null:c.type!==null);
   const totalCircles=includeYou?5:6;
-  const oneRemaining=nonYouFilled.length===(totalCircles-1);
+  const fourFilledForHAB=nonYouFilled.length===(totalCircles-2);  // 4th circle just filled
+  const fiveFilled=nonYouFilled.length===(totalCircles-1);         // 5th circle just filled (mix message)
   const allHomeowners=nonYouFilled.length>0&&nonYouFilled.every(c=>c.type==='homeowner');
   const allTenants=nonYouFilled.length>0&&nonYouFilled.every(c=>c.type==='renting');
 
   useEffect(()=>{
+    // QD message
     if(!qdShown.current&&totalForQD>=3){
       qdShown.current=true;setCoachArrow(false);
-      setCoachMsg("That's 3 customers = QD achieved! 🎉\nRecurring (residual) income unlocked.\nNow your income builds!");
+      setTimeout(()=>setCoachMsg("That's 3 customers = QD achieved! 🎉\nRecurring (residual) income unlocked.\nNow your income builds!"),500);
       return;
     }
-    if(!mixShown.current&&oneRemaining&&!qualifiesForFastStarter){
-      if(allHomeowners){mixShown.current=true;setCoachArrow(false);setCoachMsg("All homeowners so far.\nTry adding a tenant.\nSee what changes.");}
-      else if(allTenants){mixShown.current=true;setCoachArrow(false);setCoachMsg("All tenants so far.\nTry adding a homeowner.\nSee what changes.");}
+    // Trigger A — circle 4 just filled, no HAB yet — fire once only
+    if(!habAShown.current&&fourFilledForHAB&&!fiveFilled&&highActivityCustomers===0&&!qualifiesForFastStarter){
+      habAShown.current=true;setCoachArrow(false);
+      setTimeout(()=>setCoachMsg("Consider making your last two customers\n3+ service homeowners to activate\nthe £50 High Activity Bonus ⬇️"),500);
+      return;
     }
-  },[totalForQD,oneRemaining,allHomeowners,allTenants,qualifiesForFastStarter]);
+    // Mix message — 5th circle, all same type
+    if(!mixShown.current&&fiveFilled&&!qualifiesForFastStarter){
+      if(allHomeowners){
+        mixShown.current=true;setCoachArrow(false);
+        // If HAB already active, nudge tenant specifically
+        if(highActivityCustomers>=2){
+          setTimeout(()=>setCoachMsg("All homeowners so far — why not try a tenant?\nSee what happens to Recurring Income ⬇️"),500);
+        } else {
+          setTimeout(()=>setCoachMsg("All homeowners so far.\nTry adding a tenant.\nSee what changes. ⬇️"),500);
+        }
+      }
+      else if(allTenants){mixShown.current=true;setCoachArrow(false);setTimeout(()=>setCoachMsg("All tenants so far.\nTry adding a homeowner.\nSee what changes."),500);}
+    }
+  },[totalForQD,fourFilledForHAB,fiveFilled,allHomeowners,allTenants,qualifiesForFastStarter,highActivityCustomers]);
 
-  // Change 8: when partner prompt appears, trigger glow on grey P badges. No finger pointer.
+  // Reactive HAB threshold messages — only fire once circle 4 is reached
+  useEffect(()=>{
+    if(nonYouFilled.length<totalCircles-2)return;
+    if(highActivityCustomers===1&&!habBShown.current){
+      habBShown.current=true;setCoachArrow(false);
+      setTimeout(()=>setCoachMsg("You've got one homeowner with 3+ services —\nadd a second to unlock\nthe £50 High Activity Bonus ⬇️"),500);
+    }
+    else if(highActivityCustomers>=2&&!habCShown.current){
+      habCShown.current=true;setCoachArrow(false);
+      setTimeout(()=>setCoachMsg("£50 High Activity Bonus activated! 🔥\nIntroduce 4 homeowners with 3+ services\nto jump to £100 ⬇️"),500);
+    }
+  },[highActivityCustomers,nonYouFilled.length]);
+
   useEffect(()=>{
     if(allCirclesFilled&&!hasPartner&&!qualifiesForFastStarter){
-      setCoachArrow(true);setCoachMsg('__partner_prompt__');
-      setPBadgeGlow(true);
-      setTimeout(()=>setPBadgeGlow(false),2100);
+      const msgTimer=setTimeout(()=>{
+        setCoachArrow(true);setCoachMsg('__partner_prompt__');
+        setTimeout(()=>{
+          setPBadgeGlow(true);setTimeout(()=>setPBadgeGlow(false),2100);
+        },3000);
+      },1500);
+      return()=>clearTimeout(msgTimer);
     }
     else if(allCirclesFilled&&hasPartner){setCoachArrow(false);if(coachMsg==='__partner_prompt__')setCoachMsg(null);}
   },[allCirclesFilled,hasPartner,qualifiesForFastStarter]);
 
-  const resetInactivity=useCallback(()=>{
-    clearTimeout(inactivityTimer.current);
-    if(fastStarterAchieved&&stageRevealShown&&revenueExplored){
-      inactivityTimer.current=setTimeout(()=>{setCoachArrow(false);setCoachMsg('Continue exploring, dig into the 💡 next to total earnings, or tap 🧭 for next steps.');},9000);
-    }
-  },[fastStarterAchieved,stageRevealShown,revenueExplored]);
-  useEffect(()=>{resetInactivity();},[fastStarterAchieved,stageRevealShown,revenueExplored]);
+  // Staged sequence — fires 9s after first revenue card interaction
+  const startStagedSequence=useCallback(()=>{
+    if(stagedStarted.current)return;
+    stagedStarted.current=true;
+    setCoachMsg('__staged__');
+    setCoachArrow(false);
+    setPostCelebArrow(false);
+
+    // Helper: pulse a line + its paired element
+    const pulse=(lineIdx,circleCount,bulb,tab)=>{
+      setStagedPulseIndex(lineIdx);
+      if(circleCount)setCircleGlowKey(k=>k+1);
+      if(bulb)setInfoBulbPulseKey(k=>k+1);
+      if(tab)setRevTabPulseKey(k=>k+1);
+      setTimeout(()=>setStagedPulseIndex(-1),1400);
+    };
+
+    // FIRST REVEAL — 2 pulses on all elements
+    setCircleGlowCount(2);
+    setInfoBulbPulseCount(2);
+    setTimeout(()=>{ setStagedActiveCount(1); pulse(0,true,false,false); },2500);
+    setTimeout(()=>{ setStagedActiveCount(2); setInfoBulbColoured(true); pulse(1,false,true,false); },5000);
+    setTimeout(()=>{ setStagedActiveCount(3); setTabColoured(true); pulse(2,false,false,true); },7500);
+
+    // Switch to 1 pulse for repeat cycles
+    setTimeout(()=>{ setCircleGlowCount(1); setInfoBulbPulseCount(1); setRevTabPulseCount(1); setTabPulseCount(1); setStagedIsFirstReveal(false); },10500);
+
+    // REPEAT CYCLES — 1 pulse each
+    const repeat=(baseT)=>{
+      setTimeout(()=>pulse(0,true,false,false),baseT);
+      setTimeout(()=>pulse(1,false,true,false),baseT+2500);
+      setTimeout(()=>pulse(2,false,false,true),baseT+5000);
+    };
+    repeat(11000);
+    repeat(19500);
+    repeat(28000);
+  },[]);
 
   const circleColor=(c)=>{if(c.type===null)return{border:'#d1d5db',text:'#9ca3af',bg:'#f9fafb'};if(c.type==='own')return{border:'#9ca3af',text:'#374151',bg:'#f3f4f6'};if(c.type==='renting')return{border:'#2563eb',text:'#1d4ed8',bg:'#eff6ff'};return{border:'#7c3aed',text:'#6d28d9',bg:'#f5f3ff'};};
   const getCircleOpacity=(index)=>{if(index===0&&includeYou)return 1;if(!includeYou){for(let i=0;i<index;i++)if(customers[i].type===null)return 0.3;return 1;}for(let i=1;i<index;i++)if(customers[i].type===null)return 0.3;return 1;};
@@ -536,26 +721,26 @@ const UWTracker=()=>{
     setTimeout(()=>{
       setShowCelebration(false);setFastStarterAchieved(true);
       setTimeout(()=>{
-        setCoachMsg("You've seen what you can earn.\nNow see what happens when you help others.\nExplore the three unlocked revenue streams below ⬇️");
+        setCoachMsg("You've seen what you can earn.\nNow see what happens when you help others.\nExplore the three unlocked revenue streams");
+        setPostCelebArrow(true);
         stageRevealTimer.current=setTimeout(()=>{
           setRevenueCardVisible(true);
-          setTimeout(()=>{setRevenueWiggle(true);setTimeout(()=>setRevenueWiggle(false),600);},800);
+          // Synced: arrow pulses + revenue tab pulses together
+          const syncPulse=()=>{
+            setPostCelebArrowPulseKey(k=>k+1);
+            setRevTabPulseKey(k=>k+1);
+          };
+          setTimeout(syncPulse,600);
         },2000);
       },2500);
     },3000);
   };
 
-  // Change 7: the 🔁 message is permanent — CoachingLane checks for it and won't auto-hide
+  // Revenue interacted: mark explored, 9s later start staged sequence
   const handleRevenueInteracted=()=>{
     if(revenueExplored)return;
     setRevenueExplored(true);
-    setTimeout(()=>{
-      setStageRevealShown(true);
-      setTabColoured(true);
-      setCircleGlow(true);setTimeout(()=>setCircleGlow(false),2000);
-      setCoachMsg("🔁 Keep exploring customer types\n💡 Learn how it works\n🧭 Next steps");
-    },5000);
-    resetInactivity();
+    setTimeout(startStagedSequence,9000);
   };
 
   const handlePartnerBadgeClick=(e,index)=>{
@@ -566,13 +751,12 @@ const UWTracker=()=>{
     const nowQualifies=nc.every(c=>c.type!==null)&&nc.some((c,i)=>includeYou?i>0&&c.isPartner:c.isPartner);
     if(!wasQualified&&nowQualifies&&!previouslyQualified.current){previouslyQualified.current=true;setTimeout(triggerCelebration,200);}
     if(!nowQualifies)previouslyQualified.current=false;
-    resetInactivity();
   };
 
   const handleCircleClick=(index)=>{
     if((index===0&&includeYou)||!canSelectCircle(index))return;
     if(!hasInteracted){setHasInteracted(true);setShowBestGuess(true);}
-    setSelectedCircle(index);resetInactivity();
+    setSelectedCircle(index);
   };
 
   const setCustomerType=(type,services)=>{
@@ -581,13 +765,12 @@ const UWTracker=()=>{
     const nc=[...customers];nc[selectedCircle]={type,services:services||0,isPartner:nc[selectedCircle].isPartner};
     setCustomers(nc);setSelectedCircle(null);setShowBestGuess(false);
     const nonYouCount=nc.filter((c,i)=>includeYou?i>0&&c.type!==null:c.type!==null).length;
-    if(!firstCustomerDone&&nonYouCount===1){setFirstCustomerDone(true);setCoachMsg("🙌 Nice work — now keep going.\nTry different customer types\nand watch your income grow. 🤲");}
+    if(!firstCustomerDone&&nonYouCount===1){setFirstCustomerDone(true);setTimeout(()=>setCoachMsg("🙌 Nice work! 🙌\nNow keep going — try different customer types\nand watch your income grow."),500);}
     const nowAllFilled=nc.every(c=>c.type!==null);
     const nowHasPartner=nc.some((c,i)=>includeYou?i>0&&c.isPartner:c.isPartner);
     const nowQualifies=nowAllFilled&&nowHasPartner;
     if(!wasQualified&&nowQualifies&&!previouslyQualified.current){previouslyQualified.current=true;setTimeout(triggerCelebration,200);}
     if(!nowQualifies)previouslyQualified.current=false;
-    resetInactivity();
   };
 
   const removeCustomer=()=>{if(selectedCircle===null)return;const nc=[...customers];nc[selectedCircle]={type:null,services:0,isPartner:false};setCustomers(nc);setSelectedCircle(null);previouslyQualified.current=false;setShowBestGuess(false);};
@@ -595,34 +778,46 @@ const UWTracker=()=>{
   const resetTracking=()=>{
     setCustomers([{type:includeYou?'own':null,services:0,isPartner:false},{type:null,services:0,isPartner:false},{type:null,services:0,isPartner:false},{type:null,services:0,isPartner:false},{type:null,services:0,isPartner:false},{type:null,services:0,isPartner:false}]);
     setSelectedCircle(null);setShowResetConfirm(false);
-    previouslyQualified.current=false;qdShown.current=false;mixShown.current=false;
+    previouslyQualified.current=false;qdShown.current=false;mixShown.current=false;stagedStarted.current=false;
+    habAShown.current=false;habBShown.current=false;habCShown.current=false;
     setHasInteracted(false);setShowBestGuess(false);setCoachMsg(null);setCoachArrow(false);
-    setTabColoured(false);setFastStarterAchieved(false);setInfoBulbPulsed(false);
-    setStageRevealShown(false);setYouBulbPulsed(false);setRevenueCardVisible(false);setRevenueExplored(false);
-    setFirstCustomerDone(false);setCircleGlow(false);setRevenueWiggle(false);setPBadgeGlow(false);
-    clearTimeout(inactivityTimer.current);clearTimeout(tooltipTimer.current);clearTimeout(stageRevealTimer.current);
+    setTabColoured(false);setTabPulseExternal(0);setTabPulseCount(2);setFastStarterAchieved(false);setInfoBulbPulsed(false);setInfoBulbPulseKey(0);setInfoBulbColoured(false);setInfoBulbPulseCount(2);setRevTabPulseCount(2);setCircleGlowCount(2);
+    setYouBulbPulsed(false);setRevenueCardVisible(false);setRevenueExplored(false);
+    setFirstCustomerDone(false);setCircleGlowKey(0);setRevenueWiggle(false);setPBadgeGlow(false);
+    setStagedActiveCount(0);setStagedPulseIndex(-1);setStagedIsFirstReveal(true);
+    setPostCelebArrow(false);setPostCelebArrowPulseKey(0);setRevTabPulseKey(0);
+    clearTimeout(tooltipTimer.current);clearTimeout(stageRevealTimer.current);
     setYouTooltipVisible(false);
   };
 
-  const toggleIncludeYou=()=>{const niy=!includeYou;setIncludeYou(niy);const nc=[...customers];nc[0]={type:niy?'own':null,services:0,isPartner:false};setCustomers(nc);setSelectedCircle(null);previouslyQualified.current=false;resetInactivity();};
+  const toggleIncludeYou=()=>{const niy=!includeYou;setIncludeYou(niy);const nc=[...customers];nc[0]={type:niy?'own':null,services:0,isPartner:false};setCustomers(nc);setSelectedCircle(null);previouslyQualified.current=false;};
   const openYouTooltip=()=>{clearTimeout(tooltipTimer.current);setYouTooltipVisible(v=>{if(!v){tooltipTimer.current=setTimeout(()=>setYouTooltipVisible(false),5000);}return!v;});};
 
-  const infoBulbActive=fastStarterAchieved&&revenueExplored;
-  const c5Index=4;
+  // Bulb only activates after all 3 staged lines are fully visible
+  const infoBulbActive=fastStarterAchieved&&revenueExplored&&stagedActiveCount>=3;
 
   return(
-    <div style={{minHeight:'100vh',background:'linear-gradient(135deg,#fdf2f8,#f5f3ff)',padding:'1rem',paddingBottom:revenueCardVisible?'7rem':'1rem',transition:'padding-bottom 0.4s'}}>
+    <div style={{minHeight:'100vh',background:'linear-gradient(135deg,#fdf2f8,#f5f3ff)',padding:'1rem'}}>
       {showIntro&&<IntroModal onClose={()=>setShowIntro(false)}/>}
       <ProfileBubble/>
-      <ContactPanel grandTotal={grandTotal} isOpen={showContactPanel} onClose={()=>setShowContactPanel(false)} tabColoured={tabColoured} onTabClick={()=>setShowContactPanel(o=>!o)}/>
+      <ContactPanel
+        grandTotal={grandTotal}
+        isOpen={showContactPanel}
+        onClose={()=>setShowContactPanel(false)}
+        tabColoured={tabColoured}
+        onTabClick={()=>setShowContactPanel(o=>!o)}
+        tabPulseExternal={tabPulseExternal}
+        tabPulseCount={tabPulseCount}
+      />
       {showCelebration&&(<div style={{position:'fixed',inset:0,pointerEvents:'none',zIndex:50}}>{[...Array(50)].map((_,i)=>(<div key={i} className="animate-confetti" style={{position:'absolute',left:`${Math.random()*100}%`,top:'-10%',animationDelay:`${Math.random()*0.5}s`,animationDuration:`${2+Math.random()}s`}}><div style={{color:'#facc15',fontSize:`${Math.random()*20+10}px`,transform:`rotate(${Math.random()*360}deg)`}}>✨</div></div>))}</div>)}
 
-      <div style={{maxWidth:'42rem',margin:'0 auto'}}>
-        <div style={{marginBottom:'1.5rem'}}>
-          <h1 style={{fontSize:'1.5rem',fontWeight:'700',color:'#1f2937',marginBottom:'0.5rem',textAlign:'center'}}>UW Partner Earnings Tool</h1>
+      <div style={{maxWidth:'36rem',margin:'0 auto',paddingLeft:'2.5rem',paddingRight:'2.5rem'}} onClick={()=>setRevenueCloseKey(k=>k+1)}>
+        <div style={{marginBottom:'0.6rem'}}>
+          <h1 style={{fontSize:'1.3rem',fontWeight:'700',color:'#1f2937',marginBottom:'0.25rem',textAlign:'center'}}>UW Partner Earnings Tool</h1>
           <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:'1rem'}}>
             <div style={{display:'flex',flexDirection:'column',alignItems:'flex-start',gap:'0.3rem',position:'relative'}}>
               <div style={{display:'flex',flexDirection:'column',alignItems:'flex-start',gap:'0.15rem'}}>
+                <button onClick={()=>setShowResetConfirm(true)} style={{background:'none',border:'1px solid #d1d5db',borderRadius:'0.3rem',cursor:'pointer',padding:'0.1rem 0.4rem',fontSize:'0.65rem',fontWeight:'600',color:'#9ca3af',lineHeight:1.4,marginBottom:'0.1rem'}}>Reset</button>
                 <button onClick={openYouTooltip} style={{background:'none',border:'none',cursor:'pointer',padding:'0.1rem',display:'flex',alignItems:'center',lineHeight:1}}>
                   {!youBulbPulsed?<PulsingBulb size="0.95rem" onDone={()=>setYouBulbPulsed(true)}/>:<Bulb size="0.95rem"/>}
                 </button>
@@ -633,31 +828,30 @@ const UWTracker=()=>{
                   <span style={{fontSize:'0.875rem',fontWeight:'600',color:'#374151'}}>You</span>
                 </div>
               </div>
-              {youTooltipVisible&&(<div style={{position:'fixed',top:'3.5rem',left:'0.75rem',right:'0.75rem',maxWidth:'260px',background:'#92400e',color:'white',fontSize:'0.75rem',borderRadius:'0.5rem',padding:'0.55rem 0.8rem',lineHeight:1.5,zIndex:400,boxShadow:'0 4px 14px rgba(0,0,0,0.25)',textAlign:'center',animation:'slideDown 0.2s ease-out forwards'}}>💡 Most Partners also use UW themselves to save on their own household bills. Toggle this off any time.</div>)}
+              {/* Tooltip — now matches coaching lane colour scheme */}
+              {youTooltipVisible&&(<div style={{position:'fixed',top:'3.5rem',left:'0.75rem',right:'0.75rem',maxWidth:'260px',background:'linear-gradient(135deg,#f5f3ff,#eff6ff)',border:'1.5px solid #c4b5fd',color:'#374151',fontSize:'0.75rem',borderRadius:'0.5rem',padding:'0.55rem 0.8rem',lineHeight:1.5,zIndex:400,boxShadow:'0 4px 14px rgba(124,58,237,0.18)',textAlign:'center',animation:'slideDown 0.2s ease-out forwards',fontWeight:'700',fontStyle:'italic'}}>💡 Most Partners also use UW themselves to save on their own household bills. Toggle this off any time.</div>)}
             </div>
             <p style={{fontSize:'0.875rem',color:'#6b7280',flex:1,textAlign:'center'}}>Explore what <strong>{includeYou?'five':'six'}</strong> customers could earn you in the first 30 days</p>
             <div style={{width:'5rem'}}></div>
           </div>
         </div>
 
-        <div style={{background:'white',borderRadius:'1rem',boxShadow:'0 4px 16px rgba(0,0,0,0.08)',padding:'1.5rem'}}>
-          {/* Change 1: circlesRef on the 6-circle grid */}
-          <div ref={circlesRef} style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'1rem',marginBottom:'1rem'}}>
+        <div style={{background:'white',borderRadius:'1rem',boxShadow:'0 4px 16px rgba(0,0,0,0.08)',padding:'0.85rem'}}>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'0.6rem',marginBottom:'0.6rem'}}>
             {customers.map((customer,index)=>{
               const col=circleColor(customer);const cb=calculateCB(customer,index);
               const showHAB=customer.type==='homeowner'&&(customer.services===3||customer.services===4)&&highActivityCustomers>=2;
-              const isC5=index===c5Index;
-              const glowStyle=circleGlow&&customer.type!==null?{animation:'softGlow 2s ease-in-out 1'}:{};
-              // Change 8: grey (not yet gold) P badges get the glow class when pBadgeGlow is true
+              const glowStyle=circleGlowKey>0&&customer.type!==null?{animation:`circleGlowAnim 1.2s ease-in-out ${circleGlowCount}`}:{};
               const badgeGlowClass=pBadgeGlow&&!customer.isPartner&&customer.type!==null?'p-badge-glow':'';
+              const partnerClickable=allCirclesFilled;
               return(
-                <div key={index} ref={isC5?customer5Ref:null} style={{display:'flex',flexDirection:'column',alignItems:'center',position:'relative'}}>
+                <div key={`${index}-${circleGlowKey}`} style={{display:'flex',flexDirection:'column',alignItems:'center',position:'relative'}}>
                   <div onClick={()=>handleCircleClick(index)} style={{width:'5rem',height:'5rem',borderRadius:'50%',border:`4px solid ${col.border}`,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',fontSize:'1.125rem',fontWeight:'700',position:'relative',background:col.bg,color:col.text,cursor:canSelectCircle(index)?'pointer':'not-allowed',opacity:getCircleOpacity(index),transition:'transform 0.15s',boxSizing:'border-box',...glowStyle}}>
                     {(index===0&&includeYou)?<span style={{fontSize:'1rem',fontWeight:'700'}}>You</span>
                     :customer.type?(
                       <><span style={{fontSize:'0.875rem',fontWeight:'700'}}>£{cb.toLocaleString()}</span>
                       {showHAB&&<div style={{position:'absolute',top:'-0.25rem',right:'-0.25rem',padding:'0.125rem 0.25rem',background:'#f97316',color:'white',fontSize:'0.625rem',fontWeight:'700',borderRadius:'0.25rem',zIndex:10}}>+£{habPerCustomer}</div>}
-                      <div onClick={(e)=>handlePartnerBadgeClick(e,index)} className={badgeGlowClass} style={{position:'absolute',bottom:'-0.25rem',right:'-0.25rem',width:'1.5rem',height:'1.5rem',borderRadius:'50%',border:`2px solid ${customer.isPartner?'#ca8a04':'#9ca3af'}`,display:'flex',alignItems:'center',justifyContent:'center',zIndex:10,cursor:'pointer',background:customer.isPartner?'#facc15':'#e5e7eb',transition:'transform 0.15s'}}>
+                      <div onClick={(e)=>{if(partnerClickable)handlePartnerBadgeClick(e,index);}} className={badgeGlowClass} style={{position:'absolute',bottom:'-0.25rem',right:'-0.25rem',width:'1.5rem',height:'1.5rem',borderRadius:'50%',border:`2px solid ${customer.isPartner?'#ca8a04':'#9ca3af'}`,display:'flex',alignItems:'center',justifyContent:'center',zIndex:10,cursor:partnerClickable?'pointer':'default',background:customer.isPartner?'#facc15':'#e5e7eb',transition:'transform 0.15s',opacity:partnerClickable?1:0.5}}>
                         <span style={{fontSize:'0.625rem',fontWeight:'700',color:customer.isPartner?'#713f12':'#6b7280'}}>P</span>
                       </div></>
                     ):(
@@ -672,86 +866,92 @@ const UWTracker=()=>{
             })}
           </div>
 
-          <CoachingLane message={coachMsg} showArrow={coachArrow}/>
+          <CoachingLane
+            message={coachMsg}
+            showArrow={coachArrow}
+            stagedActiveCount={stagedActiveCount}
+            stagedPulseIndex={stagedPulseIndex}
+            postCelebArrow={postCelebArrow}
+            postCelebArrowPulseKey={postCelebArrowPulseKey}
+            stagedIsFirstReveal={stagedIsFirstReveal}
+          />
 
-          <div style={{display:'flex',flexDirection:'column',gap:'0.75rem'}}>
-            {/* Banners sit in normal flow — revenue card (z-index 140) floats above them */}
-            <div className="earnings-banner" style={{padding:'0.75rem 1rem',borderRadius:'0.5rem',border:`4px solid ${totalCB>0?'#7c3aed':'#d1d5db'}`,background:totalCB>0?'#f5f3ff':'#f9fafb'}}>
+          {/* Banners area — ref drives right-side card position */}
+          <div ref={bannersRef} style={{display:'flex',flexDirection:'column',gap:'0.4rem'}}>
+            <div ref={cbBannerRef} className="earnings-banner" style={{padding:'0.5rem 0.75rem',borderRadius:'0.5rem',border:`${totalCB>0?'4px':'2px'} solid ${totalCB>0?'#7c3aed':'#d1d5db'}`,background:totalCB>0?'#f5f3ff':'#f9fafb'}}>
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-                <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}><span style={{fontSize:'1.25rem',filter:totalCB>0?'none':'grayscale(1)',opacity:totalCB>0?1:0.4}}>💷</span><span style={{fontWeight:'600',color:totalCB>0?'#7c3aed':'#6b7280'}}>Customer Bonus:</span></div>
-                <span style={{fontSize:'1.25rem',fontWeight:'700',color:totalCB>0?'#6d28d9':'#9ca3af'}}>£{totalCB.toLocaleString()}</span>
+                <div style={{display:'flex',alignItems:'center',gap:'0.4rem'}}><span style={{fontSize:'1.1rem',filter:totalCB>0?'none':'grayscale(1)',opacity:totalCB>0?1:0.4}}>💷</span><span style={{fontWeight:'600',fontSize:'0.85rem',color:totalCB>0?'#7c3aed':'#6b7280'}}>Customer Bonus:</span></div>
+                <span style={{fontSize:'1.1rem',fontWeight:'700',color:totalCB>0?'#6d28d9':'#9ca3af'}}>£{totalCB.toLocaleString()}</span>
               </div>
             </div>
 
-            <div className="earnings-banner" style={{padding:'0.75rem 1rem',borderRadius:'0.5rem',border:`4px solid ${highActivityCustomers>=2?'#f97316':'#e5e7eb'}`,background:highActivityCustomers>=2?'#fff7ed':'#f9fafb',opacity:highActivityCustomers>=2?1:0.5,transition:'opacity 0.3s,border-color 0.3s,background 0.3s'}}>
+            <div className="earnings-banner" style={{padding:'0.5rem 0.75rem',borderRadius:'0.5rem',border:`${highActivityCustomers>=2?'4px':'2px'} solid ${highActivityCustomers>=2?'#f97316':'#e5e7eb'}`,background:highActivityCustomers>=2?'#fff7ed':'#f9fafb',opacity:highActivityCustomers>=2?1:0.5,transition:'opacity 0.3s,border-color 0.3s,background 0.3s'}}>
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-                <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}><span style={{fontSize:'1.25rem',filter:highActivityCustomers>=2?'none':'grayscale(1)',opacity:highActivityCustomers>=2?1:0.4}}>🔥</span><span style={{fontWeight:'600',color:highActivityCustomers>=2?'#ea580c':'#6b7280'}}>High Activity Bonus:</span></div>
-                <span style={{fontSize:'1.25rem',fontWeight:'700',color:highActivityCustomers>=2?'#ea580c':'#9ca3af'}}>{highActivityCustomers>=2?`£${totalHAB.toLocaleString()}`:'—'}</span>
-              </div>
-              {!highActivityCustomers&&(<p style={{margin:'0.3rem 0 0 1.75rem',fontSize:'0.72rem',color:'#9ca3af',fontStyle:'italic'}}>Add 2 or more homeowners with 3 services</p>)}
-            </div>
-
-            <div className="earnings-banner" style={{padding:'0.75rem 1rem',borderRadius:'0.5rem',border:`2px solid ${qualifiesForFastStarter?'#86efac':'#e5e7eb'}`,background:qualifiesForFastStarter?'#f0fdf4':'#f9fafb'}}>
-              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-                <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}><TrendingUp style={{...MD,color:qualifiesForFastStarter?'#16a34a':'#d1d5db'}}/><span style={{fontWeight:'600',color:qualifiesForFastStarter?'#16a34a':'#6b7280'}}>Fast Starter Bonus:</span></div>
-                <span style={{fontSize:'1.25rem',fontWeight:'700',color:qualifiesForFastStarter?'#16a34a':'#9ca3af'}}>£{fastStarterBonus.toLocaleString()}</span>
+                <div style={{display:'flex',alignItems:'center',gap:'0.4rem',flex:1,minWidth:0}}>
+                  <span style={{fontSize:'1.1rem',filter:highActivityCustomers>=2?'none':'grayscale(1)',opacity:highActivityCustomers>=2?1:0.4,flexShrink:0}}>🔥</span>
+                  <span style={{fontWeight:'600',fontSize:'0.85rem',color:highActivityCustomers>=2?'#ea580c':'#6b7280',flexShrink:0}}>
+                    {highActivityCustomers>=4?'£100 High Activity Bonus:':highActivityCustomers>=2?'£50 High Activity Bonus:':'High Activity Bonus:'}
+                  </span>
+                  {!highActivityCustomers&&<span style={{fontSize:'0.7rem',color:'#9ca3af',fontStyle:'italic',marginLeft:'0.3rem',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>Rewarding multiple 3+ service homeowners</span>}
+                </div>
+                <span style={{fontSize:'1.1rem',fontWeight:'700',color:highActivityCustomers>=2?'#ea580c':'#9ca3af',flexShrink:0}}>{highActivityCustomers>=2?`£${totalHAB.toLocaleString()}`:'—'}</span>
               </div>
             </div>
 
-            <div className="earnings-banner" style={{padding:'0.75rem 1rem',borderRadius:'0.5rem',border:`4px solid ${recurringActive?'#2563eb':'#d1d5db'}`,background:recurringActive?'#eff6ff':'#f9fafb',opacity:recurringActive?1:0.5,transition:'opacity 0.3s,border-color 0.3s'}}>
+            <div className="earnings-banner" style={{padding:'0.5rem 0.75rem',borderRadius:'0.5rem',border:`${qualifiesForFastStarter?'4px':'2px'} solid ${qualifiesForFastStarter?'#86efac':'#e5e7eb'}`,background:qualifiesForFastStarter?'#f0fdf4':'#f9fafb'}}>
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-                <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}><RefreshCw style={{...MD,color:recurringActive?'#2563eb':'#d1d5db'}}/><span style={{fontWeight:'600',color:recurringActive?'#374151':'#6b7280'}}>Recurring Income:</span></div>
-                <div style={{textAlign:'right'}}>
-                  <span style={{fontSize:'1.25rem',fontWeight:'700',color:recurringActive?'#2563eb':'#9ca3af'}}>{recurringActive?`£${residualIncome.toFixed(2)}/m`:'—'}</span>
-                  {recurringActive&&<span style={{display:'block',fontSize:'0.75rem',color:'#3b82f6'}}>(£{(residualIncome*12).toLocaleString()}/yr)</span>}
+                <div style={{display:'flex',alignItems:'center',gap:'0.4rem'}}><TrendingUp style={{...MD,color:qualifiesForFastStarter?'#16a34a':'#d1d5db'}}/><span style={{fontWeight:'600',fontSize:'0.85rem',color:qualifiesForFastStarter?'#16a34a':'#6b7280'}}>Fast Starter Bonus:</span></div>
+                <span style={{fontSize:'1.1rem',fontWeight:'700',color:qualifiesForFastStarter?'#16a34a':'#9ca3af'}}>£{fastStarterBonus.toLocaleString()}</span>
+              </div>
+            </div>
+
+            <div ref={riBannerRef} className="earnings-banner" style={{padding:'0.5rem 0.75rem',borderRadius:'0.5rem',border:`${recurringActive?'4px':'2px'} solid ${recurringActive?'#2563eb':'#d1d5db'}`,background:recurringActive?'#eff6ff':'#f9fafb',opacity:recurringActive?1:0.5,transition:'opacity 0.3s,border-color 0.3s'}}>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                <div style={{display:'flex',alignItems:'center',gap:'0.4rem',flex:1,minWidth:0}}>
+                  <RefreshCw style={{...MD,color:recurringActive?'#2563eb':'#d1d5db',flexShrink:0}}/>
+                  <span style={{fontWeight:'600',fontSize:'0.85rem',color:recurringActive?'#374151':'#6b7280',flexShrink:0}}>Recurring Income:</span>
+                  {!recurringActive&&<span style={{fontSize:'0.7rem',color:'#9ca3af',fontStyle:'italic',marginLeft:'0.3rem',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>Paid on tenants / renting customers</span>}
+                </div>
+                <div style={{textAlign:'right',flexShrink:0}}>
+                  <span style={{fontSize:'1.1rem',fontWeight:'700',color:recurringActive?'#2563eb':'#9ca3af'}}>{recurringActive?`£${residualIncome.toFixed(2)}/m`:'—'}</span>
+                  {recurringActive&&<span style={{display:'block',fontSize:'0.7rem',color:'#3b82f6'}}>(£{(residualIncome*12).toLocaleString()}/yr)</span>}
                 </div>
               </div>
-              {!recurringActive&&(<p style={{margin:'0.3rem 0 0 1.75rem',fontSize:'0.72rem',color:'#9ca3af',fontStyle:'italic'}}>Add a tenant to activate</p>)}
             </div>
 
-            {/* Change 1b: totalEarningsRef on TOTAL EARNINGS banner.
-                Change 5: z-index 160 places it above the revenue card (z-index 140), below contact panel (151+). */}
-            <div ref={totalEarningsRef} className="earnings-banner" style={{padding:'1rem',borderRadius:'0.5rem',boxShadow:'0 2px 8px rgba(0,0,0,0.15)',color:'white',position:'relative',overflow:'hidden',zIndex:160}}>
+            {/* TOTAL EARNINGS — z-index above revenue card */}
+            <div className="earnings-banner" style={{padding:'0.6rem 0.75rem',borderRadius:'0.5rem',boxShadow:'0 2px 8px rgba(0,0,0,0.15)',color:'white',position:'relative',overflow:'hidden',zIndex:160}}>
               <div style={{position:'absolute',inset:0,background:grandTotal>0?'linear-gradient(to right,#7c3aed,#db2777)':'#9ca3af'}}></div>
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',position:'relative',zIndex:1}}>
                 <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}>
-                  <span style={{fontWeight:'700',fontSize:'1.125rem'}}>TOTAL EARNINGS:</span>
-                  <button onClick={(e)=>{e.stopPropagation();setShowInfoPopup(true);}} style={{background:'none',border:'none',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',padding:0,lineHeight:1}}>
-                    {infoBulbActive&&!infoBulbPulsed?<PulsingBulb size="1.8rem" onDone={()=>setInfoBulbPulsed(true)}/>:<Bulb size="1.8rem" grey={!infoBulbActive}/>}
+                  <span style={{fontWeight:'700',fontSize:'1.125rem'}}>Total Earnings:</span>
+                  <button key={`bulb-${infoBulbPulseKey}`} onClick={(e)=>{e.stopPropagation();setShowInfoPopup(true);}} style={{background:'none',border:'none',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',padding:0,lineHeight:1}}>
+                    <span key={`bulb-${infoBulbPulseKey}`} className={infoBulbPulseKey>0?(infoBulbPulseCount>=2?'bulb-pulse-double':'bulb-pulse-single'):''} style={{fontSize:'1.8rem',lineHeight:1,filter:infoBulbColoured?'none':'grayscale(1)',opacity:infoBulbColoured?1:0.5}}>🔍</span>
                   </button>
                 </div>
                 <span style={{fontSize:'1.5rem',fontWeight:'700'}}>£{grandTotal.toLocaleString()}</span>
               </div>
             </div>
-
-            {/* Change 6: locked placeholder removed from in-flow — rendered as fixed LockedRevenueCard below */}
           </div>
         </div>
 
-        <div style={{marginTop:'1rem'}}>
-          <button onClick={()=>setShowResetConfirm(true)} style={{width:'100%',padding:'0.75rem',background:'#e5e7eb',border:'none',borderRadius:'0.5rem',fontWeight:'600',color:'#374151',cursor:'pointer',fontSize:'1rem'}}>Reset</button>
-        </div>
+
       </div>
 
-      {/* Change 6: locked card — shown before fastStarterAchieved, same docking as unlocked */}
-      {!fastStarterAchieved&&(
-        <LockedRevenueCard dockedBottom={revenueBottomOffset} dockedMaxHeight={revenueMaxHeight}/>
-      )}
-
-      {/* Changes 4+6: unlocked card with dynamic docking */}
-      {revenueCardVisible&&(
-        <div className="revenue-slide-up" style={{animationFillMode:'forwards'}}>
-          <RevenueCard
-            grandTotal={grandTotal}
-            supportingBonus={supportingBonus}
-            partnerTotalEarnings={partnerTotalEarnings}
-            onInteracted={handleRevenueInteracted}
-            wiggle={revenueWiggle}
-            dockedBottom={revenueBottomOffset}
-            dockedMaxHeight={revenueMaxHeight}
-          />
-        </div>
-      )}
+      {/* Right-side revenue tab — always present, transitions grey→colour on unlock */}
+      <RevenueCard
+        grandTotal={grandTotal}
+        supportingBonus={supportingBonus}
+        partnerTotalEarnings={partnerTotalEarnings}
+        onInteracted={handleRevenueInteracted}
+        wiggle={revenueWiggle}
+        topOffset={cardTopOffset}
+        cardHeight={cardHeight}
+        unlocked={revenueCardVisible}
+        revTabPulseKey={revTabPulseKey}
+        revTabPulseCount={revTabPulseCount}
+        closeKey={revenueCloseKey}
+      />
 
       {showInfoPopup&&<HowPaidPopup onClose={()=>setShowInfoPopup(false)} fastStarterAchieved={fastStarterAchieved} revenueExplored={revenueExplored}/>}
 
