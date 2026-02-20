@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en-GB">
 <head>
@@ -29,11 +30,7 @@
       min-height:100vh;
       padding: 18px 14px 40px;
     }
-    .wrap{
-      width:100%;
-      max-width: 760px;
-      margin: 0 auto;
-    }
+    .wrap{width:100%;max-width:760px;margin:0 auto;}
     .header{
       border-radius: var(--radius);
       overflow:hidden;
@@ -47,19 +44,8 @@
       color:#fff;
       background: linear-gradient(135deg, var(--purple), var(--pink));
     }
-    .hero h1{
-      margin: 0 0 6px;
-      font-size: 1.18rem;
-      font-weight: 900;
-      letter-spacing: -0.02em;
-    }
-    .hero p{
-      margin: 0;
-      font-size: 0.92rem;
-      opacity: 0.95;
-      line-height: 1.45;
-      font-weight: 600;
-    }
+    .hero h1{margin:0 0 6px;font-size:1.18rem;font-weight:900;letter-spacing:-0.02em;}
+    .hero p{margin:0;font-size:0.92rem;opacity:0.95;line-height:1.45;font-weight:600;}
     .banner{
       padding: 10px 14px;
       background: var(--yellow);
@@ -93,116 +79,70 @@
       text-align:center;
       font-weight: 650;
     }
-    form{
-      display:flex;
-      flex-direction:column;
-      gap: 12px;
-    }
+    form{display:flex;flex-direction:column;gap:12px;}
     .q{
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 12px 12px 12px;
-      background: #fff;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      background:#fff;
     }
     .q label{
       display:block;
-      font-weight: 900;
-      font-size: 0.95rem;
-      margin: 0 0 8px;
-      letter-spacing: -0.01em;
+      font-weight:900;
+      font-size:0.95rem;
+      margin:0 0 8px;
+      letter-spacing:-0.01em;
       text-align:center;
     }
     .sub{
-      margin: -4px 0 10px;
+      margin:-4px 0 10px;
       text-align:center;
-      color: var(--muted);
-      font-size: 0.84rem;
-      font-weight: 650;
-      line-height: 1.35;
+      color:var(--muted);
+      font-size:0.84rem;
+      font-weight:650;
+      line-height:1.35;
     }
-    .row{
-      display:flex;
-      flex-wrap:wrap;
-      gap: 10px;
-      justify-content:center;
-      align-items:center;
-    }
-    .chips{
-      display:flex;
-      flex-wrap:wrap;
-      gap: 8px;
-      justify-content:center;
-    }
+    .row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;}
+    .chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
     .chip{
-      display:flex;
-      align-items:center;
-      gap: 8px;
-      padding: 8px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: #f9fafb;
-      cursor:pointer;
-      user-select:none;
-      font-weight: 800;
-      font-size: 0.86rem;
+      display:flex;align-items:center;gap:8px;
+      padding:8px 10px;border-radius:999px;border:1px solid var(--line);
+      background:#f9fafb;cursor:pointer;user-select:none;
+      font-weight:800;font-size:0.86rem;
     }
-    .chip input{ accent-color: var(--purple); }
-    .rating{
-      display:flex;
-      gap: 6px;
-      justify-content:center;
-      flex-wrap:wrap;
-    }
-    .rating input{ display:none; }
+    .chip input{accent-color:var(--purple);}
+    .rating{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;}
+    .rating input{display:none;}
     .rating label{
-      margin:0;
-      width: 42px;
-      height: 42px;
-      border-radius: 999px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      border: 1px solid var(--line);
-      background: #f9fafb;
-      cursor:pointer;
-      font-weight: 900;
-      color:#374151;
+      margin:0;width:42px;height:42px;border-radius:999px;
+      display:flex;align-items:center;justify-content:center;
+      border:1px solid var(--line);background:#f9fafb;cursor:pointer;
+      font-weight:900;color:#374151;
     }
     .rating input:checked + label{
       border-color: rgba(124,58,237,0.6);
       box-shadow: 0 0 0 4px rgba(124,58,237,0.18);
-      background: #f5f3ff;
-      color: #4c1d95;
+      background:#f5f3ff;color:#4c1d95;
     }
-    textarea, input[type="text"], input[type="email"]{
+    textarea,input[type="text"],input[type="email"]{
       width:100%;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 10px 10px;
-      font-size: 0.92rem;
-      outline:none;
-      background:#fff;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px;
+      font-size:0.92rem;
+      outline:none;background:#fff;
     }
-    textarea:focus, input:focus{
+    textarea:focus,input:focus{
       border-color: rgba(124,58,237,0.65);
       box-shadow: 0 0 0 4px rgba(124,58,237,0.14);
     }
-    textarea{ min-height: 96px; resize: vertical; }
-    .btnRow{
-      display:flex;
-      flex-direction:column;
-      gap: 10px;
-      margin-top: 6px;
-    }
+    textarea{min-height:96px;resize:vertical;}
+    .btnRow{display:flex;flex-direction:column;gap:10px;margin-top:6px;}
     .btn{
       width:100%;
-      border:none;
-      border-radius: 14px;
-      padding: 12px 14px;
-      cursor:pointer;
-      font-weight: 950;
-      font-size: 1rem;
-      letter-spacing: -0.01em;
+      border:none;border-radius:14px;
+      padding:12px 14px;cursor:pointer;
+      font-weight:950;font-size:1rem;letter-spacing:-0.01em;
     }
     .btnPrimary{
       color:#fff;
@@ -210,26 +150,29 @@
       box-shadow: 0 10px 24px rgba(124,58,237,0.28);
     }
     .btnSecondary{
-      color:#374151;
-      background:#f3f4f6;
-      border: 1px solid var(--line);
+      color:#374151;background:#f3f4f6;border:1px solid var(--line);
     }
     .tiny{
-      text-align:center;
-      color: var(--muted);
-      font-size: 0.82rem;
-      line-height: 1.4;
-      margin-top: 6px;
-      font-weight: 650;
+      text-align:center;color:var(--muted);
+      font-size:0.82rem;line-height:1.4;margin-top:6px;font-weight:650;
     }
     .footerNote{
-      margin-top: 12px;
-      text-align:center;
-      color:#6b7280;
-      font-size:0.84rem;
-      font-weight:650;
-      line-height:1.45;
+      margin-top:12px;text-align:center;color:#6b7280;
+      font-size:0.84rem;font-weight:650;line-height:1.45;
     }
+    .emojiHelp{
+      margin: 10px 0 0;
+      font-size: 0.84rem;
+      color: #374151;
+      line-height: 1.5;
+      text-align:center;
+      font-weight: 750;
+      background:#f9fafb;
+      border:1px dashed #d1d5db;
+      border-radius: 12px;
+      padding: 10px 10px;
+    }
+    .emojiHelp strong{color:#111827;}
   </style>
 </head>
 
@@ -241,18 +184,18 @@
         <p>Quick, honest notes to help polish the experience.</p>
       </div>
       <div class="banner">
-        <div class="pill">💡 Two minutes is perfect - any feedback is useful (even “this confused me”).</div>
+        <div class="pill">Two minutes is perfect - any feedback is useful (even “this confused me”).</div>
       </div>
     </div>
 
     <div class="card">
       <p class="intro">
-        This is a mobile-first prototype. Feedback is most helpful on:
-        👣 first steps, 👆 partner upgrade, 🔍 dig deeper popup, and the revenue streams card behaviour.
+        Please answer whatever you can - short and punchy is absolutely fine.
       </p>
 
       <form id="feedbackForm">
-        <!-- 1 -->
+        <!-- ORIGINAL QUESTION SET (unchanged) -->
+
         <div class="q">
           <label>1) Overall - how easy was it to use?</label>
           <div class="sub">1 = confusing, 10 = effortless</div>
@@ -270,14 +213,12 @@
           </div>
         </div>
 
-        <!-- 2 -->
         <div class="q">
-          <label>2) 👣 First step clarity</label>
+          <label>2) First step clarity</label>
           <div class="sub">What felt most obvious to do first?</div>
           <textarea name="firstStep" placeholder="E.g. 'Tap a circle', 'Read the coaching line', 'Open the modal'..."></textarea>
         </div>
 
-        <!-- 3 -->
         <div class="q">
           <label>3) Customer choosing modal</label>
           <div class="sub">Was the prompt clear?</div>
@@ -295,89 +236,90 @@
           </div>
         </div>
 
-        <!-- 4 -->
         <div class="q">
-          <label>4) 👆 “P” upgrade (customer -&gt; partner)</label>
+          <label>4) “P” upgrade (customer -> partner)</label>
           <div class="sub">Was it obvious what the grey “P” meant, and how to upgrade?</div>
           <textarea name="pUpgrade" placeholder="E.g. 'I spotted it straight away' / 'I missed it' / 'Not sure what happened when I tapped'..."></textarea>
         </div>
 
-        <!-- 5 -->
         <div class="q">
           <label>5) Revenue streams card</label>
           <div class="sub">Did it feel in the right place on screen? Did it block anything important?</div>
           <textarea name="revenueCard" placeholder="E.g. 'Felt off-screen on mobile' / 'Layered over the wrong bits' / 'Expansion felt smooth'..."></textarea>
         </div>
 
-        <!-- 6 -->
         <div class="q">
-          <label>6) 🔍 Dig deeper popup</label>
+          <label>6) Dig deeper popup</label>
           <div class="sub">Was it useful, and easy to scan?</div>
           <textarea name="digDeeper" placeholder="E.g. 'Useful but too long' / 'Loved the accordion' / 'Not sure why it appeared'..."></textarea>
         </div>
 
-        <!-- 7 -->
         <div class="q">
-          <label>7) 🧭 Next steps tab</label>
+          <label>7) Next steps tab</label>
           <div class="sub">Did the tab feel discoverable at the right time?</div>
           <textarea name="nextSteps" placeholder="E.g. 'I noticed it' / 'I missed it' / 'It pulsed too early'..."></textarea>
         </div>
 
-        <!-- 8 -->
         <div class="q">
           <label>8) Where was it best viewed?</label>
           <div class="sub">Quick pick</div>
           <div class="chips">
-            <label class="chip"><input type="radio" name="device" value="Mobile (best)" /> 📱 Mobile (best)</label>
-            <label class="chip"><input type="radio" name="device" value="Laptop (best)" /> 💻 Laptop (best)</label>
-            <label class="chip"><input type="radio" name="device" value="About the same" /> 🤝 About the same</label>
+            <label class="chip"><input type="radio" name="device" value="Mobile (best)" /> Mobile (best)</label>
+            <label class="chip"><input type="radio" name="device" value="Laptop (best)" /> Laptop (best)</label>
+            <label class="chip"><input type="radio" name="device" value="About the same" /> About the same</label>
           </div>
         </div>
 
-        <!-- 9 -->
         <div class="q">
-          <label>9) 😣 What felt glitchy or frustrating?</label>
-          <div class="sub">Tick anything that made you sigh 😣</div>
+          <label>9) What felt glitchy or frustrating?</label>
+          <div class="sub">Tick anything that made you sigh</div>
           <div class="chips">
-            <label class="chip"><input type="checkbox" name="glitches" value="Something felt off-screen" /> 📱 Off-screen</label>
-            <label class="chip"><input type="checkbox" name="glitches" value="Layering/overlapping elements" /> 🧩 Overlaps</label>
-            <label class="chip"><input type="checkbox" name="glitches" value="Timing felt too fast" /> ⏱️ Too fast</label>
-            <label class="chip"><input type="checkbox" name="glitches" value="Not sure what to do next" /> 🤷 Not sure</label>
-            <label class="chip"><input type="checkbox" name="glitches" value="Buttons/taps not responding" /> 🫠 Unresponsive</label>
+            <label class="chip"><input type="checkbox" name="glitches" value="Something felt off-screen" /> Off-screen</label>
+            <label class="chip"><input type="checkbox" name="glitches" value="Layering/overlapping elements" /> Overlaps</label>
+            <label class="chip"><input type="checkbox" name="glitches" value="Timing felt too fast" /> Too fast</label>
+            <label class="chip"><input type="checkbox" name="glitches" value="Not sure what to do next" /> Not sure</label>
+            <label class="chip"><input type="checkbox" name="glitches" value="Buttons/taps not responding" /> Unresponsive</label>
           </div>
           <div style="margin-top:10px;">
             <textarea name="glitchDetails" placeholder="Anything specific? (Device / browser / what happened)"></textarea>
           </div>
         </div>
 
-        <!-- 10 -->
         <div class="q">
-          <label>10) ☝️ If you could change ONE thing first…</label>
+          <label>10) If you could change ONE thing first…</label>
           <div class="sub">The single highest-leverage improvement</div>
           <textarea name="oneThing" placeholder="E.g. 'Make the revenue card always visible on mobile' / 'Clearer partner upgrade prompt'..."></textarea>
         </div>
 
-        <!-- 11 -->
         <div class="q">
           <label>11) Would this be worth sharing with someone?</label>
           <div class="sub">Quick pick + optional note</div>
           <div class="chips">
-            <label class="chip"><input type="radio" name="share" value="Yes" /> ✅ Yes</label>
-            <label class="chip"><input type="radio" name="share" value="Maybe" /> 🤔 Maybe</label>
-            <label class="chip"><input type="radio" name="share" value="Not yet" /> 🧪 Not yet</label>
+            <label class="chip"><input type="radio" name="share" value="Yes" /> Yes</label>
+            <label class="chip"><input type="radio" name="share" value="Maybe" /> Maybe</label>
+            <label class="chip"><input type="radio" name="share" value="Not yet" /> Not yet</label>
           </div>
           <div style="margin-top:10px;">
             <textarea name="shareWhy" placeholder="Optional: why / why not?"></textarea>
           </div>
         </div>
 
-        <!-- 12 -->
         <div class="q">
           <label>12) Optional - name + email (only if happy to be contacted)</label>
           <div class="sub">Leave blank if preferred</div>
           <div class="row">
             <input type="text" name="name" placeholder="Name" style="max-width:360px;" />
             <input type="email" name="email" placeholder="Email" style="max-width:360px;" />
+          </div>
+        </div>
+
+        <!-- ONLY ADDITION: emoji helper field -->
+        <div class="q">
+          <label>Emoji quick feedback (optional)</label>
+          <div class="sub">If short on time, just drop a few emojis that sum it up</div>
+          <textarea name="emojiFeedback" placeholder="Examples: 😣 glitchy, 👆 P upgrade, 👣 first steps, ☝️ one thing, 🔍 dig deeper"></textarea>
+          <div class="emojiHelp">
+            Handy emojis: <strong>😣</strong> glitchy - <strong>👆</strong> P upgrade - <strong>👣</strong> first steps - <strong>☝️</strong> one thing - <strong>🔍</strong> dig deeper
           </div>
         </div>
 
@@ -391,7 +333,7 @@
         </div>
 
         <div class="footerNote">
-          Thank you - this helps polish the tool so it feels intentional, not “nearly there”. 🙌
+          Thank you - this really helps. 🙌
         </div>
       </form>
     </div>
@@ -421,40 +363,37 @@
       lines.push("UW Partner Earnings Tool - Feedback");
       lines.push("—");
 
-      const ease = getRadioValue("ease");
-      lines.push(`1) Overall ease (1-10): ${ease || "[not set]"}`);
+      lines.push(`1) Overall ease (1-10): ${getRadioValue("ease") || "[not set]"}`);
 
       lines.push("");
-      lines.push(`2) 👣 First step clarity:`);
+      lines.push("2) First step clarity:");
       lines.push(esc(form.firstStep.value) || "[blank]");
 
-      const modalClarity = getRadioValue("modalClarity");
       lines.push("");
-      lines.push(`3) Modal clarity (1-10): ${modalClarity || "[not set]"}`);
+      lines.push(`3) Modal clarity (1-10): ${getRadioValue("modalClarity") || "[not set]"}`);
 
       lines.push("");
-      lines.push(`4) 👆 “P” upgrade notes:`);
+      lines.push("4) “P” upgrade notes:");
       lines.push(esc(form.pUpgrade.value) || "[blank]");
 
       lines.push("");
-      lines.push(`5) Revenue streams card notes:`);
+      lines.push("5) Revenue streams card notes:");
       lines.push(esc(form.revenueCard.value) || "[blank]");
 
       lines.push("");
-      lines.push(`6) 🔍 Dig deeper popup notes:`);
+      lines.push("6) Dig deeper popup notes:");
       lines.push(esc(form.digDeeper.value) || "[blank]");
 
       lines.push("");
-      lines.push(`7) 🧭 Next steps tab notes:`);
+      lines.push("7) Next steps tab notes:");
       lines.push(esc(form.nextSteps.value) || "[blank]");
 
-      const device = getRadioValue("device");
       lines.push("");
-      lines.push(`8) Best viewed on: ${device || "[not set]"}`);
+      lines.push(`8) Best viewed on: ${getRadioValue("device") || "[not set]"}`);
 
-      const glitches = getCheckedValues("glitches");
       lines.push("");
-      lines.push(`9) 😣 Glitchy/frustrating (ticks): ${glitches.length ? glitches.join(", ") : "[none ticked]"}`);
+      const glitches = getCheckedValues("glitches");
+      lines.push(`9) Glitchy/frustrating (ticks): ${glitches.length ? glitches.join(", ") : "[none ticked]"}`);
       const glitchDetails = esc(form.glitchDetails.value);
       if (glitchDetails) {
         lines.push("Details:");
@@ -462,22 +401,25 @@
       }
 
       lines.push("");
-      lines.push(`10) ☝️ One change first:`);
+      lines.push("10) One change first:");
       lines.push(esc(form.oneThing.value) || "[blank]");
 
-      const share = getRadioValue("share");
       lines.push("");
-      lines.push(`11) Worth sharing: ${share || "[not set]"}`);
+      lines.push(`11) Worth sharing: ${getRadioValue("share") || "[not set]"}`);
       const shareWhy = esc(form.shareWhy.value);
       if (shareWhy) {
         lines.push("Why/why not:");
         lines.push(shareWhy);
       }
 
+      lines.push("");
       const name = esc(form.name.value);
       const email = esc(form.email.value);
-      lines.push("");
       lines.push(`12) Contact (optional): ${name || "[blank]"} ${email ? "<" + email + ">" : ""}`);
+
+      lines.push("");
+      lines.push("Emoji quick feedback (optional):");
+      lines.push(esc(form.emojiFeedback.value) || "[blank]");
 
       lines.push("");
       lines.push("Tool link:");
@@ -486,9 +428,9 @@
       const body = lines.join("\n");
       const mailto = `mailto:${encodeURIComponent(FEEDBACK_TO)}?subject=${encodeURIComponent(SUBJECT)}&body=${encodeURIComponent(body)}`;
 
-      // Open the user's email client
       window.location.href = mailto;
     });
   </script>
 </body>
 </html>
+```
