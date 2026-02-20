@@ -1,370 +1,492 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-GB">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>UW Partner Earnings Tool - Quick Feedback</title>
+  <title>UW Partner Earnings Tool - Feedback</title>
   <style>
-    :root { color-scheme: light; }
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: linear-gradient(135deg, #fdf2f8, #f5f3ff);
-      color: #111827;
+    :root{
+      --bg1:#fdf2f8;
+      --bg2:#f5f3ff;
+      --card:#ffffff;
+      --text:#111827;
+      --muted:#6b7280;
+      --line:#e5e7eb;
+      --purple:#7c3aed;
+      --pink:#db2777;
+      --yellow:#fefce8;
+      --yellowLine:#fde68a;
+      --amber:#92400e;
+      --shadow: 0 16px 45px rgba(0,0,0,0.14);
+      --radius: 16px;
     }
-    .wrap { max-width: 720px; margin: 0 auto; padding: 18px; }
-    .card {
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.10);
-      overflow: hidden;
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      min-height:100vh;
+      padding: 18px 14px 40px;
     }
-    header {
-      background: linear-gradient(135deg, #7c3aed, #db2777);
-      color: #fff;
-      padding: 18px 18px 14px;
-      text-align: center;
+    .wrap{
+      width:100%;
+      max-width: 760px;
+      margin: 0 auto;
     }
-    header h1 { margin: 0; font-size: 18px; font-weight: 800; letter-spacing: -0.01em; }
-    header p { margin: 8px 0 0; font-size: 13px; opacity: 0.92; line-height: 1.45; }
-    .content { padding: 16px 16px 18px; }
-    .hint {
-      background: #fefce8;
-      border: 1px solid #fde68a;
-      color: #92400e;
-      border-radius: 12px;
-      padding: 10px 12px;
-      font-size: 13px;
-      line-height: 1.45;
+    .header{
+      border-radius: var(--radius);
+      overflow:hidden;
+      box-shadow: var(--shadow);
+      background: var(--card);
       margin-bottom: 14px;
-      text-align: center;
-      font-weight: 700;
     }
-    fieldset { border: 0; margin: 0 0 14px; padding: 0; }
-    label { display: block; font-size: 13px; font-weight: 800; margin: 10px 0 6px; }
-    .sub { font-size: 12px; color: #6b7280; margin-top: -2px; }
-    input[type="text"], input[type="email"], textarea, select {
-      width: 100%;
-      box-sizing: border-box;
-      border: 2px solid #e5e7eb;
-      border-radius: 12px;
-      padding: 10px 12px;
-      font-size: 14px;
-      outline: none;
-      background: #fff;
+    .hero{
+      padding: 18px 18px 16px;
+      text-align:center;
+      color:#fff;
+      background: linear-gradient(135deg, var(--purple), var(--pink));
     }
-    textarea { min-height: 92px; resize: vertical; }
-    input:focus, textarea:focus, select:focus { border-color: #c4b5fd; box-shadow: 0 0 0 3px rgba(124,58,237,0.12); }
-    .row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+    .hero h1{
+      margin: 0 0 6px;
+      font-size: 1.18rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+    .hero p{
+      margin: 0;
+      font-size: 0.92rem;
+      opacity: 0.95;
+      line-height: 1.45;
+      font-weight: 600;
+    }
+    .banner{
+      padding: 10px 14px;
+      background: var(--yellow);
+      border-top: 1px solid var(--yellowLine);
+      border-bottom: 1px solid var(--yellowLine);
+      text-align:center;
+    }
+    .banner .pill{
+      display:inline-block;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid var(--yellowLine);
+      background: #fef9c3;
+      color: var(--amber);
+      font-weight: 800;
+      font-size: 0.86rem;
+      line-height: 1.25;
+      max-width: 640px;
+    }
+    .card{
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: var(--shadow);
+      padding: 16px 14px;
+    }
+    .intro{
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.55;
+      text-align:center;
+      font-weight: 650;
+    }
+    form{
+      display:flex;
+      flex-direction:column;
       gap: 12px;
     }
-    @media (max-width: 620px) {
-      .row { grid-template-columns: 1fr; }
-      header h1 { font-size: 17px; }
-    }
-    .scale {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 8px;
-      margin-top: 8px;
-    }
-    .chip {
-      border: 2px solid #e5e7eb;
-      border-radius: 999px;
-      padding: 8px 8px;
-      text-align: center;
-      font-size: 13px;
-      font-weight: 800;
-      cursor: pointer;
-      user-select: none;
+    .q{
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 12px 12px;
       background: #fff;
     }
-    .chip input { display: none; }
-    .chip.selected { border-color: #7c3aed; box-shadow: 0 0 0 3px rgba(124,58,237,0.12); }
-    .chip small { display: block; font-weight: 700; color: #6b7280; font-size: 11px; margin-top: 2px; }
-    .checks { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
-    @media (max-width: 620px) { .checks { grid-template-columns: 1fr; } }
-    .check {
-      border: 2px solid #e5e7eb;
-      border-radius: 12px;
-      padding: 10px 12px;
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-      cursor: pointer;
-      background: #fff;
-    }
-    .check input { margin-top: 2px; }
-    .check b { font-size: 13px; }
-    .check span { font-size: 12px; color: #6b7280; display: block; margin-top: 2px; line-height: 1.35; }
-    .btns { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
-    button {
-      border: 0;
-      border-radius: 12px;
-      padding: 12px 14px;
+    .q label{
+      display:block;
       font-weight: 900;
-      cursor: pointer;
-      font-size: 14px;
+      font-size: 0.95rem;
+      margin: 0 0 8px;
+      letter-spacing: -0.01em;
+      text-align:center;
     }
-    .primary {
-      background: linear-gradient(135deg, #7c3aed, #db2777);
-      color: #fff;
-      box-shadow: 0 10px 25px rgba(124,58,237,0.25);
-      flex: 1;
-      min-width: 220px;
+    .sub{
+      margin: -4px 0 10px;
+      text-align:center;
+      color: var(--muted);
+      font-size: 0.84rem;
+      font-weight: 650;
+      line-height: 1.35;
     }
-    .secondary {
-      background: #e5e7eb;
-      color: #374151;
+    .row{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 10px;
+      justify-content:center;
+      align-items:center;
     }
-    .footer-note {
-      margin-top: 10px;
-      font-size: 12px;
-      color: #6b7280;
-      line-height: 1.45;
-      text-align: center;
+    .chips{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 8px;
+      justify-content:center;
     }
-    .err {
-      display: none;
-      margin-top: 10px;
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-      color: #991b1b;
-      border-radius: 12px;
-      padding: 10px 12px;
-      font-size: 13px;
-      line-height: 1.4;
+    .chip{
+      display:flex;
+      align-items:center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #f9fafb;
+      cursor:pointer;
+      user-select:none;
       font-weight: 800;
+      font-size: 0.86rem;
+    }
+    .chip input{ accent-color: var(--purple); }
+    .rating{
+      display:flex;
+      gap: 6px;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+    .rating input{ display:none; }
+    .rating label{
+      margin:0;
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border: 1px solid var(--line);
+      background: #f9fafb;
+      cursor:pointer;
+      font-weight: 900;
+      color:#374151;
+    }
+    .rating input:checked + label{
+      border-color: rgba(124,58,237,0.6);
+      box-shadow: 0 0 0 4px rgba(124,58,237,0.18);
+      background: #f5f3ff;
+      color: #4c1d95;
+    }
+    textarea, input[type="text"], input[type="email"]{
+      width:100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 10px;
+      font-size: 0.92rem;
+      outline:none;
+      background:#fff;
+    }
+    textarea:focus, input:focus{
+      border-color: rgba(124,58,237,0.65);
+      box-shadow: 0 0 0 4px rgba(124,58,237,0.14);
+    }
+    textarea{ min-height: 96px; resize: vertical; }
+    .btnRow{
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .btn{
+      width:100%;
+      border:none;
+      border-radius: 14px;
+      padding: 12px 14px;
+      cursor:pointer;
+      font-weight: 950;
+      font-size: 1rem;
+      letter-spacing: -0.01em;
+    }
+    .btnPrimary{
+      color:#fff;
+      background: linear-gradient(135deg, var(--purple), var(--pink));
+      box-shadow: 0 10px 24px rgba(124,58,237,0.28);
+    }
+    .btnSecondary{
+      color:#374151;
+      background:#f3f4f6;
+      border: 1px solid var(--line);
+    }
+    .tiny{
+      text-align:center;
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.4;
+      margin-top: 6px;
+      font-weight: 650;
+    }
+    .footerNote{
+      margin-top: 12px;
+      text-align:center;
+      color:#6b7280;
+      font-size:0.84rem;
+      font-weight:650;
+      line-height:1.45;
     }
   </style>
 </head>
+
 <body>
   <div class="wrap">
-    <div class="card">
-      <header>
-        <h1>Quick feedback - UW Partner Earnings Tool</h1>
-        <p>
-          2 to 3 minutes. Honest answers are helpful. If something is unclear, say so.
-        </p>
-      </header>
+    <div class="header">
+      <div class="hero">
+        <h1>Feedback - UW Partner Earnings Tool</h1>
+        <p>Quick, honest notes to help polish the experience.</p>
+      </div>
+      <div class="banner">
+        <div class="pill">💡 Two minutes is perfect - any feedback is useful (even “this confused me”).</div>
+      </div>
+    </div>
 
-      <div class="content">
-        <div class="hint">
-          🎯 Goal: spot friction, clarity issues, and whether the £2,000 story feels credible.
+    <div class="card">
+      <p class="intro">
+        This is a mobile-first prototype. Feedback is most helpful on:
+        👣 first steps, 👆 partner upgrade, 🔍 dig deeper popup, and the revenue streams card behaviour.
+      </p>
+
+      <form id="feedbackForm">
+        <!-- 1 -->
+        <div class="q">
+          <label>1) Overall - how easy was it to use?</label>
+          <div class="sub">1 = confusing, 10 = effortless</div>
+          <div class="rating" aria-label="Overall ease rating">
+            <input type="radio" id="ease1" name="ease" value="1"><label for="ease1">1</label>
+            <input type="radio" id="ease2" name="ease" value="2"><label for="ease2">2</label>
+            <input type="radio" id="ease3" name="ease" value="3"><label for="ease3">3</label>
+            <input type="radio" id="ease4" name="ease" value="4"><label for="ease4">4</label>
+            <input type="radio" id="ease5" name="ease" value="5"><label for="ease5">5</label>
+            <input type="radio" id="ease6" name="ease" value="6"><label for="ease6">6</label>
+            <input type="radio" id="ease7" name="ease" value="7"><label for="ease7">7</label>
+            <input type="radio" id="ease8" name="ease" value="8"><label for="ease8">8</label>
+            <input type="radio" id="ease9" name="ease" value="9"><label for="ease9">9</label>
+            <input type="radio" id="ease10" name="ease" value="10"><label for="ease10">10</label>
+          </div>
         </div>
 
-        <form id="feedbackForm">
-          <fieldset class="row">
-            <div>
-              <label for="name">Name (optional)</label>
-              <input id="name" name="name" type="text" placeholder="Your name" />
-            </div>
-            <div>
-              <label for="email">Email (optional)</label>
-              <input id="email" name="email" type="email" placeholder="you@example.com" />
-            </div>
-          </fieldset>
+        <!-- 2 -->
+        <div class="q">
+          <label>2) 👣 First step clarity</label>
+          <div class="sub">What felt most obvious to do first?</div>
+          <textarea name="firstStep" placeholder="E.g. 'Tap a circle', 'Read the coaching line', 'Open the modal'..."></textarea>
+        </div>
 
-          <fieldset>
-            <label for="who">Which best describes you?</label>
-            <div class="sub">Helps interpret feedback.</div>
-            <select id="who" name="who">
-              <option value="">Select one</option>
-              <option>Business owner / self-employed</option>
-              <option>Employed (not self-employed)</option>
-              <option>Mortgage / financial adviser</option>
-              <option>Networking regular</option>
-              <option>Just curious / testing</option>
-              <option>Other</option>
-            </select>
-          </fieldset>
-
-          <fieldset>
-            <label for="firstImpression">In one sentence, what did you think the tool was for?</label>
-            <div class="sub">This tests the first impression clarity.</div>
-            <textarea id="firstImpression" name="firstImpression" placeholder="Example: It shows how adding customers and partners could build income..."></textarea>
-          </fieldset>
-
-          <fieldset>
-            <label>How easy was it to use?</label>
-            <div class="sub">1 = confusing, 5 = very easy</div>
-            <div class="scale" id="easeScale">
-              <label class="chip"><input type="radio" name="ease" value="1" /><div>1<small>Confusing</small></div></label>
-              <label class="chip"><input type="radio" name="ease" value="2" /><div>2<small>Hard</small></div></label>
-              <label class="chip"><input type="radio" name="ease" value="3" /><div>3<small>OK</small></div></label>
-              <label class="chip"><input type="radio" name="ease" value="4" /><div>4<small>Easy</small></div></label>
-              <label class="chip"><input type="radio" name="ease" value="5" /><div>5<small>Very easy</small></div></label>
-            </div>
-          </fieldset>
-
-          <fieldset>
-            <label>Where (if anywhere) did you hesitate or get confused?</label>
-            <div class="sub">Tick any that apply.</div>
-            <div class="checks">
-              <label class="check"><input type="checkbox" name="friction" value="Choosing customer type / services" />
-                <div><b>Customer selection</b><span>Choosing homeowner vs tenant, services, etc.</span></div>
-              </label>
-              <label class="check"><input type="checkbox" name="friction" value="Understanding what 'P' means / upgrading to partner" />
-                <div><b>P circles / partner upgrade</b><span>Grey P to gold P and why it matters.</span></div>
-              </label>
-              <label class="check"><input type="checkbox" name="friction" value="Understanding the banners and what changes them" />
-                <div><b>Banners</b><span>Customer bonus, high activity bonus, recurring income.</span></div>
-              </label>
-              <label class="check"><input type="checkbox" name="friction" value="Revenue streams card behaviour / layering" />
-                <div><b>Revenue streams card</b><span>Finding it, opening it, seeing it on mobile.</span></div>
-              </label>
-              <label class="check"><input type="checkbox" name="friction" value="Info popup (how partners are paid)" />
-                <div><b>Info popup</b><span>Understanding how partners are paid.</span></div>
-              </label>
-              <label class="check"><input type="checkbox" name="friction" value="Other" />
-                <div><b>Other</b><span>Anything else that felt awkward.</span></div>
-              </label>
-            </div>
-          </fieldset>
-
-          <fieldset>
-            <label for="credibility">Did “five conversations → around £2,000” feel believable?</label>
-            <select id="credibility" name="credibility">
-              <option value="">Select one</option>
-              <option>Yes - believable</option>
-              <option>Mostly - but needs clearer context</option>
-              <option>Not sure</option>
-              <option>No - feels unrealistic</option>
-            </select>
-          </fieldset>
-
-          <fieldset>
-            <label for="mobile">How did it feel on your device?</label>
-            <select id="mobile" name="mobile">
-              <option value="">Select one</option>
-              <option>Mobile - felt slick</option>
-              <option>Mobile - usable but a bit clunky</option>
-              <option>Laptop - fine</option>
-              <option>Laptop - awkward</option>
-              <option>Not sure</option>
-            </select>
-          </fieldset>
-
-          <fieldset>
-            <label for="oneChange">If only one thing could be improved, what would it be?</label>
-            <textarea id="oneChange" name="oneChange" placeholder="Example: Make the revenue card more obvious and always visible on mobile..."></textarea>
-          </fieldset>
-
-          <fieldset>
-            <label for="bugs">Anything broken or glitchy?</label>
-            <div class="sub">Optional - include what happened and what device/browser was used.</div>
-            <textarea id="bugs" name="bugs" placeholder="Example: On iPhone Safari, the revenue card sits off-screen until scrolling..."></textarea>
-          </fieldset>
-
-          <div class="err" id="errBox">Please answer at least the first impression question and the ease score.</div>
-
-          <div class="btns">
-            <button type="button" class="primary" id="sendBtn">Email feedback</button>
-            <button type="reset" class="secondary">Reset</button>
+        <!-- 3 -->
+        <div class="q">
+          <label>3) Customer choosing modal</label>
+          <div class="sub">Was the prompt clear?</div>
+          <div class="rating" aria-label="Modal clarity rating">
+            <input type="radio" id="modal1" name="modalClarity" value="1"><label for="modal1">1</label>
+            <input type="radio" id="modal2" name="modalClarity" value="2"><label for="modal2">2</label>
+            <input type="radio" id="modal3" name="modalClarity" value="3"><label for="modal3">3</label>
+            <input type="radio" id="modal4" name="modalClarity" value="4"><label for="modal4">4</label>
+            <input type="radio" id="modal5" name="modalClarity" value="5"><label for="modal5">5</label>
+            <input type="radio" id="modal6" name="modalClarity" value="6"><label for="modal6">6</label>
+            <input type="radio" id="modal7" name="modalClarity" value="7"><label for="modal7">7</label>
+            <input type="radio" id="modal8" name="modalClarity" value="8"><label for="modal8">8</label>
+            <input type="radio" id="modal9" name="modalClarity" value="9"><label for="modal9">9</label>
+            <input type="radio" id="modal10" name="modalClarity" value="10"><label for="modal10">10</label>
           </div>
+        </div>
 
-          <div class="footer-note">
-            Pressing “Email feedback” opens the default email app with everything filled in.
-            No data is stored on the website.
+        <!-- 4 -->
+        <div class="q">
+          <label>4) 👆 “P” upgrade (customer -&gt; partner)</label>
+          <div class="sub">Was it obvious what the grey “P” meant, and how to upgrade?</div>
+          <textarea name="pUpgrade" placeholder="E.g. 'I spotted it straight away' / 'I missed it' / 'Not sure what happened when I tapped'..."></textarea>
+        </div>
+
+        <!-- 5 -->
+        <div class="q">
+          <label>5) Revenue streams card</label>
+          <div class="sub">Did it feel in the right place on screen? Did it block anything important?</div>
+          <textarea name="revenueCard" placeholder="E.g. 'Felt off-screen on mobile' / 'Layered over the wrong bits' / 'Expansion felt smooth'..."></textarea>
+        </div>
+
+        <!-- 6 -->
+        <div class="q">
+          <label>6) 🔍 Dig deeper popup</label>
+          <div class="sub">Was it useful, and easy to scan?</div>
+          <textarea name="digDeeper" placeholder="E.g. 'Useful but too long' / 'Loved the accordion' / 'Not sure why it appeared'..."></textarea>
+        </div>
+
+        <!-- 7 -->
+        <div class="q">
+          <label>7) 🧭 Next steps tab</label>
+          <div class="sub">Did the tab feel discoverable at the right time?</div>
+          <textarea name="nextSteps" placeholder="E.g. 'I noticed it' / 'I missed it' / 'It pulsed too early'..."></textarea>
+        </div>
+
+        <!-- 8 -->
+        <div class="q">
+          <label>8) Where was it best viewed?</label>
+          <div class="sub">Quick pick</div>
+          <div class="chips">
+            <label class="chip"><input type="radio" name="device" value="Mobile (best)" /> 📱 Mobile (best)</label>
+            <label class="chip"><input type="radio" name="device" value="Laptop (best)" /> 💻 Laptop (best)</label>
+            <label class="chip"><input type="radio" name="device" value="About the same" /> 🤝 About the same</label>
           </div>
-        </form>
-      </div>
+        </div>
+
+        <!-- 9 -->
+        <div class="q">
+          <label>9) 😣 What felt glitchy or frustrating?</label>
+          <div class="sub">Tick anything that made you sigh 😣</div>
+          <div class="chips">
+            <label class="chip"><input type="checkbox" name="glitches" value="Something felt off-screen" /> 📱 Off-screen</label>
+            <label class="chip"><input type="checkbox" name="glitches" value="Layering/overlapping elements" /> 🧩 Overlaps</label>
+            <label class="chip"><input type="checkbox" name="glitches" value="Timing felt too fast" /> ⏱️ Too fast</label>
+            <label class="chip"><input type="checkbox" name="glitches" value="Not sure what to do next" /> 🤷 Not sure</label>
+            <label class="chip"><input type="checkbox" name="glitches" value="Buttons/taps not responding" /> 🫠 Unresponsive</label>
+          </div>
+          <div style="margin-top:10px;">
+            <textarea name="glitchDetails" placeholder="Anything specific? (Device / browser / what happened)"></textarea>
+          </div>
+        </div>
+
+        <!-- 10 -->
+        <div class="q">
+          <label>10) ☝️ If you could change ONE thing first…</label>
+          <div class="sub">The single highest-leverage improvement</div>
+          <textarea name="oneThing" placeholder="E.g. 'Make the revenue card always visible on mobile' / 'Clearer partner upgrade prompt'..."></textarea>
+        </div>
+
+        <!-- 11 -->
+        <div class="q">
+          <label>11) Would this be worth sharing with someone?</label>
+          <div class="sub">Quick pick + optional note</div>
+          <div class="chips">
+            <label class="chip"><input type="radio" name="share" value="Yes" /> ✅ Yes</label>
+            <label class="chip"><input type="radio" name="share" value="Maybe" /> 🤔 Maybe</label>
+            <label class="chip"><input type="radio" name="share" value="Not yet" /> 🧪 Not yet</label>
+          </div>
+          <div style="margin-top:10px;">
+            <textarea name="shareWhy" placeholder="Optional: why / why not?"></textarea>
+          </div>
+        </div>
+
+        <!-- 12 -->
+        <div class="q">
+          <label>12) Optional - name + email (only if happy to be contacted)</label>
+          <div class="sub">Leave blank if preferred</div>
+          <div class="row">
+            <input type="text" name="name" placeholder="Name" style="max-width:360px;" />
+            <input type="email" name="email" placeholder="Email" style="max-width:360px;" />
+          </div>
+        </div>
+
+        <div class="btnRow">
+          <button type="button" class="btn btnPrimary" id="emailBtn">Send feedback by email ✉️</button>
+          <button type="reset" class="btn btnSecondary">Clear form</button>
+        </div>
+
+        <div class="tiny">
+          Pressing “Send feedback by email” opens the default email app with everything pre-filled.
+        </div>
+
+        <div class="footerNote">
+          Thank you - this helps polish the tool so it feels intentional, not “nearly there”. 🙌
+        </div>
+      </form>
     </div>
   </div>
 
   <script>
-    // Update selected styling for the ease scale chips
-    (function () {
-      const chips = Array.from(document.querySelectorAll('#easeScale .chip'));
-      chips.forEach(chip => {
-        chip.addEventListener('click', () => {
-          chips.forEach(c => c.classList.remove('selected'));
-          chip.classList.add('selected');
-        });
-      });
-    })();
+    // Configure where feedback emails go:
+    const FEEDBACK_TO = "adrian.croft@uw.partners";
+    const SUBJECT = "UW Partner Earnings Tool - Feedback";
+
+    const form = document.getElementById("feedbackForm");
+    const btn  = document.getElementById("emailBtn");
 
     function getCheckedValues(name) {
-      return Array.from(document.querySelectorAll('input[name="' + name + '"]:checked')).map(x => x.value);
+      return Array.from(form.querySelectorAll(`input[name="${name}"]:checked`)).map(i => i.value);
     }
-
     function getRadioValue(name) {
-      const el = document.querySelector('input[name="' + name + '"]:checked');
-      return el ? el.value : '';
+      const el = form.querySelector(`input[name="${name}"]:checked`);
+      return el ? el.value : "";
+    }
+    function esc(v) {
+      return (v || "").toString().trim();
     }
 
-    function safe(v) {
-      return (v || '').toString().trim();
-    }
+    btn.addEventListener("click", () => {
+      const lines = [];
+      lines.push("UW Partner Earnings Tool - Feedback");
+      lines.push("—");
 
-    function buildEmailBody(data) {
-      const lines = [
-        "UW Partner Earnings Tool - Feedback",
-        "--------------------------------",
-        "",
-        "Name: " + (data.name || "(not provided)"),
-        "Email: " + (data.email || "(not provided)"),
-        "Role: " + (data.who || "(not selected)"),
-        "",
-        "1) First impression (what was the tool for?):",
-        data.firstImpression || "(not provided)",
-        "",
-        "2) Ease of use (1-5): " + (data.ease || "(not selected)"),
-        "",
-        "3) Where did you hesitate / get confused?:",
-        (data.friction.length ? "- " + data.friction.join("\n- ") : "(none selected)"),
-        "",
-        "4) £2,000 story credibility:",
-        data.credibility || "(not selected)",
-        "",
-        "5) Device experience:",
-        data.mobile || "(not selected)",
-        "",
-        "6) One thing to improve:",
-        data.oneChange || "(not provided)",
-        "",
-        "7) Bugs / glitches:",
-        data.bugs || "(not provided)",
-        "",
-        "Thanks"
-      ];
-      return lines.join("\n");
-    }
+      const ease = getRadioValue("ease");
+      lines.push(`1) Overall ease (1-10): ${ease || "[not set]"}`);
 
-    document.getElementById('sendBtn').addEventListener('click', function () {
-      const errBox = document.getElementById('errBox');
-      errBox.style.display = 'none';
+      lines.push("");
+      lines.push(`2) 👣 First step clarity:`);
+      lines.push(esc(form.firstStep.value) || "[blank]");
 
-      const data = {
-        name: safe(document.getElementById('name').value),
-        email: safe(document.getElementById('email').value),
-        who: safe(document.getElementById('who').value),
-        firstImpression: safe(document.getElementById('firstImpression').value),
-        ease: getRadioValue('ease'),
-        friction: getCheckedValues('friction'),
-        credibility: safe(document.getElementById('credibility').value),
-        mobile: safe(document.getElementById('mobile').value),
-        oneChange: safe(document.getElementById('oneChange').value),
-        bugs: safe(document.getElementById('bugs').value)
-      };
+      const modalClarity = getRadioValue("modalClarity");
+      lines.push("");
+      lines.push(`3) Modal clarity (1-10): ${modalClarity || "[not set]"}`);
 
-      // Minimal required fields to keep it light but useful
-      if (!data.firstImpression || !data.ease) {
-        errBox.style.display = 'block';
-        return;
+      lines.push("");
+      lines.push(`4) 👆 “P” upgrade notes:`);
+      lines.push(esc(form.pUpgrade.value) || "[blank]");
+
+      lines.push("");
+      lines.push(`5) Revenue streams card notes:`);
+      lines.push(esc(form.revenueCard.value) || "[blank]");
+
+      lines.push("");
+      lines.push(`6) 🔍 Dig deeper popup notes:`);
+      lines.push(esc(form.digDeeper.value) || "[blank]");
+
+      lines.push("");
+      lines.push(`7) 🧭 Next steps tab notes:`);
+      lines.push(esc(form.nextSteps.value) || "[blank]");
+
+      const device = getRadioValue("device");
+      lines.push("");
+      lines.push(`8) Best viewed on: ${device || "[not set]"}`);
+
+      const glitches = getCheckedValues("glitches");
+      lines.push("");
+      lines.push(`9) 😣 Glitchy/frustrating (ticks): ${glitches.length ? glitches.join(", ") : "[none ticked]"}`);
+      const glitchDetails = esc(form.glitchDetails.value);
+      if (glitchDetails) {
+        lines.push("Details:");
+        lines.push(glitchDetails);
       }
 
-      const to = "adrian.croft@uw.partners";
-      const subject = "Feedback on UW Partner Earnings Tool";
-      const body = buildEmailBody(data);
+      lines.push("");
+      lines.push(`10) ☝️ One change first:`);
+      lines.push(esc(form.oneThing.value) || "[blank]");
 
-      const mailto = "mailto:" + encodeURIComponent(to)
-        + "?subject=" + encodeURIComponent(subject)
-        + "&body=" + encodeURIComponent(body);
+      const share = getRadioValue("share");
+      lines.push("");
+      lines.push(`11) Worth sharing: ${share || "[not set]"}`);
+      const shareWhy = esc(form.shareWhy.value);
+      if (shareWhy) {
+        lines.push("Why/why not:");
+        lines.push(shareWhy);
+      }
 
-      // Open the email client
+      const name = esc(form.name.value);
+      const email = esc(form.email.value);
+      lines.push("");
+      lines.push(`12) Contact (optional): ${name || "[blank]"} ${email ? "<" + email + ">" : ""}`);
+
+      lines.push("");
+      lines.push("Tool link:");
+      lines.push("https://aqcroft.github.io/UW_PET_GH_v2/");
+
+      const body = lines.join("\n");
+      const mailto = `mailto:${encodeURIComponent(FEEDBACK_TO)}?subject=${encodeURIComponent(SUBJECT)}&body=${encodeURIComponent(body)}`;
+
+      // Open the user's email client
       window.location.href = mailto;
     });
   </script>
