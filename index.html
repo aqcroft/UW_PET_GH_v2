@@ -579,7 +579,7 @@ const RevenueCard=({grandTotal,supportingBonus,partnerTotalEarnings,onInteracted
               <div style={{background:'rgba(254,243,199,0.92)',borderRadius:'0.4rem',padding:'0.35rem 0.55rem',display:'flex',alignItems:'center',gap:'0.5rem'}}>
                 <span style={{fontSize:'1.3rem',lineHeight:1,flexShrink:0,alignSelf:'center'}}>💡</span>
                 <p style={{color:'#374151',fontSize:'0.7rem',fontWeight:'600',margin:0,lineHeight:1.45,flex:1,textAlign:'center'}}>
-                  Help just <span style={{fontWeight:'800',color:'#92400e'}}>TWO</span> Partners a month to achieve<br/>this for an annual revenue up to <span style={{fontWeight:'800',color:'#92400e'}}>£{(partnerTotalEarnings*2*12).toLocaleString()}</span>
+                  Help just <span style={{fontWeight:'800',color:'#92400e'}}>ONE</span> new Partner a month to achieve<br/>this for an annual revenue up to <span style={{fontWeight:'800',color:'#92400e'}}>£{(partnerTotalEarnings*12).toLocaleString()}</span>
                 </p>
               </div>
             </div>
@@ -726,7 +726,7 @@ const UWTracker=()=>{
     // Trigger A — circle 4 just filled, no HAB yet — fire once only
     if(!habAShown.current&&fourFilledForHAB&&!fiveFilled&&highActivityCustomers===0&&!qualifiesForFastStarter){
       habAShown.current=true;setCoachArrow(false);
-      setTimeout(()=>setCoachMsg("Consider making your last two customers\n3+ service homeowners to activate\nthe £50 High Activity Bonus"),500);
+      setTimeout(()=>setCoachMsg("Consider making your last two customers\n3+ service homeowners to activate the £50 High Activity Bonus"),500);
       return;
     }
     // Mix message — 5th circle, all same type OR HAB 3-homeowner special case
@@ -734,7 +734,7 @@ const UWTracker=()=>{
       // Special case: already 3 HAB homeowners, mixed customers — encourage 4th
       if(highActivityCustomers===3){
         mixShown.current=true;setCoachArrow(false);
-        setTimeout(()=>setCoachMsg("Congratulations — that's 3 £50 HAB customers!\nIf your last is one too, your HAB doubles\non all these customers"),500);
+        setTimeout(()=>setCoachMsg("Congratulations — that's 3 £50 HAB customers!\nIf your last is one too, your HAB doubles on all these customers"),500);
       } else if(allHomeowners){
         mixShown.current=true;setCoachArrow(false);
         if(highActivityCustomers>=2){
@@ -752,11 +752,11 @@ const UWTracker=()=>{
     if(nonYouFilled.length<totalCircles-2)return;
     if(highActivityCustomers===1&&!habBShown.current){
       habBShown.current=true;setCoachArrow(false);
-      setTimeout(()=>setCoachMsg("You've got one homeowner with 3+ services —\nadd a second to unlock\nthe £50 High Activity Bonus"),500);
+      setTimeout(()=>setCoachMsg("You've got one homeowner with 3+ services — add a second to unlock the £50 High Activity Bonus"),500);
     }
     else if(highActivityCustomers>=2&&!habCShown.current){
       habCShown.current=true;setCoachArrow(false);
-      setTimeout(()=>setCoachMsg("£50 High Activity Bonus activated! 🔥\nIntroduce 4 homeowners with 3+ services\nto jump to £100"),500);
+      setTimeout(()=>setCoachMsg("£50 High Activity Bonus activated! 🔥\nIntroduce 4 homeowners with 3+ services to jump to £100"),500);
     }
   },[highActivityCustomers,nonYouFilled.length]);
 
@@ -849,7 +849,7 @@ const UWTracker=()=>{
     // First customer saved — now flip the flag so subsequent modals show short copy
     if(!firstModalSeen.current){firstModalSeen.current=true;setHasInteracted(true);}
     const nonYouCount=nc.filter((c,i)=>includeYou?i>0&&c.type!==null:c.type!==null).length;
-    if(!firstCustomerDone&&nonYouCount===1){setFirstCustomerDone(true);setTimeout(()=>setCoachMsg("🙌 Nice work! 🙌\nNow keep going — try different customer types\nand watch your income grow."),500);}
+    if(!firstCustomerDone&&nonYouCount===1){setFirstCustomerDone(true);setTimeout(()=>setCoachMsg("🙌 Nice work! 🙌\nNow keep going — try different customer types and watch your income grow."),500);}
     const nowAllFilled=nc.every(c=>c.type!==null);
     const nowHasPartner=nc.some((c,i)=>includeYou?i>0&&c.isPartner:c.isPartner);
     const nowQualifies=nowAllFilled&&nowHasPartner;
