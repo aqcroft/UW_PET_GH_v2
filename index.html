@@ -22,30 +22,44 @@
     100% { box-shadow: 0 0 0 0px rgba(168,85,247,0), 0 0 0 0px rgba(168,85,247,0); }
   }
   @keyframes circleGlowAnim {
-    0%,100% { box-shadow: 0 0 0 0 rgba(124,58,237,0); }
-    50%     { box-shadow: 0 0 0 8px rgba(124,58,237,0.3); }
+    0%,100% { transform:scale(1); }
+    50%     { transform:scale(1.12); }
   }
-  /* Tab glow — same ring feel as circles, brand colours — halved intensity */
+  @keyframes emojiZoom {
+    0%,100% { transform:scale(1); }
+    50%     { transform:scale(2.0); }
+  }
+  /* Tab glow — single soft purple halo */
   @keyframes tabGlowLeft {
     0%,100% { box-shadow: 3px 0 0 0 rgba(124,58,237,0); }
-    50%     { box-shadow: 3px 0 0 5px rgba(219,39,119,0.4), 3px 0 0 10px rgba(124,58,237,0.15); }
+    50%     { box-shadow: 3px 0 0 8px rgba(124,58,237,0.45); }
   }
   @keyframes tabGlowRight {
     0%,100% { box-shadow: -3px 0 0 0 rgba(124,58,237,0); }
-    50%     { box-shadow: -3px 0 0 5px rgba(219,39,119,0.4), -3px 0 0 10px rgba(124,58,237,0.15); }
+    50%     { box-shadow: -3px 0 0 8px rgba(124,58,237,0.45); }
   }
-  /* Bulb glow — visible pale blue ring on coloured state */
+  /* Bulb glow — white halo + scale so it's clearly visible */
   @keyframes bulbGlow {
-    0%,100% { transform:scale(1); }
-    50%     { transform:scale(1.18); filter:drop-shadow(0 0 6px rgba(99,102,241,0.8)) drop-shadow(0 0 12px rgba(219,39,119,0.5)); }
+    0%,100% { transform:scale(1); filter:none; }
+    50%     { transform:scale(1.22); filter:drop-shadow(0 0 5px white) drop-shadow(0 0 10px rgba(99,102,241,0.7)) drop-shadow(0 0 18px rgba(219,39,119,0.4)); }
   }
   @keyframes revenueSlideIn {
     0%   { opacity:0; transform: translateX(80px) scale(0.96); }
     100% { opacity:1; transform: translateX(0) scale(1); }
   }
+  @keyframes emojiPop {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.6); }
+    70%  { transform: scale(1.35); }
+    100% { transform: scale(1); }
+  }
   @keyframes gentlePulse {
     0%,100% { transform:scale(1); opacity:1; }
-    50%     { transform:scale(1.22); opacity:0.78; }
+    50%     { transform:scale(1.13); opacity:0.88; }
+  }
+  @keyframes slowBreath {
+    0%,100% { transform:scale(1); }
+    50%     { transform:scale(1.12); }
   }
   @keyframes arrowPulse {
     0%,100% { transform:scale(1); opacity:1; }
@@ -56,17 +70,18 @@
   .animate-bounceOnce { animation: bounceOnce 0.6s ease-in-out; }
   .coach-in  { animation: coachFadeIn  0.55s ease-out forwards; }
   .coach-out { animation: coachFadeOut 0.45s ease-in  forwards; }
-  .p-badge-glow { animation: badgeGlow 1.4s ease-in-out 2; animation-fill-mode: forwards; }
   .revenue-slide-in { animation: revenueSlideIn 1.6s cubic-bezier(0.22,1,0.36,1) forwards; }
-  .line-pulse        { animation: gentlePulse 1.4s ease-in-out 1; }
-  .line-pulse-double { animation: gentlePulse 1.4s ease-in-out 2; }
-  .arrow-pulse       { animation: arrowPulse  1.4s ease-in-out 3; }
-  .left-tab-glow-double  { animation: tabGlowLeft  1.4s ease-in-out 2; }
-  .left-tab-glow-single  { animation: tabGlowLeft  1.4s ease-in-out 1; }
-  .right-tab-glow-double { animation: tabGlowRight 1.4s ease-in-out 2; }
-  .right-tab-glow-single { animation: tabGlowRight 1.4s ease-in-out 1; }
-  .bulb-glow-double { animation: bulbGlow 1.4s ease-in-out 2; }
-  .bulb-glow-single { animation: bulbGlow 1.4s ease-in-out 1; }
+  /* Single-mechanism CSS classes — added/removed by useAnimClass hook */
+  .anim-glow-left   { animation: tabGlowLeft  2.8s cubic-bezier(0.45,0,0.55,1) 1; }
+  .anim-glow-right  { animation: tabGlowRight 2.8s cubic-bezier(0.45,0,0.55,1) 1; }
+  .anim-glow-circle { animation: circleGlowAnim 2.8s cubic-bezier(0.45,0,0.55,1) 1; }
+  .anim-glow-bulb   { animation: bulbGlow 2.8s cubic-bezier(0.45,0,0.55,1) 1; }
+  .anim-pulse-line  { animation: gentlePulse 2.8s cubic-bezier(0.45,0,0.55,1) 1; }
+  .anim-pulse-lock  { animation: slowBreath  2.8s cubic-bezier(0.45,0,0.55,1) 1; }
+  .anim-pop-emoji   { animation: emojiPop    0.4s ease-out 1; }
+  .anim-pulse-arrow { animation: arrowPulse  1.4s ease-in-out 2; }
+  .anim-pulse-emoji { animation: emojiZoom   2.8s cubic-bezier(0.45,0,0.55,1) 1; }
+  .anim-badge-glow  { animation: badgeGlow   1.4s ease-in-out 2; animation-fill-mode: forwards; }
   * { box-sizing: border-box; }
   @media (orientation: landscape) and (max-height: 500px) {
     .accordion-list { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 0.4rem !important; align-items: start !important; }
@@ -124,6 +139,26 @@
 <script type="text/babel">
 const { useState, useRef, useCallback, useEffect } = React;
 
+// Single-mechanism animation hook.
+// Pass a ref to the DOM element and a CSS class name.
+// Call fire() to play the animation. Removes the class after duration so it can fire again.
+const useAnimClass=(ref,cls,duration=2800)=>{
+  const timer=useRef(null);
+  const fire=useCallback(()=>{
+    const el=ref.current;if(!el)return;
+    el.classList.remove(cls);
+    requestAnimationFrame(()=>{
+      requestAnimationFrame(()=>{
+        el.classList.add(cls);
+        clearTimeout(timer.current);
+        timer.current=setTimeout(()=>el.classList.remove(cls),duration);
+      });
+    });
+  },[cls,duration]);
+  useEffect(()=>()=>clearTimeout(timer.current),[]);
+  return fire;
+};
+
 const CONTACT = {
   displayName:'Adrian', fullName:'Adrian Croft', title:'UW Partner',
   photoUrl:'https://raw.githubusercontent.com/aqcroft/UW_PET_GH_v2/main/Adrian_Croft.jpg',
@@ -174,18 +209,19 @@ const IntroModal=({onClose})=>(
         <p style={{fontSize:'0.875rem',color:'#374151',margin:'0 0 0.7rem',lineHeight:1.65}}>UW Partners help people save on essential services they already use: ⚡ energy, 🛜 broadband, 📲 mobile & ☔ insurance.</p>
         <p style={{fontSize:'0.875rem',color:'#374151',fontWeight:'700',margin:'0 0 0.7rem',lineHeight:1.65}}>Bundles build benefits — for customers and Partners.<br/>When customers win, Partners win. 🏆</p>
         <p style={{fontSize:'0.875rem',color:'#374151',margin:'0 0 0.85rem',lineHeight:1.65}}>Add customers and watch the numbers change.</p>
-        <p style={{fontSize:'0.875rem',color:'#374151',fontWeight:'700',fontStyle:'italic',margin:'0 0 1.4rem',lineHeight:1.5}}>💡 Explore, experiment and learn as you play.</p>
-        <button onClick={onClose} style={{width:'100%',padding:'0.85rem',background:'linear-gradient(135deg,#7c3aed,#db2777)',border:'none',borderRadius:'0.6rem',color:'white',fontWeight:'800',fontSize:'1.05rem',cursor:'pointer',boxShadow:'0 4px 14px rgba(124,58,237,0.4)'}}>Let's go 🚀</button>
+        <p style={{fontSize:'0.875rem',color:'#374151',fontWeight:'700',fontStyle:'italic',margin:'0 0 1.4rem',lineHeight:1.5}}>Explore, experiment and learn as you play.</p>
+        <button onClick={onClose} style={{width:'100%',padding:'0.85rem',background:'linear-gradient(135deg,#7c3aed,#db2777)',border:'none',borderRadius:'0.6rem',color:'white',fontWeight:'800',fontSize:'1.05rem',cursor:'pointer',boxShadow:'0 4px 14px rgba(124,58,237,0.4)'}}>Let's go</button>
       </div>
     </div>
   </div>
 );
 
-const CoachingLane=({message,showArrow,stagedActiveCount,stagedPulseIndex,linePulseKeys,postCelebArrow,postCelebArrowPulseKey,stagedIsFirstReveal,onRevenuePanelOpened})=>{
+const CoachingLane=({message,showArrow,stagedActiveCount,emojiRefs,postCelebArrow,postCelebArrowRef,onRevenuePanelOpened})=>{
   const [visible,setVisible]=useState(false);
   const [displayed,setDisplayed]=useState(null);
   const [fading,setFading]=useState(false);
-  const [arrowPulseKey,setArrowPulseKey]=useState(0);
+  const pBadgeRef=useRef(null);
+  const firePBadgeGlow=useAnimClass(pBadgeRef,'anim-badge-glow',2800);
   const autoTimer=useRef(null);
   const fadeTimer=useRef(null);
   const clearAll=()=>{clearTimeout(autoTimer.current);clearTimeout(fadeTimer.current);};
@@ -204,26 +240,32 @@ const CoachingLane=({message,showArrow,stagedActiveCount,stagedPulseIndex,linePu
       autoTimer.current=setTimeout(()=>{setFading(true);fadeTimer.current=setTimeout(()=>{setVisible(false);setDisplayed(null);setFading(false);},450);},10000);
     }
   },[showArrow]);
-  useEffect(()=>{if(showArrow&&visible)setArrowPulseKey(k=>k+1);},[showArrow,visible]);
+  // Fire P-badge glow once showArrow branch is rendered (300ms gives React time to paint)
+  const prevShowArrow=useRef(false);
+  useEffect(()=>{
+    if(showArrow&&visible&&!prevShowArrow.current){
+      prevShowArrow.current=true;
+      setTimeout(()=>firePBadgeGlow(),300);
+    }
+    if(!showArrow)prevShowArrow.current=false;
+  },[showArrow,visible]);
 
   const isStaged=displayed==='__staged__';
   const isPostCeleb=displayed==='__postcelebration__';
   const isActive=visible&&displayed;
 
-  // "So... what's next?" header appears immediately; lines build after 2.5s pause
   const lineData=[
-    {text:'🔁 Explore and swap out customer types'},
+    {text:'🔁 Explore and swap customer types'},
     {text:'🧭 Check out next steps'},
     {text:'🔍 Dig into how we\'re paid'},
   ];
 
   return(
     <div className={`coaching-lane ${isActive?'active':'inactive'}`}>
-      <span style={{fontSize:'1.5rem',lineHeight:1,flexShrink:0,filter:isActive?'none':'grayscale(1)',opacity:isActive?1:0.25,transition:'none'}}>💡</span>
+      <span style={{fontSize:'1.5rem',lineHeight:1,flexShrink:0,filter:isActive?'none':'grayscale(1)',opacity:isActive?1:0.25,transition:'filter 0.3s,opacity 0.3s'}}>💡</span>
       {isActive&&(
         <span className={fading?'coach-out':'coach-in'} style={{display:'flex',alignItems:'center',flex:1,minWidth:0}}>
           {showArrow?(
-            /* Partner prompt — 3 lines */
             <span style={{display:'flex',flexDirection:'column',gap:'0.15rem',width:'100%',textAlign:'center'}}>
               <span style={{fontSize:'clamp(0.6rem,2.2vw,0.78rem)',fontWeight:'700',fontStyle:'italic',color:'#374151',lineHeight:1.5}}>🙌 Six customers done — nearly there!</span>
               <span style={{fontSize:'clamp(0.6rem,2.2vw,0.78rem)',fontWeight:'700',fontStyle:'italic',color:'#374151',lineHeight:1.5}}>Upgrade one to Partner to unlock QD*</span>
@@ -231,55 +273,56 @@ const CoachingLane=({message,showArrow,stagedActiveCount,stagedPulseIndex,linePu
                 <span style={{fontSize:'clamp(0.6rem,2.2vw,0.78rem)',fontWeight:'700',fontStyle:'italic',color:'#374151'}}>Tap a</span>
                 <span className="p-badge p-badge-grey">P</span>
                 <span style={{fontSize:'clamp(0.6rem,2.2vw,0.78rem)',fontWeight:'700',fontStyle:'italic',color:'#374151'}}>to upgrade:</span>
-                <span key={`arrow-${arrowPulseKey}`} className={`p-badge p-badge-grey${arrowPulseKey>0?' p-badge-glow':''}`}>P</span>
+                <span ref={pBadgeRef} className="p-badge p-badge-grey">P</span>
                 <span style={{fontSize:'1.1rem',lineHeight:1}}>➡️</span>
                 <span className="p-badge p-badge-gold">P</span>
               </span>
             </span>
           ):isPostCeleb?(
-            /* Post-celebration — permanent until revenue tab opened, dynamic font */
             <span style={{fontSize:'clamp(0.58rem,2vw,0.78rem)',fontWeight:'700',fontStyle:'italic',color:'#374151',textAlign:'center',width:'100%',lineHeight:1.45}}>
               You've seen what you can earn.{' '}
               Now see what happens when you help others.{' '}
               Explore the three unlocked revenue streams{' '}
-              <span key={`pcArrow-${postCelebArrowPulseKey}`} className={postCelebArrowPulseKey>0?'arrow-pulse':''} style={{fontSize:'1.1rem',display:'inline-block',lineHeight:1,verticalAlign:'middle'}}>➡️</span>
+              <span ref={postCelebArrowRef} style={{fontSize:'1.1rem',display:'inline-block',lineHeight:1,verticalAlign:'middle'}}>🔓</span>
             </span>
           ):isStaged?(
-            /* 3 fixed rows */
             <span style={{display:'flex',flexDirection:'column',width:'100%',textAlign:'center',height:'100%',justifyContent:'space-between'}}>
               {stagedActiveCount===0?(
                 <>
                   <span style={{display:'block',fontSize:'0.78rem',lineHeight:1.5,color:'transparent',userSelect:'none'}}>placeholder</span>
-                  <span className="coach-in" style={{display:'block',fontSize:'1.17rem',fontWeight:'700',fontStyle:'italic',color:'#374151',lineHeight:1.4,textAlign:'center'}}>
-                    So... what's next?
-                  </span>
+                  <span className="coach-in" style={{display:'block',fontSize:'1.17rem',fontWeight:'700',fontStyle:'italic',color:'#374151',lineHeight:1.4,textAlign:'center'}}>So... what's next?</span>
                   <span style={{display:'block',fontSize:'0.78rem',lineHeight:1.5,color:'transparent',userSelect:'none'}}>placeholder</span>
                 </>
               ):(
-                lineData.map((line,i)=>{
-                  const isPulsing=stagedPulseIndex===i;
-                  const isVisible=i<stagedActiveCount;
-                  const pulseClass=isPulsing?(stagedIsFirstReveal?'line-pulse-double':'line-pulse'):'';
-                  return(
-                    <span key={`line-${i}-${linePulseKeys?linePulseKeys[i]:0}`} className={pulseClass} style={{
-                      display:'block',fontSize:'clamp(0.58rem,2vw,0.76rem)',fontWeight:'700',fontStyle:'italic',
-                      color:isVisible?'#374151':'transparent',
-                      lineHeight:1.5,transformOrigin:'center center',
-                      transition:'color 0.5s ease',userSelect:'none'
-                    }}>{line.text}</span>
-                  );
-                })
+                <span style={{display:'inline-flex',flexDirection:'column',alignItems:'flex-start',margin:'0 auto'}}>
+                  {lineData.map((line,i)=>{
+                    const isVisible=i<stagedActiveCount;
+                    const emoji=line.text.slice(0,2);
+                    const rest=line.text.slice(2);
+                    return(
+                      <span key={i} style={{
+                        display:'flex',alignItems:'center',gap:'0.3rem',
+                        fontWeight:'700',fontStyle:'italic',
+                        color:isVisible?'#374151':'transparent',
+                        lineHeight:1.5,transition:'color 0.5s ease',userSelect:'none'
+                      }}>
+                        <span ref={emojiRefs?emojiRefs[i]:null} style={{
+                          fontSize:'0.9rem',lineHeight:1,flexShrink:0,display:'inline-block',transformOrigin:'center'
+                        }}>{emoji}</span>
+                        <span style={{display:'inline-block',fontSize:'0.72rem'}}>{rest}</span>
+                      </span>
+                    );
+                  })}
+                </span>
               )}
             </span>
           ):(
-            /* Standard message — dynamic font to fit on mobile */
             <span style={{fontSize:'clamp(0.58rem,2vw,0.78rem)',fontWeight:'700',fontStyle:'italic',color:'#374151',textAlign:'center',width:'100%',lineHeight:1.45}}>
               {displayed&&displayed.split('\n').map((line,i)=>(<span key={i} style={{display:'block'}}>{line}</span>))}
             </span>
           )}
         </span>
       )}
-      {/* Ghost — always reserves fixed 3-row height */}
       {!isActive&&(
         <span style={{display:'flex',flexDirection:'column',width:'100%',height:'100%',justifyContent:'space-between',visibility:'hidden',pointerEvents:'none'}}>
           {lineData.map((_,i)=>(<span key={i} style={{display:'block',fontSize:'0.78rem',lineHeight:1.5}}>placeholder</span>))}
@@ -289,19 +332,26 @@ const CoachingLane=({message,showArrow,stagedActiveCount,stagedPulseIndex,linePu
   );
 };
 
-const ContactPanel=({grandTotal,isOpen,onClose,tabColoured,onTabClick,tabPulseExternal,tabPulseCount})=>{
+const ContactPanel=({grandTotal,isOpen,onClose,tabColoured,onTabClick,pulseTab})=>{
   const initials=CONTACT.fullName.split(' ').map(n=>n[0]).join('').slice(0,2);
-  const [tabPulseKey,setTabPulseKey]=useState(0);
-  const prevColoured=useRef(false);
-  useEffect(()=>{if(tabColoured&&!prevColoured.current){setTimeout(()=>setTabPulseKey(k=>k+1),300);}prevColoured.current=tabColoured;},[tabColoured]);
-  useEffect(()=>{if(tabPulseExternal>0)setTabPulseKey(k=>k+1);},[tabPulseExternal]);
+  const tabRef=useRef(null);
+  const emojiRef=useRef(null);
+  const fireTabGlow=useAnimClass(tabRef,'anim-glow-left',2800);
+  const fireEmojiPop=useAnimClass(emojiRef,'anim-pop-emoji',400);
+  // pulseTab is a counter — each increment triggers one animation cycle
+  const prevPulse=useRef(0);
+  useEffect(()=>{
+    if(pulseTab>prevPulse.current){
+      prevPulse.current=pulseTab;
+      fireTabGlow();fireEmojiPop();
+    }
+  },[pulseTab]);
   const tabClass=`left-pull-tab${isOpen?' panel-open':''} ${tabColoured?'tab-coloured':'tab-grey'}`;
-  const tabGlowClass=tabPulseKey>0?(tabPulseCount>=2?'left-tab-glow-double':'left-tab-glow-single'):'';
   return(
     <>
       <div className={`contact-panel-overlay${isOpen?' visible':''}`} onClick={onClose}/>
-      <div key={`tab-${tabPulseKey}`} className={`${tabClass}${tabGlowClass?' '+tabGlowClass:''}`} onClick={onTabClick}>
-        <span style={{fontSize:'1.1rem',lineHeight:1,display:'block',marginBottom:'0.25rem',filter:tabColoured?'none':'grayscale(1)',opacity:tabColoured?1:0.7}}>{isOpen?'✕':tabColoured?'🧭':'👋'}</span>
+      <div ref={tabRef} className={tabClass} onClick={onTabClick}>
+        <span ref={emojiRef} style={{fontSize:'1.1rem',lineHeight:1,display:'block',marginBottom:'0.25rem',filter:tabColoured?'none':'grayscale(1)',opacity:tabColoured?1:0.7}}>{isOpen?'✕':tabColoured?'🧭':'👋'}</span>
         <span className="pull-tab-label" style={{transform:'rotate(180deg)'}}>{isOpen?'Close':tabColoured?'Next Steps':'Get in touch'}</span>
       </div>
       <div className={`contact-panel${isOpen?' open':''}`}>
@@ -371,14 +421,27 @@ const ProfileBubble=()=>{
 
 const box={background:'#fdf8f0',borderRadius:'0.5rem',padding:'0.75rem',marginBottom:'0.5rem',border:'1px solid #f3e8d0'};
 const closing={fontStyle:'italic',fontWeight:'700',color:'#374151',margin:0};
-const scbSummary=(isOpen)=>(<span>Upfront payment when we support a Partner to introduce a homeowner.{' '}<span style={{fontStyle:'italic',fontSize:'0.72rem',color:'#7c3aed',opacity:isOpen?1:0,transition:'opacity 0.15s'}}>🔓 Unlocks at 6 Personal Customers.</span></span>);
-const mbSummary=(isOpen)=>(<span>Up to £400 when a Partner we introduce reaches QD.<br/><span style={{fontStyle:'italic',fontSize:'0.72rem',color:'#7c3aed',opacity:isOpen?1:0,transition:'opacity 0.15s'}}>🔓 Unlocks at 3 Personal Customers.</span></span>);
+const unlockLine=(isOpen,text)=>(<span style={{fontStyle:'italic',fontSize:'0.72rem',color:isOpen?'#111827':'transparent',transition:'color 0.2s',display:'block',marginTop:'0.2rem',userSelect:'none'}}>{text}</span>);
+const accentBorder=(colour)=>({borderLeft:`3px solid ${colour}`,paddingLeft:'0.5rem'});
 const sections=[
-  {id:'cb',icon:<span style={{fontSize:'1.1rem'}}>💷</span>,title:'Customer Bonus',summary:'Upfront payment when we introduce a homeowner customer.',detail:(<div style={{fontSize:'0.875rem',color:'#374151'}}><p style={{marginBottom:'0.5rem'}}>Paid when services go live:</p><div style={{...box,display:'grid',gridTemplateColumns:'1fr 1fr',gap:'0.25rem'}}><span>1️⃣ service — £50</span><span>3️⃣ services — £250</span><span>2️⃣ services — £100</span><span>4️⃣ services — £300</span></div><p style={closing}>💡 The more customers we introduce, the more we earn.</p></div>)},
-  {id:'hab',icon:<span style={{fontSize:'1.1rem'}}>🔥</span>,title:'High Activity Bonus',summary:'Extra reward for multiple 3+ service homeowners in one calendar month.',detail:(<div style={{fontSize:'0.875rem',color:'#374151'}}><p style={{marginBottom:'0.5rem'}}>On top of Customer Bonus:</p><div style={box}><div>2️⃣ or more homeowners — £50 each</div><div>4️⃣ or more homeowners — £100 each</div></div><p style={closing}>💡 With Customer Bonus that's up to £400 per homeowner.</p></div>)},
-  {id:'ri',icon:<RefreshCw style={{...SM,color:'#2563eb'}}/>,title:'Recurring (Residual) Income',summary:"Ongoing monthly income from our personal customers and our team's customers.",detail:(<div style={{fontSize:'0.875rem',color:'#374151'}}><p style={{marginBottom:'0.5rem'}}>A recurring profit share of customers' bills which increases as customers add more services.</p><div style={{...box,marginBottom:'0.5rem'}}><p style={{fontStyle:'italic',fontSize:'0.72rem',color:'#7c3aed',margin:'0 0 0.5rem',lineHeight:'1.3'}}>🔓 Unlocks at 3 personal customers (QD)</p><p style={{margin:'0 0 0.3rem',display:'flex',alignItems:'center',gap:'0.3rem',flexWrap:'wrap'}}><RefreshCw style={{width:'0.75rem',height:'0.75rem',flexShrink:0,color:'#2563eb'}}/><span style={{fontSize:'0.8rem'}}>👤</span><strong>Personal Customers</strong><span style={{fontWeight:'400',fontStyle:'italic',color:'#6b7280',fontSize:'0.78rem'}}>— % of bill, typically</span></p><div style={{marginBottom:'0.45rem',paddingLeft:'0.3rem',fontSize:'0.82rem'}}><div>• Tenant — £2–£3 /month <span style={{color:'#6b7280',fontSize:'0.72rem'}}>(after first bill paid)</span></div><div>• Homeowner — £3–£5 /month <span style={{color:'#6b7280',fontSize:'0.72rem'}}>(after a set period)</span></div></div><div style={{borderTop:'1px solid #c4b5fd',paddingTop:'0.4rem'}}><p style={{margin:'0 0 0.3rem',display:'flex',alignItems:'center',gap:'0.3rem',flexWrap:'wrap'}}><RefreshCw style={{width:'0.75rem',height:'0.75rem',flexShrink:0,color:'#2563eb'}}/><span style={{fontSize:'0.8rem'}}>👥</span><strong>Team (Group) Customers</strong><span style={{fontWeight:'400',fontStyle:'italic',color:'#6b7280',fontSize:'0.78rem'}}>— pence per service, typically</span></p><div style={{paddingLeft:'0.3rem',fontSize:'0.82rem'}}>• 30–50p /month per customer</div></div></div><p style={closing}>💡 Grows steadily as our customers and team expand.</p></div>)},
-  {id:'scb',icon:<span style={{fontSize:'1.1rem'}}>🤝</span>,title:'Supporting Customer Bonus',summary:scbSummary,detail:(<div style={{fontSize:'0.875rem',color:'#374151'}}><p style={{marginBottom:'0.5rem'}}>We receive <strong>50%</strong> of the full Customer Bonus.</p><div style={{...box,fontSize:'0.8rem',marginBottom:'0.5rem'}}><div style={{marginBottom:'0.25rem'}}>⏱️ <strong>First 45 days</strong> — in addition to their Customer Bonus</div><div style={{marginBottom:'0.4rem'}}>➡️ <strong>After 45 days</strong> — Customer Bonus is shared 50:50</div><div style={{borderTop:'1px solid #c4b5fd',paddingTop:'0.4rem',display:'grid',gridTemplateColumns:'1fr 1fr',gap:'0.25rem'}}><span>1️⃣ service — £25</span><span>3️⃣ services — £125</span><span>2️⃣ services — £50</span><span>4️⃣ services — £150</span></div></div><p style={closing}>💡 An extra income stream from helping Partners introduce homeowners.</p></div>)},
-  {id:'mb',icon:<span style={{fontSize:'1.1rem'}}>🎓</span>,title:'Mentor Bonus',summary:mbSummary,detail:(<div style={{fontSize:'0.875rem',color:'#374151'}}><p style={{marginBottom:'0.5rem',fontWeight:'600'}}>QD = 3 Personal Customers + 1 Partner introduced</p><div style={box}><div style={{display:'flex',alignItems:'center',gap:'0.4rem'}}><span>🎓</span><span>Mentor Bonus — £100</span></div><div style={{display:'flex',alignItems:'center',gap:'0.4rem',marginTop:'0.25rem'}}><TrendingUp style={{width:'0.75rem',height:'0.75rem',color:'#374151'}}/><span>30 days Mentor Fast Starter Bonus — £300</span></div><div style={{borderTop:'1px solid #c4b5fd',marginTop:'0.5rem',paddingTop:'0.5rem',paddingLeft:'1.5rem'}}>Total — £400 per Partner</div></div><p style={closing}>💡 Rewarding us for developing new Partners — with even more for Fast Starter.</p></div>)},
+  {id:'cb',accent:'#7c3aed',icon:<span style={{fontSize:'1.1rem'}}>💷</span>,title:'Customer Bonus',
+    summary:(isOpen)=>(<span>Upfront payment when we introduce a homeowner customer.</span>),
+    detail:(<div style={{fontSize:'0.875rem',color:'#374151'}}><p style={{marginBottom:'0.5rem'}}>Paid when services go live:</p><div style={{...box,display:'grid',gridTemplateColumns:'1fr 1fr',gap:'0.25rem'}}><span>1️⃣ service — £50</span><span>3️⃣ services — £250</span><span>2️⃣ services — £100</span><span>4️⃣ services — £300</span></div><p style={closing}>💡 The more customers we introduce, the more we earn.</p></div>)},
+  {id:'hab',accent:'#f97316',icon:<span style={{fontSize:'1.1rem'}}>🔥</span>,title:'High Activity Bonus',
+    summary:(isOpen)=>(<span>Extra reward for multiple 3+ service homeowners in one calendar month.</span>),
+    detail:(<div style={{fontSize:'0.875rem',color:'#374151'}}><p style={{marginBottom:'0.5rem'}}>On top of Customer Bonus:</p><div style={box}><div>2️⃣ or more homeowners — £50 each</div><div>4️⃣ or more homeowners — £100 each</div></div><p style={closing}>💡 With Customer Bonus that's up to £400 per homeowner.</p></div>)},
+  {id:'ri',accent:'#2563eb',icon:<RefreshCw style={{...SM,color:'#2563eb'}}/>,title:'Recurring (Residual) Income',
+    summary:(isOpen)=>(<span>Ongoing monthly income from our personal customers and our team's customers.{unlockLine(isOpen,'🔓 Unlocks at QD — 3 personal customers')}</span>),
+    detail:(<div style={{fontSize:'0.875rem',color:'#374151'}}><p style={{marginBottom:'0.5rem'}}>A recurring profit share of customers' bills which increases as customers add more services.</p><div style={{...box,marginBottom:'0.5rem'}}><p style={{margin:'0 0 0.3rem',display:'flex',alignItems:'center',gap:'0.3rem',flexWrap:'wrap'}}><RefreshCw style={{width:'0.75rem',height:'0.75rem',flexShrink:0,color:'#2563eb'}}/><span style={{fontSize:'0.8rem'}}>👤</span><strong>Personal Customers</strong><span style={{fontWeight:'400',fontStyle:'italic',color:'#6b7280',fontSize:'0.78rem'}}>— % of bill, typically</span></p><div style={{marginBottom:'0.45rem',paddingLeft:'0.3rem',fontSize:'0.82rem'}}><div>• Tenant — £2–£3 /month <span style={{color:'#6b7280',fontSize:'0.72rem'}}>(after first bill paid)</span></div><div>• Homeowner — £3–£5 /month <span style={{color:'#6b7280',fontSize:'0.72rem'}}>(after a set period)</span></div></div><div style={{borderTop:'1px solid #bfdbfe',paddingTop:'0.4rem'}}><p style={{margin:'0 0 0.3rem',display:'flex',alignItems:'center',gap:'0.3rem',flexWrap:'wrap'}}><RefreshCw style={{width:'0.75rem',height:'0.75rem',flexShrink:0,color:'#2563eb'}}/><span style={{fontSize:'0.8rem'}}>👥</span><strong>Team (Group) Customers</strong><span style={{fontWeight:'400',fontStyle:'italic',color:'#6b7280',fontSize:'0.78rem'}}>— pence per service, typically</span></p><div style={{paddingLeft:'0.3rem',fontSize:'0.82rem'}}>• 30–50p /month per customer</div></div></div><p style={closing}>💡 Grows steadily as our customers and team expand.</p></div>)},
+  {id:'fsb',accent:'#16a34a',icon:<TrendingUp style={{...SM,color:'#16a34a'}}/>,title:'Promotion & Fast Starter Bonus',
+    summary:(isOpen)=>(<span>Up to £500 when you reach QD* within your first 30 days.{unlockLine(isOpen,'🔓 Unlocks at QD*')}</span>),
+    detail:(<div style={{fontSize:'0.875rem',color:'#374151'}}><p style={{marginBottom:'0.5rem',fontWeight:'600'}}>QD* = 6 personal customers + 1 partner introduced</p><div style={{...box,marginBottom:'0.5rem'}}><div style={{display:'flex',justifyContent:'space-between',marginBottom:'0.3rem'}}><span>Promotion Bonus</span><span style={{fontWeight:'700'}}>£200 <span style={{fontWeight:'400',fontStyle:'italic',color:'#6b7280',fontSize:'0.75rem'}}>(any timeframe)</span></span></div><div style={{display:'flex',justifyContent:'space-between',marginBottom:'0.3rem'}}><span>Fast Starter Bonus</span><span style={{fontWeight:'700'}}>£300 <span style={{fontWeight:'400',fontStyle:'italic',color:'#6b7280',fontSize:'0.75rem'}}>(within 30 days)</span></span></div><div style={{borderTop:'1px solid #bbf7d0',paddingTop:'0.35rem',display:'flex',justifyContent:'space-between'}}><span style={{fontWeight:'700'}}>Total</span><span style={{fontWeight:'700',color:'#111827'}}>£500</span></div></div><p style={{fontSize:'0.78rem',color:'#6b7280',fontStyle:'italic',margin:'0 0 0.4rem'}}>After 30 days, only the £200 Promotion Bonus applies.</p><p style={closing}>💡 Rewarded for reaching QD*. Rewarded more for starting fast.</p></div>)},
+  {id:'scb',accent:'#c4b5fd',icon:<span style={{fontSize:'1.1rem'}}>🤝</span>,title:'Supporting Customer Bonus',
+    summary:(isOpen)=>(<span>Upfront payment when we support a Partner to introduce a homeowner.{unlockLine(isOpen,'🔓 Unlocks at 6 personal customers')}</span>),
+    detail:(<div style={{fontSize:'0.875rem',color:'#374151'}}><p style={{marginBottom:'0.5rem'}}>We receive <strong>50%</strong> of the full Customer Bonus.</p><div style={{...box,fontSize:'0.8rem',marginBottom:'0.5rem'}}><div style={{marginBottom:'0.25rem'}}>⏱️ <strong>First 45 days</strong> — in addition to their Customer Bonus</div><div style={{marginBottom:'0.4rem'}}>➡️ <strong>After 45 days</strong> — Customer Bonus is shared 50:50</div><div style={{borderTop:'1px solid #c4b5fd',paddingTop:'0.4rem',display:'grid',gridTemplateColumns:'1fr 1fr',gap:'0.25rem'}}><span>1️⃣ service — £25</span><span>3️⃣ services — £125</span><span>2️⃣ services — £50</span><span>4️⃣ services — £150</span></div></div><p style={closing}>💡 An extra income stream from helping Partners introduce homeowners.</p></div>)},
+  {id:'mb',accent:'#111827',icon:<span style={{fontSize:'1.1rem'}}>🎓</span>,title:'Mentor Bonus',
+    summary:(isOpen)=>(<span>Up to £400 when a partner we introduce reaches QD* in 30 days.{unlockLine(isOpen,'🔓 Unlocks at QD — 3 personal customers + 1 partner introduced')}</span>),
+    detail:(<div style={{fontSize:'0.875rem',color:'#374151'}}><div style={box}><div style={{display:'flex',alignItems:'center',gap:'0.4rem'}}><span>🎓</span><span>Mentor Bonus — £100</span><span style={{fontStyle:'italic',color:'#6b7280',fontSize:'0.75rem'}}>(any timeframe)</span></div><div style={{display:'flex',alignItems:'center',gap:'0.4rem',marginTop:'0.25rem'}}><TrendingUp style={{width:'0.75rem',height:'0.75rem',color:'#374151'}}/><span>Fast Starter <em>Mentor</em> Bonus — £300</span><span style={{fontStyle:'italic',color:'#6b7280',fontSize:'0.75rem'}}>(within 30 days)</span></div><div style={{borderTop:'1px solid #e5e7eb',marginTop:'0.5rem',paddingTop:'0.5rem',paddingLeft:'1.5rem'}}>Total — £400 per Partner</div></div><p style={{fontSize:'0.78rem',color:'#6b7280',fontStyle:'italic',margin:'0 0 0.4rem'}}>After 30 days, the £100 Mentor Bonus still applies — only the £300 Fast Starter window closes.</p><p style={closing}>💡 Rewarding us for developing new Partners — with even more for starting fast.</p></div>)},
 ];
 
 const HowPaidPopup=({onClose,fastStarterAchieved,revenueExplored})=>{
@@ -396,22 +459,29 @@ const HowPaidPopup=({onClose,fastStarterAchieved,revenueExplored})=>{
           </div>
         </div>
         <div style={{background:'white',padding:'0.6rem 1rem',borderBottom:'1px solid #e5e7eb',flexShrink:0,display:'flex',justifyContent:'center'}}>
-          <div style={{background:'#fefce8',border:'1px solid #fde68a',borderRadius:'0.5rem',padding:'0.45rem 0.85rem',boxShadow:'0 2px 6px rgba(0,0,0,0.1)',maxWidth:'fit-content'}}>
-            <p style={{fontSize:'0.78rem',color:'#92400e',margin:0,lineHeight:1.4,fontWeight:'600',textAlign:'center'}}>See how different income streams build as customer and partner numbers grow.</p>
+          <div style={{background:'rgba(124,58,237,0.08)',border:'1px solid rgba(124,58,237,0.2)',borderRadius:'0.5rem',padding:'0.45rem 0.85rem',boxShadow:'0 2px 6px rgba(0,0,0,0.07)',maxWidth:'fit-content'}}>
+            <p style={{fontSize:'0.78rem',color:'#4c1d95',margin:0,lineHeight:1.4,fontWeight:'600',textAlign:'center'}}>See how different income streams build<br/>as customer and partner numbers grow.</p>
           </div>
         </div>
         <div className="accordion-list" style={{overflowY:'auto',flex:1,padding:'0.6rem',display:'flex',flexDirection:'column',gap:'0.4rem'}}>
-          {sections.map(s=>{const isOpen=openId===s.id;return(
-            <div key={s.id} style={{border:'1px solid #e5e7eb',borderRadius:'0.6rem',overflow:'hidden',background:'white'}}>
-              <button ref={el=>headerRefs.current[s.id]=el} style={{width:'100%',display:'flex',alignItems:'center',gap:'0.6rem',padding:'0.6rem 0.75rem',textAlign:'left',background:'none',border:'none',cursor:'pointer'}} onClick={()=>toggle(s.id)}>
+          {sections.map(s=>{const isOpen=openId===s.id;
+            // Subtle tinted background from accent colour at low opacity
+            const tintBg=`${s.accent}0d`; // ~5% opacity
+            return(
+            <div key={s.id} style={{border:'1px solid #e5e7eb',borderLeft:`3px solid ${s.accent}`,borderRadius:'0.6rem',background:tintBg,transition:'background 0.2s'}}>
+              <button ref={el=>headerRefs.current[s.id]=el} style={{width:'100%',display:'flex',alignItems:'center',gap:'0.6rem',padding:'0.6rem 0.75rem',textAlign:'left',background:'none',border:'none',cursor:'pointer',borderRadius:'0.6rem 0.6rem 0 0'}} onClick={()=>toggle(s.id)}>
                 <span style={{flexShrink:0,display:'flex',alignItems:'center'}}>{s.icon}</span>
-                <div style={{flex:1,minWidth:0}}><p style={{fontWeight:'600',fontSize:'0.85rem',color:'#111827',margin:'0 0 0.1rem'}}>{s.title}</p><p style={{fontSize:'0.78rem',color:'#6b7280',margin:0,lineHeight:'1.4'}}>{typeof s.summary==='function'?s.summary(isOpen):s.summary}</p></div>
+                <div style={{flex:1,minWidth:0}}><p style={{fontWeight:'600',fontSize:'0.85rem',color:'#111827',margin:'0 0 0.1rem'}}>{s.title}</p><p style={{fontSize:'0.78rem',color:'#6b7280',margin:0,lineHeight:'1.4'}}>{s.summary(isOpen)}</p></div>
                 {isOpen?<ChevronUp style={{...SM,color:'#9ca3af'}}/>:<ChevronDown style={{...SM,color:'#9ca3af'}}/>}
               </button>
-              {isOpen&&<div style={{padding:'0.25rem 0.75rem 0.75rem',borderTop:'1px solid #f3f4f6',background:'#fdf9ff'}}>{s.detail}</div>}
+              <div style={{display:'grid',gridTemplateRows:isOpen?'1fr':'0fr',transition:'grid-template-rows 0.28s ease'}}>
+                <div style={{overflow:'hidden'}}>
+                  <div style={{maxHeight:'14rem',overflowY:'auto',padding:'0.25rem 0.75rem 0.75rem',borderTop:'1px solid #f3f4f6',borderBottom:`2px solid ${s.accent}`,borderRadius:'0 0 0.6rem 0.6rem',background:'#fdf9ff'}}>{s.detail}</div>
+                </div>
+              </div>
             </div>
           );})}
-          {bulbMsg&&(<div style={{margin:'0.25rem 0 0',padding:'0.55rem 0.8rem',borderRadius:'0.5rem',background:'#fdf3e3',border:'1px solid #f9d49c'}}><p style={{margin:0,fontSize:'0.78rem',fontWeight:'700',fontStyle:'italic',color:'#92400e',lineHeight:1.5}}>{bulbMsg}</p></div>)}
+          {bulbMsg&&(<div style={{margin:'0.25rem 0 0',padding:'0.55rem 0.8rem',borderRadius:'0.5rem',background:'rgba(124,58,237,0.1)',border:'1px solid rgba(124,58,237,0.25)'}}><p style={{margin:0,fontSize:'0.78rem',fontWeight:'700',fontStyle:'italic',color:'#4c1d95',lineHeight:1.5}}>{bulbMsg}</p></div>)}
         </div>
       </div>
     </div>
@@ -419,14 +489,33 @@ const HowPaidPopup=({onClose,fastStarterAchieved,revenueExplored})=>{
 };
 
 // Right-side revenue tab — always present, grey until unlocked, expands on tap. Never disappears.
-const RevenueCard=({grandTotal,supportingBonus,partnerTotalEarnings,onInteracted,wiggle,topOffset,cardHeight,unlocked,revTabPulseKey,revTabPulseCount,closeKey})=>{
+const RevenueCard=({grandTotal,supportingBonus,partnerTotalEarnings,onInteracted,wiggle,topOffset,cardHeight,unlocked,pulseRevTab,pulseRevTabEmoji,closeKey})=>{
   const [expanded,setExpanded]=useState(false);
-  const [chevronPulseKey,setChevronPulseKey]=useState(0);
   const closeTimer=useRef(null);
+  const tabRef=useRef(null);
+  const lockRef=useRef(null);
+  const unlockEmojiRef=useRef(null);
+  const fireTabGlow=useAnimClass(tabRef,'anim-glow-right',2800);
+  const fireLockBreath=useAnimClass(lockRef,'anim-pulse-lock',2800);
+  const fireUnlockPop=useAnimClass(unlockEmojiRef,'anim-pop-emoji',400);
+  const prevPulse=useRef(0);
+  const prevEmoji=useRef(0);
+  useEffect(()=>{
+    if(pulseRevTab>prevPulse.current){
+      prevPulse.current=pulseRevTab;
+      fireTabGlow();
+      if(!unlocked)fireLockBreath();
+    }
+  },[pulseRevTab,unlocked]);
+  useEffect(()=>{
+    if(pulseRevTabEmoji>prevEmoji.current){
+      prevEmoji.current=pulseRevTabEmoji;
+      if(unlocked)fireUnlockPop();
+    }
+  },[pulseRevTabEmoji,unlocked]);
   useEffect(()=>{if(closeKey>0)setExpanded(false);},[closeKey]);
   useEffect(()=>{
     clearTimeout(closeTimer.current);
-    if(expanded){closeTimer.current=setTimeout(()=>setChevronPulseKey(k=>k+1),15000);}
     return()=>clearTimeout(closeTimer.current);
   },[expanded]);
   const handleToggle=()=>{
@@ -440,47 +529,61 @@ const RevenueCard=({grandTotal,supportingBonus,partnerTotalEarnings,onInteracted
       style={{top:`${topOffset}px`,height:`${cardHeight}px`,transition:'width 0.4s cubic-bezier(0.22,1,0.36,1)'}}
     >
       {unlocked?(
-        /* Unlocked — gradient */
         <div className="revenue-card-unlocked" style={{height:'100%',display:'flex',overflow:'hidden'}}>
-          <div key={`rtab-${revTabPulseKey}`} className={revTabPulseKey>0?(revTabPulseCount>=2?'right-tab-glow-double':'right-tab-glow-single'):''} onClick={handleToggle} style={{flexShrink:0,width:'2.8rem',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:'0.3rem',cursor:'pointer',userSelect:'none',padding:'0.4rem 0'}}>
-            <span style={{fontSize:'1.4rem',lineHeight:1}}>🔓</span>
+          <div ref={tabRef} onClick={handleToggle} style={{flexShrink:0,width:'2.8rem',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:'0.3rem',cursor:'pointer',userSelect:'none',padding:'0.4rem 0'}}>
             {expanded
               ?<ChevronRight style={{...SM,color:'rgba(255,255,255,0.9)'}}/>
-              :<ChevronLeft style={{...SM,color:'rgba(255,255,255,0.9)'}}/>
+              :<>
+                <span ref={unlockEmojiRef} style={{fontSize:'1.4rem',lineHeight:1}}>🔓</span>
+                <ChevronLeft style={{...SM,color:'rgba(255,255,255,0.9)'}}/>
+                <span style={{writingMode:'vertical-rl',textOrientation:'mixed',fontSize:'0.62rem',fontWeight:'400',color:'rgba(255,255,255,0.95)',letterSpacing:'0.08em',textTransform:'uppercase',lineHeight:1.3,textAlign:'center'}}>
+                  3 Revenue Streams
+                </span>
+              </>
             }
-            {!expanded&&(
-              <span style={{writingMode:'vertical-rl',textOrientation:'mixed',fontSize:'0.62rem',fontWeight:'400',color:'rgba(255,255,255,0.95)',letterSpacing:'0.08em',textTransform:'uppercase',lineHeight:1.3,textAlign:'center'}}>
-                3 Revenue Streams
-              </span>
-            )}
           </div>
-          <div style={{flex:1,overflowY:'auto',opacity:expanded?1:0,transition:'opacity 0.3s 0.1s',pointerEvents:expanded?'auto':'none',minWidth:0}}>
-            <div style={{padding:'0.75rem 0.9rem 0.9rem'}}>
+          <div style={{flex:1,opacity:expanded?1:0,transition:'opacity 0.3s 0.1s',pointerEvents:expanded?'auto':'none',minWidth:0,overflow:'hidden'}}>
+            <div style={{padding:'0.6rem 0.8rem 0.75rem'}}>
               <p style={{color:'white',fontWeight:'700',fontSize:'0.82rem',margin:'0 0 0.5rem',lineHeight:1.3}}>🔓 Three new revenue streams unlocked!</p>
-              <div style={{display:'flex',flexDirection:'column',gap:'0.25rem',marginBottom:'0.65rem'}}>
+              {/* Total first — wow factor */}
+              <div style={{background:'white',borderRadius:'0.5rem',padding:'0.45rem 0.6rem',boxShadow:'0 2px 8px rgba(0,0,0,0.12)',marginBottom:'0.35rem'}}>
+                <p style={{color:'#374151',fontWeight:'600',fontSize:'0.7rem',margin:'0 0 0.25rem'}}>For each Partner you recruit and support to QD*:</p>
+                <div style={{display:'flex',justifyContent:'space-between',color:'#374151',fontSize:'0.74rem',marginBottom:'0.12rem'}}>
+                  <span style={{color:'#6b7280'}}>They earn (same as you did)</span>
+                  <span style={{fontWeight:'700',color:'#7c3aed'}}>£{grandTotal.toLocaleString()}</span>
+                </div>
+                <div style={{borderTop:'1px solid #e5e7eb',paddingTop:'0.15rem',display:'flex',justifyContent:'space-between',fontSize:'0.74rem'}}>
+                  <span style={{color:'#6b7280'}}>You earn (in this example)</span>
+                  <span style={{fontWeight:'700',color:'#7c3aed'}}>£{partnerTotalEarnings.toLocaleString()}</span>
+                </div>
+              </div>
+              {/* Breakdown */}
+              <p style={{color:'rgba(255,255,255,0.8)',fontSize:'0.68rem',fontWeight:'600',margin:'0.3rem 0 0.2rem',textTransform:'uppercase',letterSpacing:'0.06em'}}>That's made up of</p>
+              <div style={{display:'flex',flexDirection:'column',gap:'0.18rem',marginBottom:'0.35rem'}}>
                 {[
-                  {icon:'🤝',label:'Supporting Customer Bonus',val:`£${supportingBonus.toLocaleString()}`},
-                  {icon:'🎓',label:'Mentor Bonus',val:'£100'},
-                  {icon:null,label:<span>Fast Starter <em>Mentor</em> Bonus</span>,val:'£300'}
+                  {icon:'🤝',label:'Supporting Customer Bonus',val:`£${supportingBonus.toLocaleString()}`,accent:'#c4b5fd'},
+                  {icon:'🎓',label:'Mentor Bonus',val:'£100',accent:'#111827'},
+                  {icon:null,label:<span>Fast Starter <em>Mentor</em> Bonus</span>,val:'£300',accent:'#16a34a'}
                 ].map((s,idx)=>(
-                  <div key={idx} style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:'0.4rem',fontSize:'0.78rem',background:'white',borderRadius:'0.4rem',padding:'0.3rem 0.6rem',boxShadow:'0 2px 8px rgba(0,0,0,0.12)'}}>
-                    <span style={{color:'#374151',display:'flex',alignItems:'center',gap:'0.35rem'}}>{s.icon?<span style={{fontSize:'0.85rem',lineHeight:1,flexShrink:0}}>{s.icon}</span>:<TrendingUp style={{width:'0.75rem',height:'0.75rem',flexShrink:0,color:'#374151'}}/>}{s.label}</span>
+                  <div key={idx} style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:'0.4rem',fontSize:'0.74rem',background:'white',borderRadius:'0.4rem',padding:'0.25rem 0.55rem',boxShadow:'0 2px 8px rgba(0,0,0,0.12)',borderLeft:`3px solid ${s.accent}`,borderBottom:`2px solid ${s.accent}`}}>
+                    <span style={{color:'#374151',display:'flex',alignItems:'center',gap:'0.3rem'}}>{s.icon?<span style={{fontSize:'0.82rem',lineHeight:1,flexShrink:0}}>{s.icon}</span>:<TrendingUp style={{width:'0.7rem',height:'0.7rem',flexShrink:0,color:'#374151'}}/>}{s.label}</span>
                     <span style={{color:'#7c3aed',fontWeight:'700',flexShrink:0}}>{s.val}</span>
                   </div>
                 ))}
               </div>
-              <div style={{background:'white',borderRadius:'0.5rem',padding:'0.55rem 0.65rem',boxShadow:'0 2px 8px rgba(0,0,0,0.12)'}}>
-                <p style={{color:'#374151',fontWeight:'600',fontSize:'0.72rem',margin:'0 0 0.35rem'}}>For each Partner you recruit and support to QD*:</p>
-                <div style={{display:'flex',justifyContent:'space-between',color:'#374151',fontSize:'0.76rem',marginBottom:'0.15rem'}}><span style={{color:'#6b7280'}}>You earn (in this example)</span><span style={{fontWeight:'700',color:'#7c3aed'}}>£{partnerTotalEarnings.toLocaleString()}</span></div>
-                <div style={{borderTop:'1px solid #e5e7eb',paddingTop:'0.2rem',display:'flex',justifyContent:'space-between',fontSize:'0.8rem'}}><span style={{color:'#6b7280'}}>They earn (same as you did)</span><span style={{fontWeight:'700',color:'#7c3aed'}}>£{grandTotal.toLocaleString()}</span></div>
+              {/* Annual kicker */}
+              <div style={{background:'rgba(255,255,255,0.15)',borderRadius:'0.4rem',padding:'0.35rem 0.55rem',borderLeft:'3px solid rgba(255,255,255,0.5)'}}>
+                <p style={{color:'white',fontSize:'0.7rem',fontWeight:'600',margin:0,lineHeight:1.4}}>
+                  💡 Help just two Partners a month to do this for an annual revenue up to <span style={{color:'#fde68a',fontWeight:'700'}}>£{(partnerTotalEarnings*2*12).toLocaleString()}</span>
+                </p>
               </div>
             </div>
           </div>
         </div>
       ):(
-        /* Locked — same grey as left tab, padlock at top then text */
-        <div className="revenue-card-locked" style={{height:'100%',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',padding:'0.5rem 0.2rem',gap:'0.4rem'}}>
-          <span style={{fontSize:'1.05rem',lineHeight:1,filter:'grayscale(1)',opacity:0.5,display:'block',marginBottom:'0.3rem'}}>🔒</span>
+        /* Locked — stable refs, animations via useAnimClass */
+        <div ref={tabRef} className="revenue-card-locked" style={{height:'100%',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'flex-start',padding:'0.6rem 0.2rem 0.5rem'}}>
+          <span ref={lockRef} style={{fontSize:'1.2rem',lineHeight:1,filter:'grayscale(1)',opacity:0.5,display:'block',marginBottom:'0.5rem',flexShrink:0}}>🔒</span>
           <span style={{writingMode:'vertical-rl',textOrientation:'mixed',fontSize:'0.62rem',fontWeight:'400',color:'#f9fafb',letterSpacing:'0.08em',textTransform:'uppercase',lineHeight:1.3,textAlign:'center',opacity:0.85}}>
             3 New Revenue Streams
           </span>
@@ -495,8 +598,7 @@ const UWTracker=()=>{
   const [showCelebration,setShowCelebration]=useState(false);
   const [showContactPanel,setShowContactPanel]=useState(false);
   const [tabColoured,setTabColoured]=useState(false);
-  const [tabPulseExternal,setTabPulseExternal]=useState(0);
-  const [tabPulseCount,setTabPulseCount]=useState(2);
+  const [pulseTab,setPulseTab]=useState(0);
   const [selectedCircle,setSelectedCircle]=useState(null);
   const [showResetConfirm,setShowResetConfirm]=useState(false);
   const [showInfoPopup,setShowInfoPopup]=useState(false);
@@ -504,49 +606,58 @@ const UWTracker=()=>{
   const [youTooltipVisible,setYouTooltipVisible]=useState(false);
   const [youBulbPulsed,setYouBulbPulsed]=useState(false);
   const [fastStarterAchieved,setFastStarterAchieved]=useState(false);
-  const [infoBulbPulsed,setInfoBulbPulsed]=useState(false);
-  const [infoBulbPulseKey,setInfoBulbPulseKey]=useState(0);
-  const [infoBulbPulseCount,setInfoBulbPulseCount]=useState(2);
   const [infoBulbColoured,setInfoBulbColoured]=useState(false);
   const [showBestGuess,setShowBestGuess]=useState(false);
   const [hasInteracted,setHasInteracted]=useState(false);
+  const firstModalSeen=useRef(false);
   const [firstCustomerDone,setFirstCustomerDone]=useState(false);
   const [coachMsg,setCoachMsg]=useState(null);
   const [coachArrow,setCoachArrow]=useState(false);
   const [revenueExplored,setRevenueExplored]=useState(false);
   const [revenueCardVisible,setRevenueCardVisible]=useState(false);
   const [revenueWiggle,setRevenueWiggle]=useState(false);
-  const [circleGlowKey,setCircleGlowKey]=useState(0);
-  const [circleGlowCount,setCircleGlowCount]=useState(2);
   const [pBadgeGlow,setPBadgeGlow]=useState(false);
   const [postCelebArrow,setPostCelebArrow]=useState(false);
-  const [postCelebArrowPulseKey,setPostCelebArrowPulseKey]=useState(0);
-  const [revTabPulseKey,setRevTabPulseKey]=useState(0);
-  const [revTabPulseCount,setRevTabPulseCount]=useState(2);
+  const [pulseRevTab,setPulseRevTab]=useState(0);
+  const [pulseRevTabEmoji,setPulseRevTabEmoji]=useState(0);
   const [revenueCloseKey,setRevenueCloseKey]=useState(0);
 
   // Staged coaching sequence
   const [stagedActiveCount,setStagedActiveCount]=useState(0);
-  const [stagedPulseIndex,setStagedPulseIndex]=useState(-1);
-  const [stagedIsFirstReveal,setStagedIsFirstReveal]=useState(true);
-  // Per-line pulse keys — incrementing forces React to remount the span, restarting the CSS animation
-  const [linePulseKeys,setLinePulseKeys]=useState([0,0,0]);
   const stagedStarted=useRef(false);
 
-  // Separate refs for precise right-card positioning: top of CB banner → bottom of RI banner
+  // Animation refs — useAnimClass fires CSS classes on these stable DOM nodes
+  const circleRefs=[useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null)];
+  const infoBulbRef=useRef(null);     // the 🔍 emoji span
+  const postCelebArrowRef=useRef(null); // the 🔓 arrow in coaching lane
+  const fireCircleGlows=circleRefs.map(r=>useAnimClass(r,'anim-glow-circle',2800));
+  const fireBulbGlow=useAnimClass(infoBulbRef,'anim-glow-bulb',2800);
+  const fireArrowPulse=useAnimClass(postCelebArrowRef,'anim-pulse-arrow',4200); // 1.4s×3
+  const fireCircleGlow=useCallback(()=>fireCircleGlows.forEach((f,i)=>{if(customers[i]&&customers[i].type!==null)f();}),[customers]);
+
+  // Per-emoji refs for staged coaching emojis
+  const emojiRefs=[useRef(null),useRef(null),useRef(null)];
+  const fireEmojiPulse=[
+    useAnimClass(emojiRefs[0],'anim-pulse-emoji',2800),
+    useAnimClass(emojiRefs[1],'anim-pulse-emoji',2800),
+    useAnimClass(emojiRefs[2],'anim-pulse-emoji',2800),
+  ];
+
+  // Separate refs for precise right-card positioning: top of CB banner → bottom of FSB banner
   const cbBannerRef=useRef(null);
   const riBannerRef=useRef(null);
+  const fsbBannerRef=useRef(null);
   const bannersRef=useRef(null);
   const [cardTopOffset,setCardTopOffset]=useState(200);
   const [cardHeight,setCardHeight]=useState(200);
 
   useEffect(()=>{
     const updatePos=()=>{
-      if(!cbBannerRef.current||!riBannerRef.current)return;
+      if(!cbBannerRef.current||!fsbBannerRef.current)return;
       const cbRect=cbBannerRef.current.getBoundingClientRect();
-      const riRect=riBannerRef.current.getBoundingClientRect();
+      const fsbRect=fsbBannerRef.current.getBoundingClientRect();
       setCardTopOffset(cbRect.top+window.scrollY);
-      setCardHeight(riRect.bottom-cbRect.top);
+      setCardHeight(fsbRect.bottom-cbRect.top);
     };
     updatePos();
     window.addEventListener('resize',updatePos);
@@ -607,7 +718,7 @@ const UWTracker=()=>{
     // Trigger A — circle 4 just filled, no HAB yet — fire once only
     if(!habAShown.current&&fourFilledForHAB&&!fiveFilled&&highActivityCustomers===0&&!qualifiesForFastStarter){
       habAShown.current=true;setCoachArrow(false);
-      setTimeout(()=>setCoachMsg("Consider making your last two customers\n3+ service homeowners to activate\nthe £50 High Activity Bonus ⬇️"),500);
+      setTimeout(()=>setCoachMsg("Consider making your last two customers\n3+ service homeowners to activate\nthe £50 High Activity Bonus"),500);
       return;
     }
     // Mix message — 5th circle, all same type OR HAB 3-homeowner special case
@@ -619,9 +730,9 @@ const UWTracker=()=>{
       } else if(allHomeowners){
         mixShown.current=true;setCoachArrow(false);
         if(highActivityCustomers>=2){
-          setTimeout(()=>setCoachMsg("All homeowners so far — why not try a tenant?\nSee what happens to Recurring Income ⬇️"),500);
+          setTimeout(()=>setCoachMsg("All homeowners so far — why not try a tenant?\nSee what happens to Recurring Income"),500);
         } else {
-          setTimeout(()=>setCoachMsg("All homeowners so far.\nTry adding a tenant.\nSee what changes. ⬇️"),500);
+          setTimeout(()=>setCoachMsg("All homeowners so far.\nTry adding a tenant.\nSee what changes."),500);
         }
       }
       else if(allTenants){mixShown.current=true;setCoachArrow(false);setTimeout(()=>setCoachMsg("All tenants so far.\nTry adding a homeowner.\nSee what changes."),500);}
@@ -633,20 +744,23 @@ const UWTracker=()=>{
     if(nonYouFilled.length<totalCircles-2)return;
     if(highActivityCustomers===1&&!habBShown.current){
       habBShown.current=true;setCoachArrow(false);
-      setTimeout(()=>setCoachMsg("You've got one homeowner with 3+ services —\nadd a second to unlock\nthe £50 High Activity Bonus ⬇️"),500);
+      setTimeout(()=>setCoachMsg("You've got one homeowner with 3+ services —\nadd a second to unlock\nthe £50 High Activity Bonus"),500);
     }
     else if(highActivityCustomers>=2&&!habCShown.current){
       habCShown.current=true;setCoachArrow(false);
-      setTimeout(()=>setCoachMsg("£50 High Activity Bonus activated! 🔥\nIntroduce 4 homeowners with 3+ services\nto jump to £100 ⬇️"),500);
+      setTimeout(()=>setCoachMsg("£50 High Activity Bonus activated! 🔥\nIntroduce 4 homeowners with 3+ services\nto jump to £100"),500);
     }
   },[highActivityCustomers,nonYouFilled.length]);
+
+  const [partnerPromptFired,setPartnerPromptFired]=useState(false);
 
   useEffect(()=>{
     if(allCirclesFilled&&!hasPartner&&!qualifiesForFastStarter){
       const msgTimer=setTimeout(()=>{
         setCoachArrow(true);setCoachMsg('__partner_prompt__');
-        // Fire pBadgeGlow simultaneously — P circles and coaching lane P pulse together
-        setPBadgeGlow(true);setTimeout(()=>setPBadgeGlow(false),2100);
+        setPartnerPromptFired(true);
+        // 200ms delay lets React render the P badges before glowing them
+        setTimeout(()=>{setPBadgeGlow(true);setTimeout(()=>setPBadgeGlow(false),2800);},200);
       },1500);
       return()=>clearTimeout(msgTimer);
     }
@@ -661,37 +775,29 @@ const UWTracker=()=>{
     setCoachArrow(false);
     setPostCelebArrow(false);
 
-    // Helper: pulse a line + its paired element
-    const pulse=(lineIdx,circleCount,bulb,tab)=>{
-      // Increment just this line's key — forces React to remount that span → animation restarts
-      setLinePulseKeys(prev=>{const n=[...prev];n[lineIdx]++;return n;});
-      setStagedPulseIndex(lineIdx);
-      if(circleCount)setCircleGlowKey(k=>k+1);
-      if(bulb)setInfoBulbPulseKey(k=>k+1);
-      if(tab){setRevTabPulseKey(k=>k+1);setTabPulseExternal(k=>k+1);}
-      setTimeout(()=>setStagedPulseIndex(-1),2800);
+    // pulse(i): animate just the emoji for line i, plus paired UI element
+    const pulse=(lineIdx,withCircles,withBulb,withTab)=>{
+      fireEmojiPulse[lineIdx]();
+      if(withCircles)fireCircleGlow();
+      if(withBulb)fireBulbGlow();
+      if(withTab){setPulseRevTab(k=>k+1);setPulseRevTabEmoji(k=>k+1);setPulseTab(k=>k+1);}
     };
 
-    // FIRST REVEAL — 2 pulses on all elements
-    setCircleGlowCount(2);
-    setInfoBulbPulseCount(2);
+    // Lines appear one by one first, then 3 identical cycles of emoji pulses
     setTimeout(()=>{ setStagedActiveCount(1); pulse(0,true,false,false); },2500);
     setTimeout(()=>{ setStagedActiveCount(2); setInfoBulbColoured(true); pulse(1,false,true,false); },5000);
     setTimeout(()=>{ setStagedActiveCount(3); setTabColoured(true); pulse(2,false,false,true); },7500);
-
-    // Switch to 1 pulse for repeat cycles
-    setTimeout(()=>{ setCircleGlowCount(1); setInfoBulbPulseCount(1); setRevTabPulseCount(1); setTabPulseCount(1); setStagedIsFirstReveal(false); },10500);
-
-    // REPEAT CYCLES — 1 pulse each
-    const repeat=(baseT)=>{
-      setTimeout(()=>pulse(0,true,false,false),baseT);
-      setTimeout(()=>pulse(1,false,true,false),baseT+2500);
-      setTimeout(()=>pulse(2,false,false,true),baseT+5000);
-    };
-    repeat(11000);
-    repeat(19500);
-    repeat(28000);
-  },[]);
+    // Cycle 1
+    const c1=12000;
+    setTimeout(()=>pulse(0,true,false,false),c1);
+    setTimeout(()=>pulse(1,false,true,false),c1+2500);
+    setTimeout(()=>pulse(2,false,false,true),c1+5000);
+    // Cycle 2
+    const c2=20000;
+    setTimeout(()=>pulse(0,true,false,false),c2);
+    setTimeout(()=>pulse(1,false,true,false),c2+2500);
+    setTimeout(()=>pulse(2,false,false,true),c2+5000);
+  },[fireEmojiPulse,fireCircleGlow,fireBulbGlow]);
 
   const circleColor=(c)=>{if(c.type===null)return{border:'#d1d5db',text:'#9ca3af',bg:'#f9fafb'};if(c.type==='own')return{border:'#9ca3af',text:'#374151',bg:'#f3f4f6'};if(c.type==='renting')return{border:'#2563eb',text:'#1d4ed8',bg:'#eff6ff'};return{border:'#7c3aed',text:'#6d28d9',bg:'#f5f3ff'};};
   const getCircleOpacity=(index)=>{if(index===0&&includeYou)return 1;if(!includeYou){for(let i=0;i<index;i++)if(customers[i].type===null)return 0.3;return 1;}for(let i=1;i<index;i++)if(customers[i].type===null)return 0.3;return 1;};
@@ -711,15 +817,15 @@ const UWTracker=()=>{
           setRevenueCardVisible(true);
           // Arrow + right tab pulse in sync, repeated 3× so direction is clear
           const syncPulse=()=>{
-            setPostCelebArrowPulseKey(k=>k+1);
-            setRevTabPulseKey(k=>k+1);
+            setPulseRevTab(k=>k+1);
+            fireArrowPulse();
           };
           setTimeout(syncPulse,600);
           setTimeout(syncPulse,4600);
           setTimeout(syncPulse,8600);
         },2000);
-      },2000);
-    },3000);
+      },1000);
+    },5000);
   };
 
   // Revenue interacted: clear post-ceb message, mark explored, 9s later start staged sequence
@@ -743,7 +849,6 @@ const UWTracker=()=>{
 
   const handleCircleClick=(index)=>{
     if((index===0&&includeYou)||!canSelectCircle(index))return;
-    if(!hasInteracted){setHasInteracted(true);setShowBestGuess(true);}
     setSelectedCircle(index);
   };
 
@@ -752,6 +857,8 @@ const UWTracker=()=>{
     const wasQualified=qualifiesForFastStarter;
     const nc=[...customers];nc[selectedCircle]={type,services:services||0,isPartner:nc[selectedCircle].isPartner};
     setCustomers(nc);setSelectedCircle(null);setShowBestGuess(false);
+    // First customer saved — now flip the flag so subsequent modals show short copy
+    if(!firstModalSeen.current){firstModalSeen.current=true;setHasInteracted(true);}
     const nonYouCount=nc.filter((c,i)=>includeYou?i>0&&c.type!==null:c.type!==null).length;
     if(!firstCustomerDone&&nonYouCount===1){setFirstCustomerDone(true);setTimeout(()=>setCoachMsg("🙌 Nice work! 🙌\nNow keep going — try different customer types\nand watch your income grow."),500);}
     const nowAllFilled=nc.every(c=>c.type!==null);
@@ -768,12 +875,13 @@ const UWTracker=()=>{
     setSelectedCircle(null);setShowResetConfirm(false);
     previouslyQualified.current=false;qdShown.current=false;mixShown.current=false;stagedStarted.current=false;
     habAShown.current=false;habBShown.current=false;habCShown.current=false;
-    setHasInteracted(false);setShowBestGuess(false);setCoachMsg(null);setCoachArrow(false);
-    setTabColoured(false);setTabPulseExternal(0);setTabPulseCount(2);setFastStarterAchieved(false);setInfoBulbPulsed(false);setInfoBulbPulseKey(0);setInfoBulbColoured(false);setInfoBulbPulseCount(2);setRevTabPulseCount(2);setCircleGlowCount(2);
+    setHasInteracted(false);setShowBestGuess(false);setCoachMsg(null);setCoachArrow(false);setPartnerPromptFired(false);
+    firstModalSeen.current=false;
+    setTabColoured(false);setPulseTab(0);setFastStarterAchieved(false);setInfoBulbColoured(false);
     setYouBulbPulsed(false);setRevenueCardVisible(false);setRevenueExplored(false);
-    setFirstCustomerDone(false);setCircleGlowKey(0);setRevenueWiggle(false);setPBadgeGlow(false);
-    setStagedActiveCount(0);setStagedPulseIndex(-1);setStagedIsFirstReveal(true);
-    setPostCelebArrow(false);setPostCelebArrowPulseKey(0);setRevTabPulseKey(0);
+    setFirstCustomerDone(false);setRevenueWiggle(false);setPBadgeGlow(false);
+    setStagedActiveCount(0);
+    setPostCelebArrow(false);setPulseRevTab(0);setPulseRevTabEmoji(0);
     clearTimeout(tooltipTimer.current);clearTimeout(stageRevealTimer.current);
     setYouTooltipVisible(false);
   };
@@ -793,60 +901,57 @@ const UWTracker=()=>{
         isOpen={showContactPanel}
         onClose={()=>setShowContactPanel(false)}
         tabColoured={tabColoured}
-        onTabClick={()=>setShowContactPanel(o=>!o)}
-        tabPulseExternal={tabPulseExternal}
-        tabPulseCount={tabPulseCount}
+        onTabClick={()=>setShowContactPanel(c=>!c)}
       />
       {showCelebration&&(<div style={{position:'fixed',inset:0,pointerEvents:'none',zIndex:50}}>{[...Array(50)].map((_,i)=>(<div key={i} className="animate-confetti" style={{position:'absolute',left:`${Math.random()*100}%`,top:'-10%',animationDelay:`${Math.random()*0.5}s`,animationDuration:`${2+Math.random()}s`}}><div style={{color:'#facc15',fontSize:`${Math.random()*20+10}px`,transform:`rotate(${Math.random()*360}deg)`}}>✨</div></div>))}</div>)}
 
       <div style={{maxWidth:'36rem',margin:'0 auto',paddingLeft:'2.5rem',paddingRight:'2.5rem'}} onClick={()=>setRevenueCloseKey(k=>k+1)}>
         <div style={{marginBottom:'0.6rem'}}>
-          <h1 style={{fontSize:'1.3rem',fontWeight:'700',color:'#1f2937',marginBottom:'0.25rem',textAlign:'center'}}>UW Partner Earnings Tool</h1>
-          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:'1rem'}}>
-            <div style={{display:'flex',flexDirection:'column',alignItems:'flex-start',gap:'0.3rem',position:'relative'}}>
-              <div style={{display:'flex',flexDirection:'column',alignItems:'flex-start',gap:'0.15rem'}}>
-                <button onClick={()=>setShowResetConfirm(true)} style={{background:'none',border:'1px solid #d1d5db',borderRadius:'0.3rem',cursor:'pointer',padding:'0.1rem 0.4rem',fontSize:'0.65rem',fontWeight:'600',color:'#9ca3af',lineHeight:1.4,marginBottom:'0.1rem'}}>Reset</button>
-                <button onClick={openYouTooltip} style={{background:'none',border:'none',cursor:'pointer',padding:'0.1rem',display:'flex',alignItems:'center',lineHeight:1}}>
+          {/* Title row — reset left, title centre, spacer right */}
+          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:'0.35rem'}}>
+            <button onClick={()=>setShowResetConfirm(true)} style={{background:'none',border:'1.5px solid #d1d5db',borderRadius:'0.4rem',cursor:'pointer',padding:'0.3rem 0.6rem',fontSize:'0.7rem',fontWeight:'700',color:'#9ca3af',lineHeight:1.3,minWidth:'2.5rem',textAlign:'center'}}>Reset</button>
+            <h1 style={{fontSize:'1.3rem',fontWeight:'700',color:'#1f2937',margin:0,textAlign:'center',flex:1}}>UW Partner Earnings Tool</h1>
+            <div style={{minWidth:'2.5rem'}}></div>
+          </div>
+          {/* Subtitle row — You+bulb inline left, toggle below, subtitle centre, spacer right */}
+          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:'0.5rem'}}>
+            <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:'0.25rem',position:'relative',flexShrink:0}}>
+              <div style={{display:'flex',alignItems:'center',gap:'0.3rem'}}>
+                <span style={{fontSize:'0.75rem',fontWeight:'600',color:'#374151',lineHeight:1}}>You</span>
+                <button onClick={openYouTooltip} style={{background:'none',border:'none',cursor:'pointer',padding:'0',display:'flex',alignItems:'center',lineHeight:1}}>
                   {!youBulbPulsed?<PulsingBulb size="0.95rem" onDone={()=>setYouBulbPulsed(true)}/>:<Bulb size="0.95rem"/>}
                 </button>
-                <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}>
-                  <button onClick={toggleIncludeYou} style={{position:'relative',display:'inline-flex',height:'1.5rem',width:'2.75rem',alignItems:'center',borderRadius:'9999px',border:'none',cursor:'pointer',background:includeYou?'#22c55e':'#d1d5db',transition:'background 0.2s'}}>
-                    <span style={{display:'inline-block',height:'1rem',width:'1rem',transform:includeYou?'translateX(1.5rem)':'translateX(0.25rem)',borderRadius:'50%',background:'white',transition:'transform 0.2s',boxShadow:'0 1px 3px rgba(0,0,0,0.2)'}}></span>
-                  </button>
-                  <span style={{fontSize:'0.875rem',fontWeight:'600',color:'#374151'}}>You</span>
-                </div>
               </div>
-              {/* Tooltip — now matches coaching lane colour scheme */}
+              <button onClick={toggleIncludeYou} style={{position:'relative',display:'inline-flex',height:'1.5rem',width:'2.75rem',alignItems:'center',borderRadius:'9999px',border:'none',cursor:'pointer',background:includeYou?'#22c55e':'#d1d5db',transition:'background 0.2s'}}>
+                <span style={{display:'inline-block',height:'1rem',width:'1rem',transform:includeYou?'translateX(1.5rem)':'translateX(0.25rem)',borderRadius:'50%',background:'white',transition:'transform 0.2s',boxShadow:'0 1px 3px rgba(0,0,0,0.2)'}}></span>
+              </button>
               {youTooltipVisible&&(<div style={{position:'fixed',top:'3.5rem',left:'0.75rem',right:'0.75rem',maxWidth:'260px',background:'linear-gradient(135deg,#f5f3ff,#eff6ff)',border:'1.5px solid #c4b5fd',color:'#374151',fontSize:'0.75rem',borderRadius:'0.5rem',padding:'0.55rem 0.8rem',lineHeight:1.5,zIndex:400,boxShadow:'0 4px 14px rgba(124,58,237,0.18)',textAlign:'center',animation:'slideDown 0.2s ease-out forwards',fontWeight:'700',fontStyle:'italic'}}>💡 Most Partners also use UW themselves to save on their own household bills. Toggle this off any time.</div>)}
             </div>
             <p style={{fontSize:'0.875rem',color:'#6b7280',flex:1,textAlign:'center'}}>Explore what <strong>{includeYou?'five':'six'}</strong> customers could earn you in the first 30 days</p>
-            <div style={{width:'5rem'}}></div>
+            <div style={{minWidth:'2.75rem'}}></div>
           </div>
         </div>
 
-        <div style={{background:'white',borderRadius:'1rem',boxShadow:'0 4px 16px rgba(0,0,0,0.08)',padding:'0.85rem'}}>
-          <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'0.6rem',marginBottom:'0.6rem'}}>
+        <div style={{background:'white',borderRadius:'1rem',boxShadow:'0 4px 16px rgba(0,0,0,0.08)',padding:'0.85rem',overflow:'visible'}}>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'0.6rem',marginBottom:'0.6rem',overflow:'visible'}}>
             {customers.map((customer,index)=>{
               const col=circleColor(customer);const cb=calculateCB(customer,index);
               const showHAB=customer.type==='homeowner'&&(customer.services===3||customer.services===4)&&highActivityCustomers>=2;
-              const glowStyle=circleGlowKey>0&&customer.type!==null?{animation:`circleGlowAnim 1.2s ease-in-out ${circleGlowCount}`}:{};
-              const badgeGlowClass=pBadgeGlow&&!customer.isPartner&&customer.type!==null?'p-badge-glow':'';
+              const badgeGlowClass=pBadgeGlow&&!customer.isPartner&&customer.type!==null?'anim-badge-glow':'';
               const partnerClickable=allCirclesFilled;
               return(
-                <div key={`${index}-${circleGlowKey}`} style={{display:'flex',flexDirection:'column',alignItems:'center',position:'relative'}}>
-                  <div onClick={()=>handleCircleClick(index)} style={{width:'5rem',height:'5rem',borderRadius:'50%',border:`4px solid ${col.border}`,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',fontSize:'1.125rem',fontWeight:'700',position:'relative',background:col.bg,color:col.text,cursor:canSelectCircle(index)?'pointer':'not-allowed',opacity:getCircleOpacity(index),transition:'transform 0.15s',boxSizing:'border-box',...glowStyle}}>
+                <div key={index} style={{display:'flex',flexDirection:'column',alignItems:'center',position:'relative',overflow:'visible'}}>
+                  <div ref={circleRefs[index]} onClick={()=>handleCircleClick(index)} style={{width:'5rem',height:'5rem',borderRadius:'50%',border:`4px solid ${col.border}`,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',fontSize:'1.125rem',fontWeight:'700',position:'relative',background:col.bg,color:col.text,cursor:canSelectCircle(index)?'pointer':'not-allowed',opacity:getCircleOpacity(index),transition:'transform 0.15s',boxSizing:'border-box',transformOrigin:'center'}}>
                     {(index===0&&includeYou)?<span style={{fontSize:'1rem',fontWeight:'700'}}>You</span>
                     :customer.type?(
                       <><span style={{fontSize:'0.875rem',fontWeight:'700'}}>£{cb.toLocaleString()}</span>
                       {showHAB&&<div style={{position:'absolute',top:'-0.25rem',right:'-0.25rem',padding:'0.125rem 0.25rem',background:'#f97316',color:'white',fontSize:'0.625rem',fontWeight:'700',borderRadius:'0.25rem',zIndex:10}}>+£{habPerCustomer}</div>}
-                      <div onClick={(e)=>{if(partnerClickable)handlePartnerBadgeClick(e,index);}} className={badgeGlowClass} style={{position:'absolute',bottom:'-0.25rem',right:'-0.25rem',width:'1.5rem',height:'1.5rem',borderRadius:'50%',border:`2px solid ${customer.isPartner?'#ca8a04':'#9ca3af'}`,display:'flex',alignItems:'center',justifyContent:'center',zIndex:10,cursor:partnerClickable?'pointer':'default',background:customer.isPartner?'#facc15':'#e5e7eb',transition:'transform 0.15s',opacity:partnerClickable?1:0.5}}>
+                      {(partnerPromptFired||fastStarterAchieved)&&<div onClick={(e)=>{if(partnerClickable)handlePartnerBadgeClick(e,index);}} className={badgeGlowClass} style={{position:'absolute',bottom:'-0.25rem',right:'-0.25rem',width:'1.5rem',height:'1.5rem',borderRadius:'50%',border:`2px solid ${customer.isPartner?'#ca8a04':'#9ca3af'}`,display:'flex',alignItems:'center',justifyContent:'center',zIndex:10,cursor:partnerClickable?'pointer':'default',background:customer.isPartner?'#facc15':'#e5e7eb',transition:'transform 0.15s'}}>
                         <span style={{fontSize:'0.625rem',fontWeight:'700',color:customer.isPartner?'#713f12':'#6b7280'}}>P</span>
-                      </div></>
+                      </div>}
+                      </>
                     ):(
-                      <><span style={{fontSize:'0.875rem'}}>{includeYou?ordinal(index):ordinal(index+1)}</span>
-                      <div style={{position:'absolute',bottom:'-0.25rem',right:'-0.25rem',width:'1.5rem',height:'1.5rem',borderRadius:'50%',border:'2px solid #9ca3af',display:'flex',alignItems:'center',justifyContent:'center',zIndex:10,background:'#e5e7eb'}}>
-                        <span style={{fontSize:'0.625rem',fontWeight:'700',color:'#6b7280'}}>P</span>
-                      </div></>
+                      <><span style={{fontSize:'0.875rem'}}>{includeYou?ordinal(index):ordinal(index+1)}</span></>
                     )}
                   </div>
                 </div>
@@ -858,62 +963,98 @@ const UWTracker=()=>{
             message={coachMsg}
             showArrow={coachArrow}
             stagedActiveCount={stagedActiveCount}
-            stagedPulseIndex={stagedPulseIndex}
-            linePulseKeys={linePulseKeys}
+            emojiRefs={emojiRefs}
             postCelebArrow={postCelebArrow}
-            postCelebArrowPulseKey={postCelebArrowPulseKey}
-            stagedIsFirstReveal={stagedIsFirstReveal}
+            postCelebArrowRef={postCelebArrowRef}
           />
 
           {/* Banners area — ref drives right-side card position */}
           <div ref={bannersRef} style={{display:'flex',flexDirection:'column',gap:'0.4rem'}}>
-            <div ref={cbBannerRef} className="earnings-banner" style={{padding:'0.5rem 0.75rem',borderRadius:'0.5rem',border:`${totalCB>0?'4px':'2px'} solid ${totalCB>0?'#7c3aed':'#d1d5db'}`,background:totalCB>0?'#f5f3ff':'#f9fafb'}}>
+            {/* CB */}
+            <div ref={cbBannerRef} className="earnings-banner" style={{padding:'0.5rem 0.75rem',borderRadius:'0.5rem',border:`3px solid ${totalCB>0?'#7c3aed':'#d1d5db'}`,background:totalCB>0?'#f5f3ff':'#f9fafb',opacity:totalCB>0?1:0.5,transition:'opacity 0.3s,border-color 0.3s,background 0.3s'}}>
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
                 <div style={{display:'flex',alignItems:'center',gap:'0.4rem'}}><span style={{fontSize:'1.1rem',filter:totalCB>0?'none':'grayscale(1)',opacity:totalCB>0?1:0.4}}>💷</span><span style={{fontWeight:'600',fontSize:'0.85rem',color:totalCB>0?'#7c3aed':'#6b7280'}}>Customer Bonus:</span></div>
                 <span style={{fontSize:'1.1rem',fontWeight:'700',color:totalCB>0?'#6d28d9':'#9ca3af'}}>£{totalCB.toLocaleString()}</span>
               </div>
             </div>
-
-            <div className="earnings-banner" style={{padding:'0.5rem 0.75rem',borderRadius:'0.5rem',border:`${highActivityCustomers>=2?'4px':'2px'} solid ${highActivityCustomers>=2?'#f97316':'#e5e7eb'}`,background:highActivityCustomers>=2?'#fff7ed':'#f9fafb',opacity:highActivityCustomers>=2?1:0.5,transition:'opacity 0.3s,border-color 0.3s,background 0.3s'}}>
+            {/* HAB */}
+            <div className="earnings-banner" style={{padding:'0.5rem 0.75rem',borderRadius:'0.5rem',border:`3px solid ${highActivityCustomers>=2?'#f97316':'#d1d5db'}`,background:highActivityCustomers>=2?'#fff7ed':'#f9fafb',opacity:highActivityCustomers>=2?1:0.5,transition:'opacity 0.3s,border-color 0.3s,background 0.3s'}}>
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
                 <div style={{display:'flex',alignItems:'center',gap:'0.4rem'}}>
                   <span style={{fontSize:'1.1rem',filter:highActivityCustomers>=2?'none':'grayscale(1)',opacity:highActivityCustomers>=2?1:0.4,flexShrink:0}}>🔥</span>
-                  <span style={{fontWeight:'600',fontSize:'0.85rem',color:highActivityCustomers>=2?'#ea580c':'#6b7280'}}>
-                    {highActivityCustomers>=4?'£100 High Activity Bonus:':highActivityCustomers>=2?'£50 High Activity Bonus:':'High Activity Bonus:'}
-                  </span>
+                  <span style={{fontWeight:'600',fontSize:'0.85rem',color:highActivityCustomers>=2?'#ea580c':'#6b7280'}}>{highActivityCustomers>=4?'£100 High Activity Bonus:':highActivityCustomers>=2?'£50 High Activity Bonus:':'High Activity Bonus:'}</span>
                 </div>
                 <span style={{fontSize:'1.1rem',fontWeight:'700',color:highActivityCustomers>=2?'#ea580c':'#9ca3af',flexShrink:0}}>{highActivityCustomers>=2?`£${totalHAB.toLocaleString()}`:'—'}</span>
               </div>
             </div>
-
-            <div className="earnings-banner" style={{padding:'0.5rem 0.75rem',borderRadius:'0.5rem',border:`${qualifiesForFastStarter?'4px':'2px'} solid ${qualifiesForFastStarter?'#86efac':'#e5e7eb'}`,background:qualifiesForFastStarter?'#f0fdf4':'#f9fafb'}}>
-              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-                <div style={{display:'flex',alignItems:'center',gap:'0.4rem'}}><TrendingUp style={{...MD,color:qualifiesForFastStarter?'#16a34a':'#d1d5db'}}/><span style={{fontWeight:'600',fontSize:'0.85rem',color:qualifiesForFastStarter?'#16a34a':'#6b7280'}}>Fast Starter Bonus:</span></div>
-                <span style={{fontSize:'1.1rem',fontWeight:'700',color:qualifiesForFastStarter?'#16a34a':'#9ca3af'}}>£{fastStarterBonus.toLocaleString()}</span>
-              </div>
-            </div>
-
-            <div ref={riBannerRef} className="earnings-banner" style={{padding:'0.5rem 0.75rem',borderRadius:'0.5rem',border:`${recurringActive?'4px':'2px'} solid ${recurringActive?'#2563eb':'#d1d5db'}`,background:recurringActive?'#eff6ff':'#f9fafb',opacity:recurringActive?1:0.5,transition:'opacity 0.3s,border-color 0.3s'}}>
+            {/* RI */}
+            <div ref={riBannerRef} className="earnings-banner" style={{padding:'0.5rem 0.75rem',borderRadius:'0.5rem',border:`3px solid ${recurringActive?'#2563eb':'#d1d5db'}`,background:recurringActive?'#eff6ff':'#f9fafb',opacity:recurringActive?1:0.5,transition:'opacity 0.3s,border-color 0.3s,background 0.3s'}}>
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
                 <div style={{display:'flex',alignItems:'center',gap:'0.4rem'}}>
                   <RefreshCw style={{...MD,color:recurringActive?'#2563eb':'#d1d5db',flexShrink:0}}/>
                   <span style={{fontWeight:'600',fontSize:'0.85rem',color:recurringActive?'#374151':'#6b7280'}}>Recurring Income:</span>
                 </div>
                 <div style={{textAlign:'right',flexShrink:0}}>
-                  <span style={{fontSize:'1.1rem',fontWeight:'700',color:recurringActive?'#2563eb':'#9ca3af'}}>{tenantCount>0?`£${residualIncome.toFixed(2)}/m`:'—'}</span>
-                  {recurringActive&&<span style={{display:'block',fontSize:'0.7rem',color:'#3b82f6'}}>(£{(residualIncome*12).toLocaleString()}/yr)</span>}
+                  {tenantCount>0?(
+                    <>
+                      <span style={{fontSize:'1.1rem',fontWeight:'700',color:recurringActive?'#2563eb':'#9ca3af',display:'block'}}>£{(residualIncome*12).toFixed(0)}/yr</span>
+                      <span style={{fontSize:'0.65rem',fontWeight:'400',color:'#3b82f6',display:'block'}}>(£{residualIncome.toFixed(2)}/m)</span>
+                    </>
+                  ):(
+                    <>
+                      <span style={{fontSize:'1.1rem',fontWeight:'700',color:'#9ca3af',display:'block'}}>—</span>
+                      <span style={{fontSize:'0.65rem',display:'block',visibility:'hidden'}}>-</span>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
-
+            {/* FSB */}
+            <div ref={fsbBannerRef} className="earnings-banner" style={{padding:'0.5rem 0.75rem',borderRadius:'0.5rem',border:`3px solid ${qualifiesForFastStarter?'#16a34a':'#d1d5db'}`,background:qualifiesForFastStarter?'#f0fdf4':'#f9fafb',opacity:qualifiesForFastStarter?1:0.5,transition:'opacity 0.3s,border-color 0.3s,background 0.3s'}}>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                <div style={{display:'flex',alignItems:'center',gap:'0.4rem'}}><TrendingUp style={{...MD,color:qualifiesForFastStarter?'#16a34a':'#d1d5db',flexShrink:0}}/><span style={{fontWeight:'600',fontSize:'0.85rem',color:qualifiesForFastStarter?'#16a34a':'#6b7280'}}>Fast Starter Bonus:</span></div>
+                <span style={{fontSize:'1.1rem',fontWeight:'700',color:qualifiesForFastStarter?'#16a34a':'#9ca3af'}}>£{fastStarterBonus.toLocaleString()}</span>
+              </div>
+            </div>
             {/* TOTAL EARNINGS — z-index above revenue card but below left panel */}
             <div className="earnings-banner" style={{padding:'0.6rem 0.75rem',borderRadius:'0.5rem',boxShadow:'0 2px 8px rgba(0,0,0,0.15)',color:'white',position:'relative',overflow:'hidden',zIndex:145}}>
-              <div style={{position:'absolute',inset:0,background:grandTotal>0?'linear-gradient(to right,#7c3aed,#db2777)':'#9ca3af'}}></div>
+              {/* Background: segment proportionally CB (purple) / HAB (orange) / FSB (green) */}
+              {(()=>{
+                const upfront=totalCB+totalHAB+fastStarterBonus;
+                if(upfront===0)return <div style={{position:'absolute',inset:0,background:'#9ca3af',transition:'background 0.5s ease'}}></div>;
+                const cbPct=totalCB/upfront*100;
+                const habPct=totalHAB/upfront*100;
+                const fsbPct=fastStarterBonus/upfront*100;
+                // Build soft blended stops — colours overlap by ~8% either side of boundary
+                const blend=8;
+                const stops=[];
+                let pos=0;
+                if(cbPct>0&&habPct===0&&fsbPct===0){
+                  // Only CB — solid purple
+                  stops.push('#7c3aed 0%','#7c3aed 100%');
+                } else if(cbPct>0&&habPct>0&&fsbPct===0){
+                  const m=cbPct;
+                  stops.push(`#7c3aed 0%`,`#7c3aed ${Math.max(m-blend,0)}%`,`#f97316 ${Math.min(m+blend,100)}%`,`#f97316 100%`);
+                } else if(cbPct===0&&habPct===0&&fsbPct>0){
+                  stops.push('#16a34a 0%','#16a34a 100%');
+                } else if(cbPct>0&&habPct===0&&fsbPct>0){
+                  const m=cbPct;
+                  stops.push(`#7c3aed 0%`,`#7c3aed ${Math.max(m-blend,0)}%`,`#16a34a ${Math.min(m+blend,100)}%`,`#16a34a 100%`);
+                } else if(cbPct===0&&habPct>0&&fsbPct>0){
+                  const m=habPct;
+                  stops.push(`#f97316 0%`,`#f97316 ${Math.max(m-blend,0)}%`,`#16a34a ${Math.min(m+blend,100)}%`,`#16a34a 100%`);
+                } else {
+                  // All three
+                  const m1=cbPct; const m2=cbPct+habPct;
+                  stops.push(`#7c3aed 0%`,`#7c3aed ${Math.max(m1-blend,0)}%`,`#f97316 ${Math.min(m1+blend,m2-blend)}%`,`#f97316 ${Math.max(m2-blend,m1+blend)}%`,`#16a34a ${Math.min(m2+blend,100)}%`,`#16a34a 100%`);
+                }
+                return <div style={{position:'absolute',inset:0,background:`linear-gradient(to right,${stops.join(',')})`,transition:'background 0.6s ease'}}></div>;
+              })()}
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',position:'relative',zIndex:1}}>
                 <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}>
                   <span style={{fontWeight:'700',fontSize:'1.125rem'}}>Total Earnings:</span>
-                  <button key={`bulb-${infoBulbPulseKey}`} onClick={(e)=>{e.stopPropagation();setShowInfoPopup(true);}} style={{background:'none',border:'none',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',padding:0,lineHeight:1}}>
-                    <span key={`bulb-${infoBulbPulseKey}`} className={infoBulbPulseKey>0&&infoBulbColoured?(infoBulbPulseCount>=2?'bulb-glow-double':'bulb-glow-single'):''} style={{fontSize:'1.8rem',lineHeight:1,filter:infoBulbColoured?'none':'grayscale(1)',opacity:infoBulbColoured?1:0.25,display:'inline-block'}}>🔍</span>
+                  <button onClick={(e)=>{e.stopPropagation();setShowInfoPopup(true);}} style={{background:'none',border:'none',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',padding:0,lineHeight:1}}>
+                    <span ref={infoBulbRef} style={{fontSize:'1.8rem',lineHeight:1,filter:infoBulbColoured?'none':'grayscale(1)',opacity:infoBulbColoured?1:0.25,display:'inline-block'}}>🔍</span>
                   </button>
                 </div>
                 <span style={{fontSize:'1.5rem',fontWeight:'700'}}>£{grandTotal.toLocaleString()}</span>
@@ -935,8 +1076,8 @@ const UWTracker=()=>{
         topOffset={cardTopOffset}
         cardHeight={cardHeight}
         unlocked={revenueCardVisible}
-        revTabPulseKey={revTabPulseKey}
-        revTabPulseCount={revTabPulseCount}
+        pulseRevTab={pulseRevTab}
+        pulseRevTabEmoji={pulseRevTabEmoji}
         closeKey={revenueCloseKey}
       />
 
@@ -948,16 +1089,14 @@ const UWTracker=()=>{
             {!hasInteracted?(
               <>
                 <p style={{fontSize:'1rem',fontWeight:'700',color:'#111827',marginBottom:'0.1rem',textAlign:'center'}}>Choose a customer example</p>
-                <p style={{fontSize:'0.82rem',color:'#6b7280',marginBottom:'0.4rem',textAlign:'center',fontStyle:'italic'}}>Homeowner or tenant — what would you like to try first?</p>
-                <p style={{fontSize:'0.82rem',color:'#6b7280',marginBottom:'0.6rem',textAlign:'center',fontStyle:'italic'}}>A Homeowner with how many services?</p>
-                {showBestGuess&&(
-                  <p style={{fontSize:'0.82rem',color:'#374151',fontWeight:'700',fontStyle:'italic',textAlign:'center',margin:'0 0 0.85rem',background:'#fef9c3',padding:'0.45rem 0.65rem',borderRadius:'0.4rem',lineHeight:'1.6'}}>
-                    💡 Just make your best guess<br/>— you can change this later.
-                  </p>
-                )}
+                <p style={{fontSize:'0.82rem',color:'#6b7280',marginBottom:'0.15rem',textAlign:'center',fontStyle:'italic'}}>Homeowner or tenant — what would you like to try first?</p>
+                <p style={{fontSize:'0.82rem',color:'#6b7280',marginBottom:'0.65rem',textAlign:'center',fontStyle:'italic'}}>A Homeowner with how many services?</p>
+                <p style={{fontSize:'0.82rem',color:'#374151',fontWeight:'700',fontStyle:'italic',textAlign:'center',margin:'0 0 0.85rem',background:'#fef9c3',padding:'0.45rem 0.65rem',borderRadius:'0.4rem',lineHeight:'1.6',border:'1px solid #fde68a'}}>
+                  💡 Just make your best guess — you can change it later.
+                </p>
               </>
             ):(
-              <p style={{fontSize:'0.95rem',fontWeight:'700',color:'#111827',marginBottom:'0.65rem',textAlign:'center'}}>What's next — a Homeowner with how many services?</p>
+              <p style={{fontSize:'0.95rem',fontWeight:'700',color:'#111827',marginBottom:'0.75rem',textAlign:'center'}}>What's next — a Homeowner with how many services?</p>
             )}
             <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'0.5rem',marginBottom:'0.75rem'}}>
               {[1,2,3,4].map(num=>{const cb=[50,100,250,300][num-1];const active=customers[selectedCircle]&&customers[selectedCircle].type==='homeowner'&&customers[selectedCircle].services===num;return(
@@ -993,11 +1132,12 @@ const UWTracker=()=>{
         <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.5)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:400,padding:'1rem'}}>
           <div className="animate-bounceOnce" style={{background:'white',borderRadius:'1rem',padding:'2rem',maxWidth:'28rem',textAlign:'center',boxShadow:'0 20px 60px rgba(0,0,0,0.3)'}}>
             <div style={{fontSize:'3.75rem',marginBottom:'1rem'}}>🎉</div>
-            <h2 style={{fontSize:'1.875rem',fontWeight:'700',color:'#7c3aed',marginBottom:'0.5rem'}}>Congratulations!</h2>
-            <p style={{fontSize:'1rem',color:'#374151',marginBottom:'0.75rem',lineHeight:1.5}}>You've been promoted to QD* in your first 30 days!</p>
-            <p style={{fontSize:'0.95rem',color:'#374151',marginBottom:'0.5rem'}}>You've qualified for the</p>
-            <p style={{fontSize:'2rem',fontWeight:'700',color:'#16a34a',marginBottom:'0.1rem',lineHeight:1.15}}>£500 Fast Starter</p>
-            <p style={{fontSize:'2rem',fontWeight:'700',color:'#16a34a',marginBottom:'1rem',lineHeight:1.15}}>Bonus</p>
+            <h2 style={{fontSize:'1.875rem',fontWeight:'700',color:'#7c3aed',marginBottom:'0.75rem'}}>Congratulations!</h2>
+            <p style={{fontSize:'1rem',color:'#374151',marginBottom:'0.15rem',lineHeight:1.5}}>You've been promoted to QD*</p>
+            <p style={{fontSize:'1rem',color:'#374151',marginBottom:'0.75rem',lineHeight:1.5}}>in your first 30 days!</p>
+            <p style={{fontSize:'0.95rem',color:'#374151',marginBottom:'0.15rem'}}>You've qualified for</p>
+            <p style={{fontSize:'2.25rem',fontWeight:'700',color:'#16a34a',marginBottom:'0',lineHeight:1.15}}>£500 Fast</p>
+            <p style={{fontSize:'2.25rem',fontWeight:'700',color:'#16a34a',marginBottom:'0',lineHeight:1.15}}>Starter Bonus</p>
           </div>
         </div>
       )}
