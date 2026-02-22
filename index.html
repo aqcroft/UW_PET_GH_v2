@@ -252,7 +252,7 @@ const CoachingLane=({message,showArrow,stagedActiveCount,emojiRefs,postCelebArro
 
   const isStaged=displayed==='__staged__';
   const isPostCeleb=displayed==='__postcelebration__';
-  const isActive=visible&&displayed&&!isPostCeleb;
+  const isActive=visible&&displayed;
 
   const lineData=[
     {text:'🔁 Experiment with customer mixes'},
