@@ -81,7 +81,11 @@
   .anim-pop-emoji   { animation: emojiPop    0.4s ease-out 1; }
   .anim-pulse-arrow { animation: arrowPulse  1.4s ease-in-out 2; }
   .anim-pulse-emoji { animation: emojiZoom   2.8s cubic-bezier(0.45,0,0.55,1) 1; }
-  .anim-badge-glow  { animation: badgeGlow   1.4s ease-in-out 2; animation-fill-mode: forwards; }
+  @keyframes lockPulse {
+    0%,100% { transform:scale(1); }
+    40%     { transform:scale(2); }
+  }
+  .anim-lock-pulse  { animation: lockPulse 0.7s ease-in-out 1; }
   * { box-sizing: border-box; }
   @media (orientation: landscape) and (max-height: 500px) {
     .accordion-list { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 0.4rem !important; align-items: start !important; }
@@ -127,8 +131,8 @@
   .p-badge { width:1.35rem;height:1.35rem;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:800;flex-shrink:0;vertical-align:middle; }
   .p-badge-grey { background:#e5e7eb;border:2px solid #9ca3af;color:#6b7280; }
   .p-badge-gold { background:#facc15;border:2px solid #ca8a04;color:#713f12; }
-  .revenue-card-wrap { position:fixed;right:0;z-index:140;width:2.2rem;transition:width 0.4s cubic-bezier(0.22,1,0.36,1); }
-  .revenue-card-wrap.expanded { width:min(28rem,90vw); }
+  .revenue-card-wrap { position:fixed;right:0;z-index:160;width:2.2rem;transition:width 0.4s cubic-bezier(0.22,1,0.36,1); }
+  .revenue-card-wrap.expanded { width:min(28rem,90vw);z-index:165; }
   .revenue-card-locked { background:#9ca3af;border-radius:0.6rem 0 0 0.6rem;overflow:hidden;box-shadow:-3px 0 10px rgba(0,0,0,0.15); }
   .revenue-card-unlocked { background:linear-gradient(135deg,#7c3aed,#db2777);border-radius:0.6rem 0 0 0.6rem;overflow:hidden;box-shadow:-4px 0 24px rgba(124,58,237,0.4);cursor:pointer; }
   .earnings-banner { min-height:4.43rem;display:flex;flex-direction:column;justify-content:center; }
@@ -216,12 +220,32 @@ const IntroModal=({onClose})=>(
   </div>
 );
 
+// Dynamically shrink font until text fits its container, with a min/max clamp
+const useFitText=(containerRef,deps,maxRem=0.92,minRem=0.55)=>{
+  const [fontSize,setFontSize]=useState(maxRem);
+  useEffect(()=>{
+    const el=containerRef.current;if(!el)return;
+    let size=maxRem;
+    el.style.fontSize=size+'rem';
+    // Step down until content fits height
+    while(el.scrollHeight>el.offsetHeight&&size>minRem){
+      size=Math.round((size-0.02)*100)/100;
+      el.style.fontSize=size+'rem';
+    }
+    setFontSize(size);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },deps);
+  return fontSize;
+};
+
 const CoachingLane=({message,showArrow,stagedActiveCount,emojiRefs,postCelebArrow,postCelebArrowRef,onRevenuePanelOpened})=>{
   const [visible,setVisible]=useState(false);
   const [displayed,setDisplayed]=useState(null);
   const [fading,setFading]=useState(false);
   const pBadgeRef=useRef(null);
+  const textRef=useRef(null);
   const firePBadgeGlow=useAnimClass(pBadgeRef,'anim-badge-glow',2800);
+  useFitText(textRef,[displayed,visible,stagedActiveCount]);
   const autoTimer=useRef(null);
   const fadeTimer=useRef(null);
   const clearAll=()=>{clearTimeout(autoTimer.current);clearTimeout(fadeTimer.current);};
@@ -264,7 +288,7 @@ const CoachingLane=({message,showArrow,stagedActiveCount,emojiRefs,postCelebArro
     <div className={`coaching-lane ${isActive?'active':'inactive'}`}>
       <span style={{fontSize:'1.5rem',lineHeight:1,flexShrink:0,filter:isActive?'none':'grayscale(1)',opacity:isActive?1:0.25,transition:'filter 0.3s,opacity 0.3s'}}>💡</span>
       {isActive&&(
-        <span className={fading?'coach-out':'coach-in'} style={{display:'flex',alignItems:'center',flex:1,minWidth:0}}>
+        <span ref={textRef} className={fading?'coach-out':'coach-in'} style={{display:'flex',alignItems:'center',flex:1,minWidth:0,height:'100%',overflow:'hidden'}}>
           {showArrow?(
             <span style={{display:'flex',flexDirection:'column',gap:'0.15rem',width:'100%',textAlign:'center'}}>
               <span style={{fontSize:'clamp(0.72rem,2.6vw,0.92rem)',fontWeight:'700',fontStyle:'italic',color:'#374151',lineHeight:1.5}}>🙌 Six customers done — nearly there!</span>
@@ -501,7 +525,7 @@ const RevenueCard=({grandTotal,supportingBonus,partnerTotalEarnings,onInteracted
   const unlockEmojiRef=useRef(null);
   const fireTabGlow=useAnimClass(tabRef,'anim-glow-right',2800);
   const fireLockBreath=useAnimClass(lockRef,'anim-pulse-lock',2800);
-  const fireUnlockPop=useAnimClass(unlockEmojiRef,'anim-pop-emoji',400);
+  const fireUnlockPop=useAnimClass(unlockEmojiRef,'anim-lock-pulse',700);
   const prevPulse=useRef(0);
   const prevEmoji=useRef(0);
   useEffect(()=>{
@@ -640,6 +664,7 @@ const UWTracker=()=>{
   const fireCircleGlows=circleRefs.map(r=>useAnimClass(r,'anim-glow-circle',2800));
   const fireBulbGlow=useAnimClass(infoBulbRef,'anim-glow-bulb',2800);
   const fireArrowPulse=useAnimClass(postCelebArrowRef,'anim-pulse-arrow',4200); // 1.4s×3
+  const fireLockPulse=useAnimClass(postCelebArrowRef,'anim-lock-pulse',700);
   const fireCircleGlow=useCallback(()=>fireCircleGlows.forEach((f,i)=>{if(customers[i]&&customers[i].type!==null)f();}),[customers]);
 
   // Per-emoji refs for staged coaching emojis
@@ -804,11 +829,16 @@ const UWTracker=()=>{
         setPostCelebArrow(true);
         stageRevealTimer.current=setTimeout(()=>{
           setRevenueCardVisible(true);
-          // Arrow + right tab pulse in sync, repeated 3× so direction is clear
-          const syncPulse=()=>{
-            setPulseRevTab(k=>k+1);
-            fireArrowPulse();
+          // 🔓 coaching lane + rev tab pulse in sync, 3× at 2s intervals
+          const syncLockPulse=()=>{
+            setPulseRevTabEmoji(k=>k+1);
+            fireLockPulse();
           };
+          setTimeout(syncLockPulse,600);
+          setTimeout(syncLockPulse,2600);
+          setTimeout(syncLockPulse,4600);
+          // Tab glow pulses separately to draw eye to the card
+          const syncPulse=()=>setPulseRevTab(k=>k+1);
           setTimeout(syncPulse,600);
           setTimeout(syncPulse,4600);
           setTimeout(syncPulse,8600);
@@ -1005,8 +1035,8 @@ const UWTracker=()=>{
                 <span style={{fontSize:'1.1rem',fontWeight:'700',color:qualifiesForFastStarter?'#16a34a':'#9ca3af'}}>£{fastStarterBonus.toLocaleString()}</span>
               </div>
             </div>
-            {/* TOTAL EARNINGS — z-index above revenue card but below left panel */}
-            <div className="earnings-banner" style={{padding:'0.6rem 0.75rem',borderRadius:'0.5rem',boxShadow:'0 2px 8px rgba(0,0,0,0.15)',color:'white',position:'relative',overflow:'hidden',zIndex:145}}>
+            {/* TOTAL EARNINGS */}
+            <div className="earnings-banner" style={{padding:'0.6rem 0.75rem',borderRadius:'0.5rem',boxShadow:'0 2px 8px rgba(0,0,0,0.15)',color:'white',position:'relative',overflow:'hidden'}}>
               {/* Background: segment proportionally CB (purple) / HAB (orange) / FSB (green) / RI (blue) */}
               {(()=>{
                 const total=totalCB+totalHAB+fastStarterBonus+residualAnnual;
