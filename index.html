@@ -83,10 +83,24 @@
   .anim-pulse-emoji { animation: emojiZoom   2.8s cubic-bezier(0.45,0,0.55,1) 1; }
   @keyframes lockPulse {
     0%,100% { transform:scale(1); }
-    40%     { transform:scale(2); }
+    40%     { transform:scale(1.8); }
   }
-  .anim-lock-pulse  { animation: lockPulse 0.7s ease-in-out 1; }
-  * { box-sizing: border-box; }
+  .anim-lock-pulse  { animation: lockPulse 1.4s ease-in-out 1; }
+  @keyframes circleExpand {
+    0%,100% { transform:scale(1); }
+    45%     { transform:scale(1.15); }
+  }
+  .anim-circle-expand { animation: circleExpand 1.1s ease-in-out 1; }
+  .anim-badge-glow  { animation: badgeGlow 2.0s ease-in-out 3; }
+  @keyframes headerShimmer {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .accordion-header-animated {
+    background-size: 200% 200%;
+    animation: headerShimmer 4s ease infinite;
+  }
   @media (orientation: landscape) and (max-height: 500px) {
     .accordion-list { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 0.4rem !important; align-items: start !important; }
     .accordion-list > div { overflow: visible !important; }
@@ -238,13 +252,11 @@ const useFitText=(containerRef,deps,maxRem=0.92,minRem=0.55)=>{
   return fontSize;
 };
 
-const CoachingLane=({message,showArrow,stagedActiveCount,emojiRefs,postCelebArrow,postCelebArrowRef,onRevenuePanelOpened})=>{
+const CoachingLane=({message,showArrow,stagedActiveCount,emojiRefs,postCelebArrow,postCelebArrowRef,pBadgeRef,onRevenuePanelOpened})=>{
   const [visible,setVisible]=useState(false);
   const [displayed,setDisplayed]=useState(null);
   const [fading,setFading]=useState(false);
-  const pBadgeRef=useRef(null);
   const textRef=useRef(null);
-  const firePBadgeGlow=useAnimClass(pBadgeRef,'anim-badge-glow',2800);
   useFitText(textRef,[displayed,visible,stagedActiveCount]);
   const autoTimer=useRef(null);
   const fadeTimer=useRef(null);
@@ -264,16 +276,6 @@ const CoachingLane=({message,showArrow,stagedActiveCount,emojiRefs,postCelebArro
       autoTimer.current=setTimeout(()=>{setFading(true);fadeTimer.current=setTimeout(()=>{setVisible(false);setDisplayed(null);setFading(false);},450);},10000);
     }
   },[showArrow]);
-  // Fire P-badge glow once showArrow branch is rendered (300ms gives React time to paint)
-  const prevShowArrow=useRef(false);
-  useEffect(()=>{
-    if(showArrow&&visible&&!prevShowArrow.current){
-      prevShowArrow.current=true;
-      setTimeout(()=>firePBadgeGlow(),300);
-    }
-    if(!showArrow)prevShowArrow.current=false;
-  },[showArrow,visible]);
-
   const isStaged=displayed==='__staged__';
   const isPostCeleb=displayed==='__postcelebration__';
   const isActive=visible&&displayed;
@@ -291,15 +293,11 @@ const CoachingLane=({message,showArrow,stagedActiveCount,emojiRefs,postCelebArro
         <span ref={textRef} className={fading?'coach-out':'coach-in'} style={{display:'flex',alignItems:'center',flex:1,minWidth:0,height:'100%',overflow:'hidden'}}>
           {showArrow?(
             <span style={{display:'flex',flexDirection:'column',gap:'0.15rem',width:'100%',textAlign:'center'}}>
-              <span style={{fontSize:'clamp(0.72rem,2.6vw,0.92rem)',fontWeight:'700',fontStyle:'italic',color:'#374151',lineHeight:1.5}}>🙌 Six customers done — nearly there!</span>
               <span style={{fontSize:'clamp(0.72rem,2.6vw,0.92rem)',fontWeight:'700',fontStyle:'italic',color:'#374151',lineHeight:1.5}}>Upgrade one to Partner to unlock QD*</span>
-              <span style={{display:'flex',flexWrap:'wrap',alignItems:'center',gap:'0.3rem',justifyContent:'center',lineHeight:1.8}}>
-                <span style={{fontSize:'clamp(0.72rem,2.6vw,0.92rem)',fontWeight:'700',fontStyle:'italic',color:'#374151'}}>Tap a</span>
-                <span className="p-badge p-badge-grey">P</span>
-                <span style={{fontSize:'clamp(0.72rem,2.6vw,0.92rem)',fontWeight:'700',fontStyle:'italic',color:'#374151'}}>to upgrade:</span>
+              <span style={{display:'flex',alignItems:'center',gap:'0.35rem',justifyContent:'center',lineHeight:1.8}}>
+                <span style={{fontSize:'clamp(0.72rem,2.6vw,0.92rem)',fontWeight:'700',fontStyle:'italic',color:'#374151'}}>Just tap a</span>
                 <span ref={pBadgeRef} className="p-badge p-badge-grey">P</span>
-                <span style={{fontSize:'1.1rem',lineHeight:1}}>➡️</span>
-                <span className="p-badge p-badge-gold">P</span>
+                <span style={{fontSize:'clamp(0.72rem,2.6vw,0.92rem)',fontWeight:'700',fontStyle:'italic',color:'#374151'}}>above</span>
               </span>
             </span>
           ):isPostCeleb?(
@@ -356,20 +354,28 @@ const CoachingLane=({message,showArrow,stagedActiveCount,emojiRefs,postCelebArro
   );
 };
 
-const ContactPanel=({grandTotal,isOpen,onClose,tabColoured,onTabClick,pulseTab})=>{
+const ContactPanel=({grandTotal,isOpen,onClose,tabColoured,onTabClick,pulseTab,pulseCompass})=>{
   const initials=CONTACT.fullName.split(' ').map(n=>n[0]).join('').slice(0,2);
   const tabRef=useRef(null);
   const emojiRef=useRef(null);
   const fireTabGlow=useAnimClass(tabRef,'anim-glow-left',2800);
   const fireEmojiPop=useAnimClass(emojiRef,'anim-pop-emoji',400);
+  const fireCompassPulse=useAnimClass(emojiRef,'anim-lock-pulse',700);
   // pulseTab is a counter — each increment triggers one animation cycle
   const prevPulse=useRef(0);
+  const prevCompass=useRef(0);
   useEffect(()=>{
     if(pulseTab>prevPulse.current){
       prevPulse.current=pulseTab;
       fireTabGlow();fireEmojiPop();
     }
   },[pulseTab]);
+  useEffect(()=>{
+    if(pulseCompass>prevCompass.current){
+      prevCompass.current=pulseCompass;
+      fireCompassPulse();
+    }
+  },[pulseCompass]);
   const tabClass=`left-pull-tab${isOpen?' panel-open':''} ${tabColoured?'tab-coloured':'tab-grey'}`;
   return(
     <>
@@ -447,22 +453,22 @@ const box={background:'#fdf8f0',borderRadius:'0.5rem',padding:'0.75rem',marginBo
 const closing={fontStyle:'italic',fontWeight:'700',color:'#374151',margin:0};
 const unlockLine=(isOpen,text)=>(<span style={{fontStyle:'italic',fontSize:'0.72rem',color:isOpen?'#111827':'transparent',transition:'color 0.2s',display:'block',marginTop:'0.2rem',userSelect:'none'}}>{text}</span>);
 const sections=[
-  {id:'cb',accent:'#7c3aed',icon:<span style={{fontSize:'1.1rem'}}>💷</span>,title:'Customer Bonus',
+  {id:'cb',accent:'#7c3aed',icon:<span style={{fontSize:'1.1rem'}}>💷</span>,headerIcon:<span style={{fontSize:'1.05rem',lineHeight:1}}>💷</span>,title:'Customer Bonus',
     summary:(isOpen)=>(<span>Upfront payment when we introduce a homeowner customer.</span>),
     detail:(<div style={{fontSize:'0.875rem',color:'#374151'}}><p style={{marginBottom:'0.5rem'}}>Paid when services go live:</p><div style={{...box,display:'grid',gridTemplateColumns:'1fr 1fr',gap:'0.25rem'}}><span>1️⃣ service — £50</span><span>3️⃣ services — £250</span><span>2️⃣ services — £100</span><span>4️⃣ services — £300</span></div><p style={closing}>💡 The more customers we introduce, the more we earn.</p></div>)},
-  {id:'hab',accent:'#f97316',icon:<span style={{fontSize:'1.1rem'}}>🔥</span>,title:'High Activity Bonus',
+  {id:'hab',accent:'#f97316',icon:<span style={{fontSize:'1.1rem'}}>🔥</span>,headerIcon:<span style={{fontSize:'1.05rem',lineHeight:1}}>🔥</span>,title:'High Activity Bonus',
     summary:(isOpen)=>(<span>Extra reward for multiple 3+ service homeowners in one calendar month.</span>),
     detail:(<div style={{fontSize:'0.875rem',color:'#374151'}}><p style={{marginBottom:'0.5rem'}}>On top of Customer Bonus:</p><div style={box}><div>2️⃣ or more homeowners — £50 each</div><div>4️⃣ or more homeowners — £100 each</div></div><p style={closing}>💡 With Customer Bonus that's up to £400 per homeowner.</p></div>)},
-  {id:'ri',accent:'#2563eb',icon:<RefreshCw style={{...SM,color:'#2563eb'}}/>,title:'Recurring (Residual) Income',
+  {id:'ri',accent:'#2563eb',icon:<RefreshCw style={{...SM,color:'#2563eb'}}/>,headerIcon:<RefreshCw style={{...SM,color:'rgba(255,255,255,0.9)'}}/>,title:'Recurring (Residual) Income',
     summary:(isOpen)=>(<span>Ongoing monthly income from our personal customers and our team's customers.{unlockLine(isOpen,'🔓 Unlocks at QD — 3 personal customers')}</span>),
     detail:(<div style={{fontSize:'0.875rem',color:'#374151'}}><p style={{marginBottom:'0.5rem'}}>A recurring profit share of customers' bills which increases as customers add more services.</p><div style={{...box,marginBottom:'0.5rem'}}><p style={{margin:'0 0 0.3rem',display:'flex',alignItems:'center',gap:'0.3rem',flexWrap:'wrap'}}><RefreshCw style={{width:'0.75rem',height:'0.75rem',flexShrink:0,color:'#2563eb'}}/><span style={{fontSize:'0.8rem'}}>👤</span><strong>Personal Customers</strong><span style={{fontWeight:'400',fontStyle:'italic',color:'#6b7280',fontSize:'0.78rem'}}>— % of bill, typically</span></p><div style={{marginBottom:'0.45rem',paddingLeft:'0.3rem',fontSize:'0.82rem'}}><div>• Tenant — £2–£3 /month <span style={{color:'#6b7280',fontSize:'0.72rem'}}>(after first bill paid)</span></div><div>• Homeowner — £3–£5 /month <span style={{color:'#6b7280',fontSize:'0.72rem'}}>(after a set period)</span></div></div><div style={{borderTop:'1px solid #bfdbfe',paddingTop:'0.4rem'}}><p style={{margin:'0 0 0.3rem',display:'flex',alignItems:'center',gap:'0.3rem',flexWrap:'wrap'}}><RefreshCw style={{width:'0.75rem',height:'0.75rem',flexShrink:0,color:'#2563eb'}}/><span style={{fontSize:'0.8rem'}}>👥</span><strong>Team (Group) Customers</strong><span style={{fontWeight:'400',fontStyle:'italic',color:'#6b7280',fontSize:'0.78rem'}}>— pence per service, typically</span></p><div style={{paddingLeft:'0.3rem',fontSize:'0.82rem'}}>• 30–50p /month per customer</div></div></div><p style={closing}>💡 Grows steadily as our customers and team expand.</p></div>)},
-  {id:'fsb',accent:'#16a34a',icon:<TrendingUp style={{...SM,color:'#16a34a'}}/>,title:'Promotion & Fast Starter Bonus',
+  {id:'fsb',accent:'#16a34a',icon:<TrendingUp style={{...SM,color:'#16a34a'}}/>,headerIcon:<TrendingUp style={{...SM,color:'#bbf7d0'}}/>,title:'Promotion & Fast Starter Bonus',
     summary:(isOpen)=>(<span>Up to £500 when you reach QD* within your first 30 days.{unlockLine(isOpen,'🏆 Achieved at QD*')}</span>),
     detail:(<div style={{fontSize:'0.875rem',color:'#374151'}}><p style={{marginBottom:'0.5rem',fontWeight:'600'}}>QD* = 6 personal customers + 1 partner introduced</p><div style={{...box,marginBottom:'0.5rem'}}><div style={{display:'flex',justifyContent:'space-between',marginBottom:'0.3rem'}}><span>Promotion Bonus</span><span style={{fontWeight:'700'}}>£200 <span style={{fontWeight:'400',fontStyle:'italic',color:'#6b7280',fontSize:'0.75rem'}}>(any timeframe)</span></span></div><div style={{display:'flex',justifyContent:'space-between',marginBottom:'0.3rem'}}><span>Fast Starter Bonus</span><span style={{fontWeight:'700'}}>£300 <span style={{fontWeight:'400',fontStyle:'italic',color:'#6b7280',fontSize:'0.75rem'}}>(within 30 days)</span></span></div><div style={{borderTop:'1px solid #bbf7d0',paddingTop:'0.35rem',display:'flex',justifyContent:'space-between'}}><span style={{fontWeight:'700'}}>Total</span><span style={{fontWeight:'700',color:'#111827'}}>£500</span></div></div><p style={closing}>💡 Rewarded for reaching QD*. Rewarded more for starting fast.</p></div>)},
-  {id:'scb',accent:'#c4b5fd',icon:<span style={{fontSize:'1.1rem'}}>🤝</span>,title:'Supporting Customer Bonus',
+  {id:'scb',accent:'#c4b5fd',icon:<span style={{fontSize:'1.1rem'}}>🤝</span>,headerIcon:<span style={{fontSize:'1.05rem',lineHeight:1}}>🤝</span>,title:'Supporting Customer Bonus',
     summary:(isOpen)=>(<span>Upfront payment when we support a Partner to introduce a homeowner.{unlockLine(isOpen,'🔓 Unlocks at 6 personal customers')}</span>),
     detail:(<div style={{fontSize:'0.875rem',color:'#374151'}}><p style={{marginBottom:'0.5rem'}}>We receive <strong>50%</strong> of the full Customer Bonus.</p><div style={{...box,fontSize:'0.8rem',marginBottom:'0.5rem'}}><div style={{marginBottom:'0.25rem'}}>⏱️ <strong>First 45 days</strong> — in addition to their Customer Bonus</div><div style={{marginBottom:'0.4rem'}}>➡️ <strong>After 45 days</strong> — Customer Bonus is shared 50:50</div><div style={{borderTop:'1px solid #c4b5fd',paddingTop:'0.4rem',display:'grid',gridTemplateColumns:'1fr 1fr',gap:'0.25rem'}}><span>1️⃣ service — £25</span><span>3️⃣ services — £125</span><span>2️⃣ services — £50</span><span>4️⃣ services — £150</span></div></div><p style={closing}>💡 An extra income stream from helping Partners introduce homeowners.</p></div>)},
-  {id:'mb',accent:'#374151',icon:<span style={{fontSize:'1.1rem'}}>🎓</span>,title:'Mentor Bonus',
+  {id:'mb',accent:'#374151',icon:<span style={{fontSize:'1.1rem'}}>🎓</span>,headerIcon:<span style={{fontSize:'1.05rem',lineHeight:1}}>🎓</span>,title:'Mentor Bonus',
     summary:(isOpen)=>(<span>Up to £400 when a partner we introduce reaches QD* in 30 days.{unlockLine(isOpen,'🔓 Unlocks at QD — 3 customers')}</span>),
     detail:(<div style={{fontSize:'0.875rem',color:'#374151'}}><div style={{...box,marginBottom:'0.5rem'}}><div style={{display:'flex',justifyContent:'space-between',marginBottom:'0.3rem'}}><span style={{display:'flex',alignItems:'center',gap:'0.3rem'}}><span>🎓</span> Mentor Bonus</span><span style={{fontWeight:'700'}}>£100 <span style={{fontWeight:'400',fontStyle:'italic',color:'#6b7280',fontSize:'0.75rem'}}>(any timeframe)</span></span></div><div style={{display:'flex',justifyContent:'space-between',marginBottom:'0.3rem'}}><span style={{display:'flex',alignItems:'center',gap:'0.3rem'}}><TrendingUp style={{width:'0.75rem',height:'0.75rem',color:'#374151'}}/> Fast Starter <em>Mentor</em> Bonus</span><span style={{fontWeight:'700'}}>£300 <span style={{fontWeight:'400',fontStyle:'italic',color:'#6b7280',fontSize:'0.75rem'}}>(within 30 days)</span></span></div><div style={{borderTop:'1px solid #e5e7eb',paddingTop:'0.35rem',display:'flex',justifyContent:'space-between'}}><span style={{fontWeight:'700'}}>Total</span><span style={{fontWeight:'700',color:'#111827'}}>£400</span></div></div><p style={closing}>💡 Rewarding us for developing new Partners — with even more for starting fast.</p></div>)},
 ];
@@ -471,7 +477,7 @@ const HowPaidPopup=({onClose,fastStarterAchieved,revenueExplored})=>{
   const [openId,setOpenId]=useState(null);
   const headerRefs=useRef({});
   const toggle=useCallback((id)=>{const opening=openId!==id;setOpenId(opening?id:null);},[openId]);
-  const bulbMsg=fastStarterAchieved&&revenueExplored?null:fastStarterAchieved&&!revenueExplored?"💡 You've explored your earnings. Next, see how helping others unlocks three new revenue streams.":"💡 Have a play with the Partner Earnings Tool to explore and understand what's possible.";
+  const bulbMsg=fastStarterAchieved&&revenueExplored?null:fastStarterAchieved&&!revenueExplored?"You've explored your earnings. Next, see how helping others unlocks three new revenue streams.":"Have a play with the Partner Earnings Tool to explore and understand what's possible.";
   return(
     <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.5)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:200,padding:'0.75rem'}} onClick={onClose}>
       <div style={{background:'white',borderRadius:'0.75rem',boxShadow:'0 20px 50px rgba(0,0,0,0.3)',maxWidth:'28rem',width:'100%',display:'flex',flexDirection:'column',height:'85vh'}} onClick={e=>e.stopPropagation()}>
@@ -493,12 +499,14 @@ const HowPaidPopup=({onClose,fastStarterAchieved,revenueExplored})=>{
             return(
             <div key={s.id} style={{borderRadius:'0.6rem',boxShadow:'0 1px 4px rgba(0,0,0,0.07)',border:'1px solid #e5e7eb'}}>
               <button ref={el=>headerRefs.current[s.id]=el} style={{width:'100%',textAlign:'left',background:'none',border:'none',cursor:'pointer',overflow:'hidden',borderRadius:isOpen?'0.6rem 0.6rem 0 0':'0.6rem'}} onClick={()=>toggle(s.id)}>
-                <div style={{background:s.accent,padding:'0.4rem 0.75rem',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-                  <p style={{fontWeight:'700',fontSize:'0.85rem',color:'white',margin:0}}>{s.title}</p>
+                <div className="accordion-header-animated" style={{background:`linear-gradient(120deg,${s.accent},${s.accent}dd,${s.accent}bb,${s.accent})`,padding:'0.4rem 0.75rem',display:'flex',alignItems:'center',justifyContent:'space-between',gap:'0.5rem'}}>
+                  <span style={{display:'flex',alignItems:'center',gap:'0.5rem',minWidth:0}}>
+                    <span style={{flexShrink:0,display:'flex',alignItems:'center'}}>{s.headerIcon}</span>
+                    <p style={{fontWeight:'700',fontSize:'0.85rem',color:'white',margin:0}}>{s.title}</p>
+                  </span>
                   {isOpen?<ChevronUp style={{...SM,color:'rgba(255,255,255,0.9)',flexShrink:0}}/>:<ChevronDown style={{...SM,color:'rgba(255,255,255,0.9)',flexShrink:0}}/>}
                 </div>
                 <div style={{display:'flex',alignItems:'center',gap:'0.6rem',padding:'0.35rem 0.75rem',background:tintBg,borderLeft:`3px solid ${s.accent}`}}>
-                  <span style={{flexShrink:0,display:'flex',alignItems:'center'}}>{s.icon}</span>
                   <p style={{fontSize:'0.85rem',fontWeight:'400',color:'#374151',margin:0,lineHeight:'1.4'}}>{s.summary(isOpen)}</p>
                 </div>
               </button>
@@ -509,7 +517,7 @@ const HowPaidPopup=({onClose,fastStarterAchieved,revenueExplored})=>{
               </div>
             </div>
           );})}
-          {bulbMsg&&(<div style={{margin:'0.25rem 0 0',padding:'0.55rem 0.8rem',borderRadius:'0.5rem',background:'rgba(124,58,237,0.1)',border:'1px solid rgba(124,58,237,0.25)'}}><p style={{margin:0,fontSize:'0.78rem',fontWeight:'700',fontStyle:'italic',color:'#4c1d95',lineHeight:1.5}}>{bulbMsg}</p></div>)}
+          {bulbMsg&&(<div style={{margin:'0.25rem 0 0',padding:'0.5rem 0.75rem',borderRadius:'0.5rem',background:'rgba(254,243,199,0.97)',border:'1px solid #fcd34d',display:'flex',alignItems:'center',gap:'0.55rem'}}><span style={{fontSize:'1.5rem',lineHeight:1,flexShrink:0}}>💡</span><p style={{margin:0,fontSize:'0.78rem',fontWeight:'600',fontStyle:'italic',color:'#374151',lineHeight:1.5,textAlign:'center',flex:1}}>{bulbMsg}</p></div>)}
         </div>
       </div>
     </div>
@@ -525,7 +533,7 @@ const RevenueCard=({grandTotal,supportingBonus,partnerTotalEarnings,onInteracted
   const unlockEmojiRef=useRef(null);
   const fireTabGlow=useAnimClass(tabRef,'anim-glow-right',2800);
   const fireLockBreath=useAnimClass(lockRef,'anim-pulse-lock',2800);
-  const fireUnlockPop=useAnimClass(unlockEmojiRef,'anim-lock-pulse',700);
+  const fireUnlockPop=useAnimClass(unlockEmojiRef,'anim-lock-pulse',1400);
   const prevPulse=useRef(0);
   const prevEmoji=useRef(0);
   useEffect(()=>{
@@ -577,11 +585,11 @@ const RevenueCard=({grandTotal,supportingBonus,partnerTotalEarnings,onInteracted
               <div style={{background:'white',borderRadius:'0.5rem',padding:'0.45rem 0.6rem',boxShadow:'0 2px 8px rgba(0,0,0,0.12)',marginBottom:'0.35rem'}}>
                 <p style={{color:'#374151',fontWeight:'600',fontSize:'0.7rem',margin:'0 0 0.25rem'}}>For each Partner you recruit and support to QD*:</p>
                 <div style={{display:'flex',justifyContent:'space-between',color:'#374151',fontSize:'0.74rem',marginBottom:'0.12rem'}}>
-                  <span style={{color:'#111827',fontWeight:'700'}}>They earn (same as you did)</span>
+                  <span style={{color:'#111827',fontWeight:'700'}}>They earn <span style={{fontWeight:'400'}}>(same as you did)</span></span>
                   <span style={{fontWeight:'800',color:'#111827'}}>£{grandTotal.toLocaleString()}</span>
                 </div>
                 <div style={{borderTop:'1px solid #e5e7eb',paddingTop:'0.15rem',display:'flex',justifyContent:'space-between',fontSize:'0.74rem'}}>
-                  <span style={{color:'#111827',fontWeight:'700'}}>You earn (in this example)</span>
+                  <span style={{color:'#111827',fontWeight:'700'}}>You earn <span style={{fontWeight:'400'}}>(in this example)</span></span>
                   <span style={{fontWeight:'800',color:'#111827'}}>£{partnerTotalEarnings.toLocaleString()}</span>
                 </div>
               </div>
@@ -649,6 +657,8 @@ const UWTracker=()=>{
   const [postCelebArrow,setPostCelebArrow]=useState(false);
   const [pulseRevTab,setPulseRevTab]=useState(0);
   const [pulseRevTabEmoji,setPulseRevTabEmoji]=useState(0);
+  const [pulseCompass,setPulseCompass]=useState(0);
+  const [pulseInfoBulb,setPulseInfoBulb]=useState(0);
   const [revenueCloseKey,setRevenueCloseKey]=useState(0);
 
   // Staged coaching sequence
@@ -659,21 +669,29 @@ const UWTracker=()=>{
 
   // Animation refs — useAnimClass fires CSS classes on these stable DOM nodes
   const circleRefs=[useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null)];
+  const pCircleRefs=[useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null)];
   const infoBulbRef=useRef(null);     // the 🔍 emoji span
   const postCelebArrowRef=useRef(null); // the 🔓 arrow in coaching lane
   const fireCircleGlows=circleRefs.map(r=>useAnimClass(r,'anim-glow-circle',2800));
   const fireBulbGlow=useAnimClass(infoBulbRef,'anim-glow-bulb',2800);
   const fireArrowPulse=useAnimClass(postCelebArrowRef,'anim-pulse-arrow',4200); // 1.4s×3
-  const fireLockPulse=useAnimClass(postCelebArrowRef,'anim-lock-pulse',700);
+  const fireLockPulse=useAnimClass(postCelebArrowRef,'anim-lock-pulse',1400);
   const fireCircleGlow=useCallback(()=>fireCircleGlows.forEach((f,i)=>{if(customers[i]&&customers[i].type!==null)f();}),[customers]);
 
   // Per-emoji refs for staged coaching emojis
   const emojiRefs=[useRef(null),useRef(null),useRef(null)];
   const fireEmojiPulse=[
-    useAnimClass(emojiRefs[0],'anim-pulse-emoji',2800),
-    useAnimClass(emojiRefs[1],'anim-pulse-emoji',2800),
-    useAnimClass(emojiRefs[2],'anim-pulse-emoji',2800),
+    useAnimClass(emojiRefs[0],'anim-lock-pulse',1400),
+    useAnimClass(emojiRefs[1],'anim-lock-pulse',1400),
+    useAnimClass(emojiRefs[2],'anim-lock-pulse',1400),
   ];
+  const fireCircleExpands=circleRefs.map(r=>useAnimClass(r,'anim-circle-expand',1100));
+  const fireAllCircles=useCallback(()=>{ fireCircleExpands.forEach(f=>f()); },[fireCircleExpands[0],fireCircleExpands[1],fireCircleExpands[2],fireCircleExpands[3],fireCircleExpands[4],fireCircleExpands[5]]);
+  const fireInfoBulbPulse=useAnimClass(infoBulbRef,'anim-lock-pulse',1400);
+  const fireCirclePGlows=pCircleRefs.map(r=>useAnimClass(r,'anim-badge-glow',6000));
+  const pBadgeRef=useRef(null);
+  const firePBadgeGlow=useAnimClass(pBadgeRef,'anim-badge-glow',6000);
+  const firePBadgesSync=useCallback(()=>{ fireCirclePGlows.forEach(f=>f()); firePBadgeGlow(); },[fireCirclePGlows[0],fireCirclePGlows[1],fireCirclePGlows[2],fireCirclePGlows[3],fireCirclePGlows[4],fireCirclePGlows[5],firePBadgeGlow]);
 
   // Separate refs for precise right-card positioning: top of CB banner → bottom of FSB banner
   const cbBannerRef=useRef(null);
@@ -792,8 +810,8 @@ const UWTracker=()=>{
       const msgTimer=setTimeout(()=>{
         setCoachArrow(true);setCoachMsg('__partner_prompt__');
         setPartnerPromptFired(true);
-        // 200ms delay lets React render the P badges before glowing them
-        setTimeout(()=>{setPBadgeGlow(true);setTimeout(()=>setPBadgeGlow(false),2800);},200);
+        // Fire P badge halos — 800ms delay ensures badges are mounted, 3 pulses built into CSS
+        setTimeout(()=>{ firePBadgesSync(); },800);
       },1500);
       return()=>clearTimeout(msgTimer);
     }
@@ -801,17 +819,39 @@ const UWTracker=()=>{
   },[allCirclesFilled,hasPartner,qualifiesForFastStarter]);
 
   // Staged sequence — fires 9s after first revenue card interaction
-  // Lines appear one at a time, fully static — no emoji pulses, no circle/bulb/tab animations
   const startStagedSequence=useCallback(()=>{
     if(stagedStarted.current)return;
     stagedStarted.current=true;
     setCoachMsg('__staged__');
     setCoachArrow(false);
     setPostCelebArrow(false);
-    setTimeout(()=>{ setStagedActiveCount(1); },2500);
-    setTimeout(()=>{ setStagedActiveCount(2); setTabColoured(true); },5500);
-    setTimeout(()=>{ setStagedActiveCount(3); setInfoBulbColoured(true); },8500);
-  },[]);
+
+    // Line 1 appears at 1.5s — 🔁 emoji + all circles pulse
+    const line1=1500;
+    // Line 2 appears at 3.5s — 🧭 emoji + left tab compass + tab turns colour
+    const line2=3500;
+    // Line 3 appears at 5.5s — 🔍 emoji + total earnings 🔍 + bulb turns colour
+    const line3=5500;
+
+    setTimeout(()=>{ setStagedActiveCount(1); },line1);
+    setTimeout(()=>{ setStagedActiveCount(2); setTabColoured(true); },line2);
+    setTimeout(()=>{ setStagedActiveCount(3); setInfoBulbColoured(true); },line3);
+
+    // Helper: one full round of pulses (fires immediately relative to offset)
+    const firePulseRound=(offset)=>{
+      // Beat 1: 🔁 + circles (line 1)
+      setTimeout(()=>{ fireEmojiPulse[0](); fireAllCircles(); },offset);
+      // Beat 2: 🧭 + left tab compass (line 2) — 1.4s after beat 1
+      setTimeout(()=>{ fireEmojiPulse[1](); setPulseCompass(k=>k+1); },offset+1400);
+      // Beat 3: 🔍 + total earnings bulb (line 3) — 1.4s after beat 2
+      setTimeout(()=>{ fireEmojiPulse[2](); fireInfoBulbPulse(); },offset+2800);
+    };
+
+    // Round 1 (repeat): starts 1s after all lines visible
+    firePulseRound(line3+1000);
+    // Round 2 (repeat): 5s after round 1
+    firePulseRound(line3+6000);
+  },[fireEmojiPulse,fireAllCircles,fireInfoBulbPulse]);
 
   const circleColor=(c)=>{if(c.type===null)return{border:'#d1d5db',text:'#9ca3af',bg:'#f9fafb'};if(c.type==='own')return{border:'#9ca3af',text:'#374151',bg:'#f3f4f6'};if(c.type==='renting')return{border:'#2563eb',text:'#1d4ed8',bg:'#eff6ff'};return{border:'#7c3aed',text:'#6d28d9',bg:'#f5f3ff'};};
   const getCircleOpacity=(index)=>{if(index===0&&includeYou)return 1;if(!includeYou){for(let i=0;i<index;i++)if(customers[i].type===null)return 0.3;return 1;}for(let i=1;i<index;i++)if(customers[i].type===null)return 0.3;return 1;};
@@ -921,6 +961,8 @@ const UWTracker=()=>{
         onClose={()=>setShowContactPanel(false)}
         tabColoured={tabColoured}
         onTabClick={()=>setShowContactPanel(c=>!c)}
+        pulseTab={pulseTab}
+        pulseCompass={pulseCompass}
       />
       {showCelebration&&(<div style={{position:'fixed',inset:0,pointerEvents:'none',zIndex:50}}>{[...Array(50)].map((_,i)=>(<div key={i} className="animate-confetti" style={{position:'absolute',left:`${Math.random()*100}%`,top:'-10%',animationDelay:`${Math.random()*0.5}s`,animationDuration:`${2+Math.random()}s`}}><div style={{color:'#facc15',fontSize:`${Math.random()*20+10}px`,transform:`rotate(${Math.random()*360}deg)`}}>✨</div></div>))}</div>)}
 
@@ -956,7 +998,6 @@ const UWTracker=()=>{
             {customers.map((customer,index)=>{
               const col=circleColor(customer);const cb=calculateCB(customer,index);
               const showHAB=customer.type==='homeowner'&&(customer.services===3||customer.services===4)&&highActivityCustomers>=2;
-              const badgeGlowClass=pBadgeGlow&&!customer.isPartner&&customer.type!==null?'anim-badge-glow':'';
               const partnerClickable=allCirclesFilled;
               return(
                 <div key={index} style={{display:'flex',flexDirection:'column',alignItems:'center',position:'relative',overflow:'visible'}}>
@@ -965,7 +1006,7 @@ const UWTracker=()=>{
                     :customer.type?(
                       <><span style={{fontSize:'0.875rem',fontWeight:'700'}}>£{cb.toLocaleString()}</span>
                       {showHAB&&<div style={{position:'absolute',top:'-0.25rem',right:'-0.25rem',padding:'0.125rem 0.25rem',background:'#f97316',color:'white',fontSize:'0.625rem',fontWeight:'700',borderRadius:'0.25rem',zIndex:10}}>+£{habPerCustomer}</div>}
-                      {(partnerPromptFired||fastStarterAchieved)&&<div onClick={(e)=>{if(partnerClickable)handlePartnerBadgeClick(e,index);}} className={badgeGlowClass} style={{position:'absolute',bottom:'-0.25rem',right:'-0.25rem',width:'1.5rem',height:'1.5rem',borderRadius:'50%',border:`2px solid ${customer.isPartner?'#ca8a04':'#9ca3af'}`,display:'flex',alignItems:'center',justifyContent:'center',zIndex:10,cursor:partnerClickable?'pointer':'default',background:customer.isPartner?'#facc15':'#e5e7eb',transition:'transform 0.15s'}}>
+                      {(partnerPromptFired||fastStarterAchieved)&&<div ref={pCircleRefs[index]} onClick={(e)=>{if(partnerClickable)handlePartnerBadgeClick(e,index);}} style={{position:'absolute',bottom:'-0.25rem',right:'-0.25rem',width:'1.5rem',height:'1.5rem',borderRadius:'50%',border:`2px solid ${customer.isPartner?'#ca8a04':'#9ca3af'}`,display:'flex',alignItems:'center',justifyContent:'center',zIndex:10,cursor:partnerClickable?'pointer':'default',background:customer.isPartner?'#facc15':'#e5e7eb',transition:'transform 0.15s'}}>
                         <span style={{fontSize:'0.625rem',fontWeight:'700',color:customer.isPartner?'#713f12':'#6b7280'}}>P</span>
                       </div>}
                       </>
@@ -985,6 +1026,7 @@ const UWTracker=()=>{
             emojiRefs={emojiRefs}
             postCelebArrow={postCelebArrow}
             postCelebArrowRef={postCelebArrowRef}
+            pBadgeRef={pBadgeRef}
           />
 
           {/* Banners area — ref drives right-side card position */}
