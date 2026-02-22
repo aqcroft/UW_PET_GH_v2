@@ -131,7 +131,7 @@
   .revenue-card-wrap.expanded { width:min(28rem,90vw); }
   .revenue-card-locked { background:#9ca3af;border-radius:0.6rem 0 0 0.6rem;overflow:hidden;box-shadow:-3px 0 10px rgba(0,0,0,0.15); }
   .revenue-card-unlocked { background:linear-gradient(135deg,#7c3aed,#db2777);border-radius:0.6rem 0 0 0.6rem;overflow:hidden;box-shadow:-4px 0 24px rgba(124,58,237,0.4);cursor:pointer; }
-  .earnings-banner { min-height:3.5rem;display:flex;flex-direction:column;justify-content:center; }
+  .earnings-banner { min-height:4.43rem;display:flex;flex-direction:column;justify-content:center; }
 </style>
 </head>
 <body>
@@ -255,9 +255,9 @@ const CoachingLane=({message,showArrow,stagedActiveCount,emojiRefs,postCelebArro
   const isActive=visible&&displayed;
 
   const lineData=[
-    {text:'🔁 Explore and swap customer types'},
+    {text:'🔁 Experiment with customer mixes'},
     {text:'🧭 Check out next steps'},
-    {text:'🔍 Dig into how we\'re paid'},
+    {text:'🔍 Dive into how we\'re paid'},
   ];
 
   return(
@@ -422,7 +422,6 @@ const ProfileBubble=()=>{
 const box={background:'#fdf8f0',borderRadius:'0.5rem',padding:'0.75rem',marginBottom:'0.5rem',border:'1px solid #f3e8d0'};
 const closing={fontStyle:'italic',fontWeight:'700',color:'#374151',margin:0};
 const unlockLine=(isOpen,text)=>(<span style={{fontStyle:'italic',fontSize:'0.72rem',color:isOpen?'#111827':'transparent',transition:'color 0.2s',display:'block',marginTop:'0.2rem',userSelect:'none'}}>{text}</span>);
-const accentBorder=(colour)=>({borderLeft:`3px solid ${colour}`,paddingLeft:'0.5rem'});
 const sections=[
   {id:'cb',accent:'#7c3aed',icon:<span style={{fontSize:'1.1rem'}}>💷</span>,title:'Customer Bonus',
     summary:(isOpen)=>(<span>Upfront payment when we introduce a homeowner customer.</span>),
@@ -434,14 +433,14 @@ const sections=[
     summary:(isOpen)=>(<span>Ongoing monthly income from our personal customers and our team's customers.{unlockLine(isOpen,'🔓 Unlocks at QD — 3 personal customers')}</span>),
     detail:(<div style={{fontSize:'0.875rem',color:'#374151'}}><p style={{marginBottom:'0.5rem'}}>A recurring profit share of customers' bills which increases as customers add more services.</p><div style={{...box,marginBottom:'0.5rem'}}><p style={{margin:'0 0 0.3rem',display:'flex',alignItems:'center',gap:'0.3rem',flexWrap:'wrap'}}><RefreshCw style={{width:'0.75rem',height:'0.75rem',flexShrink:0,color:'#2563eb'}}/><span style={{fontSize:'0.8rem'}}>👤</span><strong>Personal Customers</strong><span style={{fontWeight:'400',fontStyle:'italic',color:'#6b7280',fontSize:'0.78rem'}}>— % of bill, typically</span></p><div style={{marginBottom:'0.45rem',paddingLeft:'0.3rem',fontSize:'0.82rem'}}><div>• Tenant — £2–£3 /month <span style={{color:'#6b7280',fontSize:'0.72rem'}}>(after first bill paid)</span></div><div>• Homeowner — £3–£5 /month <span style={{color:'#6b7280',fontSize:'0.72rem'}}>(after a set period)</span></div></div><div style={{borderTop:'1px solid #bfdbfe',paddingTop:'0.4rem'}}><p style={{margin:'0 0 0.3rem',display:'flex',alignItems:'center',gap:'0.3rem',flexWrap:'wrap'}}><RefreshCw style={{width:'0.75rem',height:'0.75rem',flexShrink:0,color:'#2563eb'}}/><span style={{fontSize:'0.8rem'}}>👥</span><strong>Team (Group) Customers</strong><span style={{fontWeight:'400',fontStyle:'italic',color:'#6b7280',fontSize:'0.78rem'}}>— pence per service, typically</span></p><div style={{paddingLeft:'0.3rem',fontSize:'0.82rem'}}>• 30–50p /month per customer</div></div></div><p style={closing}>💡 Grows steadily as our customers and team expand.</p></div>)},
   {id:'fsb',accent:'#16a34a',icon:<TrendingUp style={{...SM,color:'#16a34a'}}/>,title:'Promotion & Fast Starter Bonus',
-    summary:(isOpen)=>(<span>Up to £500 when you reach QD* within your first 30 days.{unlockLine(isOpen,'🔓 Unlocks at QD*')}</span>),
-    detail:(<div style={{fontSize:'0.875rem',color:'#374151'}}><p style={{marginBottom:'0.5rem',fontWeight:'600'}}>QD* = 6 personal customers + 1 partner introduced</p><div style={{...box,marginBottom:'0.5rem'}}><div style={{display:'flex',justifyContent:'space-between',marginBottom:'0.3rem'}}><span>Promotion Bonus</span><span style={{fontWeight:'700'}}>£200 <span style={{fontWeight:'400',fontStyle:'italic',color:'#6b7280',fontSize:'0.75rem'}}>(any timeframe)</span></span></div><div style={{display:'flex',justifyContent:'space-between',marginBottom:'0.3rem'}}><span>Fast Starter Bonus</span><span style={{fontWeight:'700'}}>£300 <span style={{fontWeight:'400',fontStyle:'italic',color:'#6b7280',fontSize:'0.75rem'}}>(within 30 days)</span></span></div><div style={{borderTop:'1px solid #bbf7d0',paddingTop:'0.35rem',display:'flex',justifyContent:'space-between'}}><span style={{fontWeight:'700'}}>Total</span><span style={{fontWeight:'700',color:'#111827'}}>£500</span></div></div><p style={{fontSize:'0.78rem',color:'#6b7280',fontStyle:'italic',margin:'0 0 0.4rem'}}>After 30 days, only the £200 Promotion Bonus applies.</p><p style={closing}>💡 Rewarded for reaching QD*. Rewarded more for starting fast.</p></div>)},
+    summary:(isOpen)=>(<span>Up to £500 when you reach QD* within your first 30 days.{unlockLine(isOpen,'🏆 Achieved at QD*')}</span>),
+    detail:(<div style={{fontSize:'0.875rem',color:'#374151'}}><p style={{marginBottom:'0.5rem',fontWeight:'600'}}>QD* = 6 personal customers + 1 partner introduced</p><div style={{...box,marginBottom:'0.5rem'}}><div style={{display:'flex',justifyContent:'space-between',marginBottom:'0.3rem'}}><span>Promotion Bonus</span><span style={{fontWeight:'700'}}>£200 <span style={{fontWeight:'400',fontStyle:'italic',color:'#6b7280',fontSize:'0.75rem'}}>(any timeframe)</span></span></div><div style={{display:'flex',justifyContent:'space-between',marginBottom:'0.3rem'}}><span>Fast Starter Bonus</span><span style={{fontWeight:'700'}}>£300 <span style={{fontWeight:'400',fontStyle:'italic',color:'#6b7280',fontSize:'0.75rem'}}>(within 30 days)</span></span></div><div style={{borderTop:'1px solid #bbf7d0',paddingTop:'0.35rem',display:'flex',justifyContent:'space-between'}}><span style={{fontWeight:'700'}}>Total</span><span style={{fontWeight:'700',color:'#111827'}}>£500</span></div></div><p style={closing}>💡 Rewarded for reaching QD*. Rewarded more for starting fast.</p></div>)},
   {id:'scb',accent:'#c4b5fd',icon:<span style={{fontSize:'1.1rem'}}>🤝</span>,title:'Supporting Customer Bonus',
     summary:(isOpen)=>(<span>Upfront payment when we support a Partner to introduce a homeowner.{unlockLine(isOpen,'🔓 Unlocks at 6 personal customers')}</span>),
     detail:(<div style={{fontSize:'0.875rem',color:'#374151'}}><p style={{marginBottom:'0.5rem'}}>We receive <strong>50%</strong> of the full Customer Bonus.</p><div style={{...box,fontSize:'0.8rem',marginBottom:'0.5rem'}}><div style={{marginBottom:'0.25rem'}}>⏱️ <strong>First 45 days</strong> — in addition to their Customer Bonus</div><div style={{marginBottom:'0.4rem'}}>➡️ <strong>After 45 days</strong> — Customer Bonus is shared 50:50</div><div style={{borderTop:'1px solid #c4b5fd',paddingTop:'0.4rem',display:'grid',gridTemplateColumns:'1fr 1fr',gap:'0.25rem'}}><span>1️⃣ service — £25</span><span>3️⃣ services — £125</span><span>2️⃣ services — £50</span><span>4️⃣ services — £150</span></div></div><p style={closing}>💡 An extra income stream from helping Partners introduce homeowners.</p></div>)},
-  {id:'mb',accent:'#111827',icon:<span style={{fontSize:'1.1rem'}}>🎓</span>,title:'Mentor Bonus',
-    summary:(isOpen)=>(<span>Up to £400 when a partner we introduce reaches QD* in 30 days.{unlockLine(isOpen,'🔓 Unlocks at QD — 3 personal customers + 1 partner introduced')}</span>),
-    detail:(<div style={{fontSize:'0.875rem',color:'#374151'}}><div style={box}><div style={{display:'flex',alignItems:'center',gap:'0.4rem'}}><span>🎓</span><span>Mentor Bonus — £100</span><span style={{fontStyle:'italic',color:'#6b7280',fontSize:'0.75rem'}}>(any timeframe)</span></div><div style={{display:'flex',alignItems:'center',gap:'0.4rem',marginTop:'0.25rem'}}><TrendingUp style={{width:'0.75rem',height:'0.75rem',color:'#374151'}}/><span>Fast Starter <em>Mentor</em> Bonus — £300</span><span style={{fontStyle:'italic',color:'#6b7280',fontSize:'0.75rem'}}>(within 30 days)</span></div><div style={{borderTop:'1px solid #e5e7eb',marginTop:'0.5rem',paddingTop:'0.5rem',paddingLeft:'1.5rem'}}>Total — £400 per Partner</div></div><p style={{fontSize:'0.78rem',color:'#6b7280',fontStyle:'italic',margin:'0 0 0.4rem'}}>After 30 days, the £100 Mentor Bonus still applies — only the £300 Fast Starter window closes.</p><p style={closing}>💡 Rewarding us for developing new Partners — with even more for starting fast.</p></div>)},
+  {id:'mb',accent:'#374151',icon:<span style={{fontSize:'1.1rem'}}>🎓</span>,title:'Mentor Bonus',
+    summary:(isOpen)=>(<span>Up to £400 when a partner we introduce reaches QD* in 30 days.{unlockLine(isOpen,'🔓 Unlocks at QD — 3 customers')}</span>),
+    detail:(<div style={{fontSize:'0.875rem',color:'#374151'}}><div style={{...box,marginBottom:'0.5rem'}}><div style={{display:'flex',justifyContent:'space-between',marginBottom:'0.3rem'}}><span style={{display:'flex',alignItems:'center',gap:'0.3rem'}}><span>🎓</span> Mentor Bonus</span><span style={{fontWeight:'700'}}>£100 <span style={{fontWeight:'400',fontStyle:'italic',color:'#6b7280',fontSize:'0.75rem'}}>(any timeframe)</span></span></div><div style={{display:'flex',justifyContent:'space-between',marginBottom:'0.3rem'}}><span style={{display:'flex',alignItems:'center',gap:'0.3rem'}}><TrendingUp style={{width:'0.75rem',height:'0.75rem',color:'#374151'}}/> Fast Starter <em>Mentor</em> Bonus</span><span style={{fontWeight:'700'}}>£300 <span style={{fontWeight:'400',fontStyle:'italic',color:'#6b7280',fontSize:'0.75rem'}}>(within 30 days)</span></span></div><div style={{borderTop:'1px solid #e5e7eb',paddingTop:'0.35rem',display:'flex',justifyContent:'space-between'}}><span style={{fontWeight:'700'}}>Total</span><span style={{fontWeight:'700',color:'#111827'}}>£400</span></div></div><p style={closing}>💡 Rewarding us for developing new Partners — with even more for starting fast.</p></div>)},
 ];
 
 const HowPaidPopup=({onClose,fastStarterAchieved,revenueExplored})=>{
@@ -465,18 +464,22 @@ const HowPaidPopup=({onClose,fastStarterAchieved,revenueExplored})=>{
         </div>
         <div className="accordion-list" style={{overflowY:'auto',flex:1,padding:'0.6rem',display:'flex',flexDirection:'column',gap:'0.4rem'}}>
           {sections.map(s=>{const isOpen=openId===s.id;
-            // Subtle tinted background from accent colour at low opacity
-            const tintBg=`${s.accent}0d`; // ~5% opacity
+            const tintBg=s.accent+'18'; // ~10% tint for expanded panel
             return(
-            <div key={s.id} style={{border:'1px solid #e5e7eb',borderLeft:`3px solid ${s.accent}`,borderRadius:'0.6rem',background:tintBg,transition:'background 0.2s'}}>
-              <button ref={el=>headerRefs.current[s.id]=el} style={{width:'100%',display:'flex',alignItems:'center',gap:'0.6rem',padding:'0.6rem 0.75rem',textAlign:'left',background:'none',border:'none',cursor:'pointer',borderRadius:'0.6rem 0.6rem 0 0'}} onClick={()=>toggle(s.id)}>
-                <span style={{flexShrink:0,display:'flex',alignItems:'center'}}>{s.icon}</span>
-                <div style={{flex:1,minWidth:0}}><p style={{fontWeight:'600',fontSize:'0.85rem',color:'#111827',margin:'0 0 0.1rem'}}>{s.title}</p><p style={{fontSize:'0.78rem',color:'#6b7280',margin:0,lineHeight:'1.4'}}>{s.summary(isOpen)}</p></div>
-                {isOpen?<ChevronUp style={{...SM,color:'#9ca3af'}}/>:<ChevronDown style={{...SM,color:'#9ca3af'}}/>}
+            <div key={s.id} style={{borderRadius:'0.6rem',boxShadow:'0 1px 4px rgba(0,0,0,0.07)',border:'1px solid #e5e7eb'}}>
+              <button ref={el=>headerRefs.current[s.id]=el} style={{width:'100%',textAlign:'left',background:'none',border:'none',cursor:'pointer',overflow:'hidden',borderRadius:isOpen?'0.6rem 0.6rem 0 0':'0.6rem'}} onClick={()=>toggle(s.id)}>
+                <div style={{background:s.accent,padding:'0.4rem 0.75rem',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+                  <p style={{fontWeight:'700',fontSize:'0.85rem',color:'white',margin:0}}>{s.title}</p>
+                  {isOpen?<ChevronUp style={{...SM,color:'rgba(255,255,255,0.9)',flexShrink:0}}/>:<ChevronDown style={{...SM,color:'rgba(255,255,255,0.9)',flexShrink:0}}/>}
+                </div>
+                <div style={{display:'flex',alignItems:'center',gap:'0.6rem',padding:'0.35rem 0.75rem',background:tintBg,borderLeft:`3px solid ${s.accent}`}}>
+                  <span style={{flexShrink:0,display:'flex',alignItems:'center'}}>{s.icon}</span>
+                  <p style={{fontSize:'0.85rem',fontWeight:'400',color:'#374151',margin:0,lineHeight:'1.4'}}>{s.summary(isOpen)}</p>
+                </div>
               </button>
               <div style={{display:'grid',gridTemplateRows:isOpen?'1fr':'0fr',transition:'grid-template-rows 0.28s ease'}}>
                 <div style={{overflow:'hidden'}}>
-                  <div style={{maxHeight:'14rem',overflowY:'auto',padding:'0.25rem 0.75rem 0.75rem',borderTop:'1px solid #f3f4f6',borderBottom:`2px solid ${s.accent}`,borderRadius:'0 0 0.6rem 0.6rem',background:'#fdf9ff'}}>{s.detail}</div>
+                  <div style={{maxHeight:'14rem',overflowY:'auto',padding:'0.5rem 0.75rem 0.75rem',borderLeft:`3px solid ${s.accent}`,borderBottom:`2px solid ${s.accent}`,borderRadius:'0 0 0.6rem 0.6rem',background:tintBg}}>{s.detail}</div>
                 </div>
               </div>
             </div>
@@ -561,20 +564,21 @@ const RevenueCard=({grandTotal,supportingBonus,partnerTotalEarnings,onInteracted
               <p style={{color:'rgba(255,255,255,0.8)',fontSize:'0.68rem',fontWeight:'600',margin:'0.3rem 0 0.2rem',textTransform:'uppercase',letterSpacing:'0.06em'}}>That's made up of</p>
               <div style={{display:'flex',flexDirection:'column',gap:'0.18rem',marginBottom:'0.35rem'}}>
                 {[
-                  {icon:'🤝',label:'Supporting Customer Bonus',val:`£${supportingBonus.toLocaleString()}`,accent:'#c4b5fd'},
-                  {icon:'🎓',label:'Mentor Bonus',val:'£100',accent:'#111827'},
-                  {icon:null,label:<span>Fast Starter <em>Mentor</em> Bonus</span>,val:'£300',accent:'#16a34a'}
+                  {icon:'🤝',label:'Supporting Customer Bonus',val:`£${supportingBonus.toLocaleString()}`,accent:'#9333ea',tint:'#f3eeff'},
+                  {icon:'🎓',label:'Mentor Bonus',val:'£100',accent:'#4b5563',tint:'#f3f4f6'},
+                  {icon:null,label:<span>Fast Starter <em>Mentor</em> Bonus</span>,val:'£300',accent:'#16a34a',tint:'#edfdf3'}
                 ].map((s,idx)=>(
-                  <div key={idx} style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:'0.4rem',fontSize:'0.74rem',background:'white',borderRadius:'0.4rem',padding:'0.25rem 0.55rem',boxShadow:'0 2px 8px rgba(0,0,0,0.12)',borderLeft:`3px solid ${s.accent}`,borderBottom:`2px solid ${s.accent}`}}>
+                  <div key={idx} style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:'0.4rem',fontSize:'0.74rem',background:s.tint,borderRadius:'0.4rem',padding:'0.25rem 0.55rem',boxShadow:'0 2px 8px rgba(0,0,0,0.12)',borderLeft:`3px solid ${s.accent}`,borderBottom:`2px solid ${s.accent}`}}>
                     <span style={{color:'#374151',display:'flex',alignItems:'center',gap:'0.3rem'}}>{s.icon?<span style={{fontSize:'0.82rem',lineHeight:1,flexShrink:0}}>{s.icon}</span>:<TrendingUp style={{width:'0.7rem',height:'0.7rem',flexShrink:0,color:'#374151'}}/>}{s.label}</span>
-                    <span style={{color:'#7c3aed',fontWeight:'700',flexShrink:0}}>{s.val}</span>
+                    <span style={{color:'#374151',fontWeight:'700',flexShrink:0}}>{s.val}</span>
                   </div>
                 ))}
               </div>
               {/* Annual kicker */}
-              <div style={{background:'rgba(255,255,255,0.15)',borderRadius:'0.4rem',padding:'0.35rem 0.55rem',borderLeft:'3px solid rgba(255,255,255,0.5)'}}>
-                <p style={{color:'white',fontSize:'0.7rem',fontWeight:'600',margin:0,lineHeight:1.4}}>
-                  💡 Help just two Partners a month to do this for an annual revenue up to <span style={{color:'#fde68a',fontWeight:'700'}}>£{(partnerTotalEarnings*2*12).toLocaleString()}</span>
+              <div style={{background:'rgba(254,243,199,0.92)',borderRadius:'0.4rem',padding:'0.35rem 0.55rem',display:'flex',alignItems:'flex-start',gap:'0.5rem'}}>
+                <span style={{fontSize:'1.3rem',lineHeight:1,flexShrink:0}}>💡</span>
+                <p style={{color:'#374151',fontSize:'0.7rem',fontWeight:'600',margin:0,lineHeight:1.45}}>
+                  Help just <span style={{fontWeight:'800',color:'#92400e'}}>TWO</span> Partners a month to do this for an annual revenue up to <span style={{fontWeight:'800',color:'#92400e'}}>£{(partnerTotalEarnings*2*12).toLocaleString()}</span>
                 </p>
               </div>
             </div>
@@ -768,36 +772,17 @@ const UWTracker=()=>{
   },[allCirclesFilled,hasPartner,qualifiesForFastStarter]);
 
   // Staged sequence — fires 9s after first revenue card interaction
+  // Lines appear one at a time, fully static — no emoji pulses, no circle/bulb/tab animations
   const startStagedSequence=useCallback(()=>{
     if(stagedStarted.current)return;
     stagedStarted.current=true;
     setCoachMsg('__staged__');
     setCoachArrow(false);
     setPostCelebArrow(false);
-
-    // pulse(i): animate just the emoji for line i, plus paired UI element
-    const pulse=(lineIdx,withCircles,withBulb,withTab)=>{
-      fireEmojiPulse[lineIdx]();
-      if(withCircles)fireCircleGlow();
-      if(withBulb)fireBulbGlow();
-      if(withTab){setPulseRevTab(k=>k+1);setPulseRevTabEmoji(k=>k+1);setPulseTab(k=>k+1);}
-    };
-
-    // Lines appear one by one first, then 3 identical cycles of emoji pulses
-    setTimeout(()=>{ setStagedActiveCount(1); pulse(0,true,false,false); },2500);
-    setTimeout(()=>{ setStagedActiveCount(2); setInfoBulbColoured(true); pulse(1,false,true,false); },5000);
-    setTimeout(()=>{ setStagedActiveCount(3); setTabColoured(true); pulse(2,false,false,true); },7500);
-    // Cycle 1
-    const c1=12000;
-    setTimeout(()=>pulse(0,true,false,false),c1);
-    setTimeout(()=>pulse(1,false,true,false),c1+2500);
-    setTimeout(()=>pulse(2,false,false,true),c1+5000);
-    // Cycle 2
-    const c2=20000;
-    setTimeout(()=>pulse(0,true,false,false),c2);
-    setTimeout(()=>pulse(1,false,true,false),c2+2500);
-    setTimeout(()=>pulse(2,false,false,true),c2+5000);
-  },[fireEmojiPulse,fireCircleGlow,fireBulbGlow]);
+    setTimeout(()=>{ setStagedActiveCount(1); },2500);
+    setTimeout(()=>{ setStagedActiveCount(2); setTabColoured(true); },5500);
+    setTimeout(()=>{ setStagedActiveCount(3); setInfoBulbColoured(true); },8500);
+  },[]);
 
   const circleColor=(c)=>{if(c.type===null)return{border:'#d1d5db',text:'#9ca3af',bg:'#f9fafb'};if(c.type==='own')return{border:'#9ca3af',text:'#374151',bg:'#f3f4f6'};if(c.type==='renting')return{border:'#2563eb',text:'#1d4ed8',bg:'#eff6ff'};return{border:'#7c3aed',text:'#6d28d9',bg:'#f5f3ff'};};
   const getCircleOpacity=(index)=>{if(index===0&&includeYou)return 1;if(!includeYou){for(let i=0;i<index;i++)if(customers[i].type===null)return 0.3;return 1;}for(let i=1;i<index;i++)if(customers[i].type===null)return 0.3;return 1;};
