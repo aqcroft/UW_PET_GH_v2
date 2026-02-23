@@ -219,12 +219,12 @@ const IntroModal=({onClose})=>(
     <div className="animate-slideDown" style={{background:'white',borderRadius:'1rem',overflow:'hidden',maxWidth:'26rem',width:'100%',boxShadow:'0 20px 60px rgba(0,0,0,0.35)'}}>
       <div style={{background:'linear-gradient(135deg,#7c3aed,#db2777)',padding:'1.4rem 1.5rem 1.25rem',textAlign:'center'}}>
         <div style={{fontSize:'1.6rem',marginBottom:'0.35rem'}}>👋</div>
-        <h2 style={{fontSize:'1.3rem',fontWeight:'800',color:'white',margin:'0 0 0.05rem',lineHeight:1.25}}>Welcome to this</h2>
-        <h2 style={{fontSize:'1.3rem',fontWeight:'800',color:'white',margin:0,lineHeight:1.25}}>interactive earnings tool</h2>
+        <h2 style={{fontSize:'1.25rem',fontWeight:'800',color:'white',margin:'0 0 0.15rem',lineHeight:1.3}}>Welcome to this</h2>
+        <h2 style={{fontSize:'1.25rem',fontWeight:'800',color:'white',margin:'0 0 0.5rem',lineHeight:1.25}}>interactive earnings tool</h2>
       </div>
       <div style={{padding:'1.25rem 1.5rem 1.5rem',textAlign:'center'}}>
         <p style={{fontWeight:'700',color:'#92400e',fontSize:'0.95rem',margin:'0 0 1.1rem',background:'#fefce8',padding:'0.5rem 0.75rem',borderRadius:'0.5rem',border:'1px solid #fde68a'}}>5 conversations up to £2000? Explore how</p>
-        <p style={{fontSize:'0.875rem',color:'#374151',margin:'0 0 0.7rem',lineHeight:1.65}}>UW Partners help people save on essential household services they already use:<br/>⚡ energy, 🛜 broadband,<br/>📲 mobile, ☔ insurance.</p>
+        <p style={{fontSize:'0.875rem',color:'#374151',margin:'0 0 0.7rem',lineHeight:1.65}}>UW Partners help people save on essential household services they already use:<br/>⚡ energy  🛜 broadband<br/>📲 mobile  ☔ insurance</p>
         <p style={{fontSize:'0.875rem',color:'#374151',fontWeight:'700',margin:'0 0 0.7rem',lineHeight:1.65}}>Bundles build benefits — for customers and Partners.<br/><br/>When customers win, Partners win. 🏆</p>
         <p style={{fontSize:'0.875rem',color:'#374151',margin:'0 0 0.85rem',lineHeight:1.65}}>Add customers and watch the numbers change.</p>
         <p style={{fontSize:'0.875rem',color:'#374151',fontWeight:'700',fontStyle:'italic',margin:'0 0 1.4rem',lineHeight:1.5}}>Explore, experiment and learn as you play.</p>
@@ -313,7 +313,7 @@ const CoachingLane=({message,showArrow,stagedActiveCount,emojiRefs,postCelebArro
                 <>
                   <span style={{display:'block',fontSize:'0.78rem',lineHeight:1.5,color:'transparent',userSelect:'none'}}>placeholder</span>
                   <span className="coach-in" style={{display:'block',fontSize:'1.17rem',fontWeight:'700',fontStyle:'italic',color:'#374151',lineHeight:1.4,textAlign:'center'}}>So... what's next?</span>
-                  <span style={{display:'block',fontSize:'0.78rem',lineHeight:1.5,color:'transparent',userSelect:'none'}}>placeholder</span>
+                  <span className="coach-in" style={{display:'block',fontSize:'0.82rem',fontWeight:'600',fontStyle:'italic',color:'#6b7280',lineHeight:1.4,textAlign:'center'}}>You choose!</span>
                 </>
               ):(
                 <span style={{display:'inline-flex',flexDirection:'column',alignItems:'flex-start',margin:'0 auto'}}>
@@ -391,7 +391,8 @@ const ContactPanel=({grandTotal,isOpen,onClose,tabColoured,onTabClick,pulseTab,p
           <div style={{width:'4rem',height:'4rem',borderRadius:'50%',border:'2.5px solid rgba(255,255,255,0.7)',background:'rgba(124,58,237,0.6)',margin:'0 auto 0.5rem',display:'none',alignItems:'center',justifyContent:'center',fontWeight:'800',fontSize:'1.2rem',color:'white'}}>{initials}</div>
           <p style={{color:'white',fontWeight:'400',fontSize:'0.78rem',margin:'0 0 0.75rem',lineHeight:1.3}}>{CONTACT.fullName} · {CONTACT.title}</p>
           <span style={{color:'rgba(255,255,255,0.85)',fontWeight:'700',fontSize:'0.95rem',display:'block',marginBottom:'0.2rem'}}>What would an extra</span>
-          <span style={{display:'block',fontWeight:'800',fontSize:'0.95rem',marginBottom:'0.45rem',lineHeight:'1.3'}}><span style={{color:'#fde68a'}}>£{grandTotal.toLocaleString()} </span><span style={{color:'rgba(255,255,255,0.85)'}}>mean to you?</span></span>
+          <span style={{display:'block',fontWeight:'800',fontSize:'0.95rem',marginBottom:'0.2rem',lineHeight:'1.3'}}><span style={{color:'#fde68a'}}>£{grandTotal.toLocaleString()} </span><span style={{color:'rgba(255,255,255,0.85)'}}>mean to you</span></span>
+          <span style={{color:'rgba(255,255,255,0.85)',fontWeight:'700',fontSize:'0.95rem',display:'block',marginBottom:'0.45rem'}}>in the next 30 days?</span>
           <span style={{color:'rgba(255,255,255,0.72)',fontSize:'0.82rem',fontStyle:'italic',lineHeight:'1.4',display:'block'}}>Are you ready to make it happen?</span>
         </div>
         <div style={{padding:'1rem',display:'flex',flexDirection:'column',gap:'0.5rem',flex:1}}>
@@ -507,7 +508,7 @@ const HowPaidPopup=({onClose,fastStarterAchieved,revenueExplored})=>{
                   {isOpen?<ChevronUp style={{...SM,color:'rgba(255,255,255,0.9)',flexShrink:0}}/>:<ChevronDown style={{...SM,color:'rgba(255,255,255,0.9)',flexShrink:0}}/>}
                 </div>
                 <div style={{display:'flex',alignItems:'center',gap:'0.6rem',padding:'0.35rem 0.75rem',background:tintBg,borderLeft:`3px solid ${s.accent}`}}>
-                  <p style={{fontSize:'0.85rem',fontWeight:'400',color:'#374151',margin:0,lineHeight:'1.4'}}>{s.summary(isOpen)}</p>
+                  <p style={{fontSize:'0.85rem',fontWeight:'400',color:s.accent,margin:0,lineHeight:'1.4'}}>{s.summary(isOpen)}</p>
                 </div>
               </button>
               <div style={{display:'grid',gridTemplateRows:isOpen?'1fr':'0fr',transition:'grid-template-rows 0.28s ease'}}>
@@ -594,7 +595,7 @@ const RevenueCard=({grandTotal,supportingBonus,partnerTotalEarnings,onInteracted
                 </div>
               </div>
               {/* Breakdown */}
-              <p style={{color:'rgba(255,255,255,0.8)',fontSize:'0.68rem',fontWeight:'600',margin:'0.3rem 0 0.2rem',textTransform:'uppercase',letterSpacing:'0.06em'}}>That's made up of</p>
+              <p style={{color:'rgba(255,255,255,0.8)',fontSize:'0.68rem',fontWeight:'600',margin:'0.3rem 0 0.2rem',letterSpacing:'0.04em'}}>That's made up of</p>
               <div style={{display:'flex',flexDirection:'column',gap:'0.18rem',marginBottom:'0.35rem'}}>
                 {[
                   {icon:'🤝',label:'Supporting Customer Bonus',val:`£${supportingBonus.toLocaleString()}`,accent:'#9333ea',tint:'#f3eeff'},
@@ -602,7 +603,7 @@ const RevenueCard=({grandTotal,supportingBonus,partnerTotalEarnings,onInteracted
                   {icon:null,label:<span>Fast Starter <em>Mentor</em> Bonus</span>,val:'£300',accent:'#16a34a',tint:'#edfdf3'}
                 ].map((s,idx)=>(
                   <div key={idx} style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:'0.4rem',fontSize:'0.74rem',background:s.tint,borderRadius:'0.4rem',padding:'0.25rem 0.55rem',boxShadow:'0 2px 8px rgba(0,0,0,0.12)',borderLeft:`3px solid ${s.accent}`,borderBottom:`2px solid ${s.accent}`}}>
-                    <span style={{color:'#374151',display:'flex',alignItems:'center',gap:'0.3rem'}}>{s.icon?<span style={{fontSize:'0.82rem',lineHeight:1,flexShrink:0}}>{s.icon}</span>:<TrendingUp style={{width:'0.7rem',height:'0.7rem',flexShrink:0,color:s.accent}}/>}{s.label}</span>
+                    <span style={{color:s.accent,display:'flex',alignItems:'center',gap:'0.3rem'}}>{s.icon?<span style={{fontSize:'0.82rem',lineHeight:1,flexShrink:0}}>{s.icon}</span>:<TrendingUp style={{width:'0.7rem',height:'0.7rem',flexShrink:0,color:s.accent}}/>}{s.label}</span>
                     <span style={{color:s.accent,fontWeight:'800',flexShrink:0}}>{s.val}</span>
                   </div>
                 ))}
@@ -691,7 +692,7 @@ const UWTracker=()=>{
   const fireCirclePGlows=pCircleRefs.map(r=>useAnimClass(r,'anim-badge-glow',6000));
   const pBadgeRef=useRef(null);
   const firePBadgeGlow=useAnimClass(pBadgeRef,'anim-badge-glow',6000);
-  const firePBadgesSync=useCallback(()=>{ fireCirclePGlows.forEach(f=>f()); firePBadgeGlow(); },[fireCirclePGlows[0],fireCirclePGlows[1],fireCirclePGlows[2],fireCirclePGlows[3],fireCirclePGlows[4],fireCirclePGlows[5],firePBadgeGlow]);
+  const firePBadgesSync=useCallback(()=>{ fireCirclePGlows.forEach(f=>f()); },[fireCirclePGlows[0],fireCirclePGlows[1],fireCirclePGlows[2],fireCirclePGlows[3],fireCirclePGlows[4],fireCirclePGlows[5]]);
 
   // Separate refs for precise right-card positioning: top of CB banner → bottom of FSB banner
   const cbBannerRef=useRef(null);
