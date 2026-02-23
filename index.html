@@ -843,15 +843,15 @@ const UWTracker=()=>{
       // Beat 1: 🔁 + circles (line 1)
       setTimeout(()=>{ fireEmojiPulse[0](); fireAllCircles(); },offset);
       // Beat 2: 🧭 + left tab compass (line 2) — 1.4s after beat 1
-      setTimeout(()=>{ fireEmojiPulse[1](); setPulseCompass(k=>k+1); },offset+1400);
-      // Beat 3: 🔍 + total earnings bulb (line 3) — 1.4s after beat 2
-      setTimeout(()=>{ fireEmojiPulse[2](); fireInfoBulbPulse(); },offset+2800);
+      setTimeout(()=>{ fireEmojiPulse[1](); setPulseCompass(k=>k+1); },offset+2000);
+      // Beat 3: 🔍 + total earnings bulb (line 3) — 2s after beat 2
+      setTimeout(()=>{ fireEmojiPulse[2](); fireInfoBulbPulse(); },offset+4000);
     };
 
     // Round 1 (repeat): starts 1s after all lines visible
     firePulseRound(line3+1000);
-    // Round 2 (repeat): 5s after round 1
-    firePulseRound(line3+6000);
+    // Round 2 (repeat): 6s after round 1 (keeps 2s gap after 🔍)
+    firePulseRound(line3+7000);
   },[fireEmojiPulse,fireAllCircles,fireInfoBulbPulse]);
 
   const circleColor=(c)=>{if(c.type===null)return{border:'#d1d5db',text:'#9ca3af',bg:'#f9fafb'};if(c.type==='own')return{border:'#9ca3af',text:'#374151',bg:'#f3f4f6'};if(c.type==='renting')return{border:'#2563eb',text:'#1d4ed8',bg:'#eff6ff'};return{border:'#7c3aed',text:'#6d28d9',bg:'#f5f3ff'};};
