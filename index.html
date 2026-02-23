@@ -452,7 +452,7 @@ const ProfileBubble=()=>{
 
 const box={background:'#fdf8f0',borderRadius:'0.5rem',padding:'0.75rem',marginBottom:'0.5rem',border:'1px solid #f3e8d0'};
 const closing={fontStyle:'italic',fontWeight:'700',color:'#374151',margin:0};
-const unlockLine=(isOpen,text)=>(<span style={{fontStyle:'italic',fontSize:'0.72rem',color:isOpen?'#111827':'transparent',transition:'color 0.2s',display:'block',marginTop:'0.2rem',userSelect:'none'}}>{text}</span>);
+const unlockLine=(isOpen,text)=>isOpen?(<span style={{fontStyle:'italic',fontSize:'0.72rem',color:'#111827',transition:'color 0.2s',display:'block',marginTop:'0.2rem',userSelect:'none'}}>{text}</span>):null;
 const sections=[
   {id:'cb',accent:'#7c3aed',icon:<span style={{fontSize:'1.1rem'}}>💷</span>,headerIcon:<span style={{fontSize:'1.05rem',lineHeight:1}}>💷</span>,title:'Customer Bonus',
     summary:(isOpen)=>(<span>Upfront payment when we introduce a homeowner customer.</span>),
