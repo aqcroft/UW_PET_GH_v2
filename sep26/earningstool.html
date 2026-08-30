@@ -158,9 +158,8 @@ function renderTiles(customers,rowsById,offset=0,lockedFuture=false){
     const cls=['customer-icon',period,status].filter(Boolean).join(' ');
     const selected=state.editingIndex===offset+i;
     const canEdit=row&&state.exploreMix;
-    return `<button class="customer-tile ${future?'customer-tile-future':''}" ${canEdit?`onclick="selectCustomer(${offset+i})"`:''} style="border:none;background:transparent;padding:0;cursor:${canEdit?'pointer':'default'};outline:${selected?'2px solid var(--cream)':'none'};border-radius:.65rem">
+    return `<button class="customer-tile ${future?'customer-tile-future':''}" aria-label="Customer ${offset+i+1}" ${canEdit?`onclick="selectCustomer(${offset+i})"`:''} style="border:none;background:transparent;padding:0;cursor:${canEdit?'pointer':'default'};outline:${selected?'2px solid var(--cream)':'none'};border-radius:.65rem">
       <div class="${cls}">${row?homeIcon(row.type):`C${offset+i+1}`}</div>
-      <div class="customer-label ${row?'':'customer-label-placeholder'}">${row?`C${offset+i+1}`:`C${offset+i+1}`}</div>
       <div class="customer-label customer-label-amount ${row?'':'customer-label-placeholder'}">${row?money(total):'£0'}</div>
     </button>`;
   }).join('');
@@ -216,6 +215,8 @@ function renderStarted(){
     ?`${homeIcon(state.type)} ${state.services} services`
     :needsUpgrade?`${milestoneStepsDone}/2 done`
     :`${homeIcon(DEMO_TYPE)} ${DEMO_SERVICES} services`;
+  const builderPrimaryClass=independentStage?'button green':'button';
+  const editPrimaryClass=state.editingIndex!==null&&state.editingIndex>=5?'button green':'button';
   const builderControls=state.exploreMix
     ?(state.editingIndex===null?`
       <p class="muted" style="margin:.75rem 0 0">Tap a customer above to change homeowner status or services.</p>
@@ -229,7 +230,7 @@ function renderStarted(){
       <div class="segmented four" style="margin:.35rem 0 .85rem">
         ${[1,2,3,4].map(n=>`<button class="segment ${state.services===n?'active':''}" onclick="setServices(${n})">${n}</button>`).join('')}
       </div>
-      <button class="button" onclick="saveDraft()">Update customer ${activeNumber}</button>
+      <button class="${editPrimaryClass}" onclick="saveDraft()">Update customer ${activeNumber}</button>
       <button class="button secondary" style="width:100%;margin-top:.5rem" onclick="cancelEdit()">Cancel edit</button>
     `)
     :(needsUpgrade?`
@@ -239,7 +240,7 @@ function renderStarted(){
       <button class="button" onclick="enableMixExplore()">Explore the mix</button>
     `:`
       <p class="muted" style="margin:.75rem 0">Each demo customer is a 3-service homeowner.</p>
-      <button class="button" onclick="saveDraft()">Add customer ${nextNumber}</button>
+      <button class="${builderPrimaryClass}" onclick="saveDraft()">Add customer ${nextNumber}</button>
     `);
   const registerButton=`<a class="button register-link" target="_blank" rel="noopener" href="${registerUrl}">🎯Ready to earn? Register here!</a>`;
   const noticeMarkup=!state.habIntroDismissed&&state.month1.length>=4?`<div class="notice-backdrop" onclick="dismissHabIntro()">
@@ -344,4 +345,3 @@ render();
 </script>
 </body>
 </html>
-
