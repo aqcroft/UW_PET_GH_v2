@@ -186,16 +186,16 @@ function renderCustomerRows(customers,rowsById,offset=0,lockedFuture=false,fastS
 }
 function tableFooter(tone,total){
   return `<div class="customer-table-footer customer-table-footer-${tone}">
-    <strong>Period total</strong>
+    <strong>Total</strong>
     ${tableMoney(total,'table-row-total')}
   </div>`;
 }
-function customerColumn({title,copy,count,total,max,rows,tone,locked=false}){
+function customerColumn({title,copy='',count,total,max,rows,tone,locked=false}){
   return `<section class="customer-column customer-column-${tone} ${locked?'customer-column-locked':''}">
     <div class="customer-column-head">
       <div>
         <div class="eyebrow">${title}</div>
-        <h2>${copy}</h2>
+        ${copy?`<h2>${copy}</h2>`:''}
       </div>
       <span class="column-count">${count}/5</span>
     </div>
@@ -301,19 +301,14 @@ function renderStarted(){
   const milestoneStepsDone=(state.ownAccountLinked?1:0)+(state.customerPartnerUpgraded?1:0);
   const needsUpgrade=state.month1.length>=5&&!first30MilestoneComplete();
   const independentStage=state.month1.length>=5&&first30MilestoneComplete();
-  const stage=independentStage?'Days 31-60':'Days 1-30';
   const journeyComplete=allCount>=10;
   const pageHeading=independentStage?'Next 30 days':'First 30 days';
-  const headline=allCount===0?'Add your first five customers and watch the first-30-day bonuses appear.':state.month1.length<4?'Build your first five customers and keep the journey simple.':state.month1.length===4?'High Activity Bonus is now part of your first month.':needsUpgrade?'Two steps now unlock your Fast Start moment.':independentStage&&state.month2.length===0?'Your launch month is complete. Now see what a more independent second month can add.':state.month2.length===4?'Another High Activity Bonus has landed in your second month.':state.month2.length<5?'You are now exploring more independent customer gathering, with Momentum in play.':'Your first 60 days are mapped.';
-  const builderTitle=needsUpgrade?'Complete two steps':journeyComplete?'Journey complete':`Customer ${nextNumber}`;
-  const builderMeta=needsUpgrade?`${milestoneStepsDone}/2 done`:`${homeIcon(DEMO_TYPE)} ${DEMO_SERVICES} services`;
+  const coachLine=allCount===0?'Add your first five customers and watch the first-30-day bonuses appear.':state.month1.length<4?'Build your first five customers and keep the journey simple.':state.month1.length===4?'High Activity Bonus is now part of your first month.':needsUpgrade?`${milestoneStepsDone}/2 steps complete. Finish both to unlock your Fast Start moment.`:independentStage&&state.month2.length===0?'Your launch month is complete. Now see what a more independent second 30 days can add.':state.month2.length===4?'Another High Activity Bonus has landed in your second month.':state.month2.length<5?'You are now exploring more independent customer gathering, with Momentum in play.':'Your first 60 days are mapped.';
   const builderPrimaryClass=independentStage?'button green':'button';
   const addCustomerAction=!needsUpgrade&&!journeyComplete
     ?`<div class="add-customer-row"><button class="${builderPrimaryClass} add-customer-main" onclick="addCustomer()">${addLabel(nextNumber)}</button></div>`
     :'';
-  const builderControls=needsUpgrade?`
-      <p class="muted" style="margin:.75rem 0 0">Your first five customers are in. Complete both steps to include the Fast Start + promotion bonus and unlock the next 30 days.</p>
-    `:'';
+  const builderControls='';
   const registerButton=`<a class="button register-link" target="_blank" rel="noopener" href="${registerUrl}">🎯Ready to earn? Register here!</a>`;
   const noticeMarkup=!state.habIntroDismissed&&state.month1.length>=4?`<div class="notice-backdrop" onclick="dismissHabIntro()">
       <section class="notice-popup notice-blue notice-celebration" onclick="event.stopPropagation()">
@@ -338,12 +333,12 @@ function renderStarted(){
       <section class="notice-popup notice-green notice-celebration">
         <div class="notice-emoji">🎉</div>
         <div class="eyebrow">Fast Start awarded</div>
-        <h2>£500 added. Your first 30 days total is ${money(split.month1)}.</h2>
+        <h2>£500 Bonus!</h2>
         <div class="award-strip">
-          <span>🏅 Partner badge awarded</span>
-          <span>🎯 Fast Start + promotion included</span>
+          <span><strong>🏅 1 Customer upgrades</strong></span>
+          <span><strong>💷 Fast Start Bonus</strong></span>
         </div>
-        <p class="muted">You can register now, or carry on into days 31-60 to see how a more independent second 30 days can add Momentum Bonus.</p>
+        <p class="muted">Register now, or explore what days 31-60 look like with more independent appointments and new Momentum Bonuses.</p>
         <div class="notice-actions">
           ${registerButton}
           <button class="button secondary" onclick="dismissNextIntro()">Explore next 30 days earnings</button>
@@ -379,20 +374,17 @@ function renderStarted(){
           <div class="eyebrow" style="color:rgba(255,255,255,.76)">Potential so far</div>
           <div class="hero-number">${money(total)}</div>
         </div>
+        <div class="hero-meta-pill">${homeIcon(DEMO_TYPE)} ${DEMO_SERVICES} service homeowners</div>
       </div>
-      <div class="hero-sub">${headline}</div>
       <div style="margin-top:.75rem" class="progress"><span style="width:${Math.min(100,total/maxTotal*100)}%"></span></div>
-      <div style="font-size:.82rem;margin-top:.35rem;opacity:.82">${money(total)} of ${money(maxTotal)} clean 3-service homeowner journey</div>
+      <div class="hero-progress-caption">${money(total)} of ${money(maxTotal)}</div>
     </section>
-    <section class="card ${independentStage?'independence-card':''}">
-      <div class="row" style="margin-bottom:.65rem">
-        <div><div class="eyebrow">${stage}</div><h2>${builderTitle}</h2></div>
-        <strong>${builderMeta}</strong>
-      </div>
+    <section class="card customer-builder-card ${independentStage?'independence-card':''}">
+      <div class="coach-box ${independentStage?'coach-box-next':'coach-box-first'}">${coachLine}</div>
       ${addCustomerAction}
       <div class="customer-columns">
-        ${customerColumn({title:'Days 1-30',copy:'Customers 1-5',count:state.month1.length,total:split.month1,max:maxMonth1,rows:renderCustomerRows(state.month1,split.rowsById,0,false,split.month1Breakdown[2][1]),tone:'first'})}
-        ${customerColumn({title:'Days 31-60',copy:'Customers 6-10',count:state.month2.length,total:split.month2,max:maxMonth2,rows:renderCustomerRows(state.month2,split.rowsById,5,!independentStage),tone:'next',locked:!independentStage})}
+        ${customerColumn({title:'Days 1-30',count:state.month1.length,total:split.month1,max:maxMonth1,rows:renderCustomerRows(state.month1,split.rowsById,0,false,split.month1Breakdown[2][1]),tone:'first'})}
+        ${customerColumn({title:'Days 31-60',count:state.month2.length,total:split.month2,max:maxMonth2,rows:renderCustomerRows(state.month2,split.rowsById,5,!independentStage),tone:'next',locked:!independentStage})}
       </div>
       ${builderControls}
     </section>
