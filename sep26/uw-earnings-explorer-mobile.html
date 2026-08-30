@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UW Earnings Explorer</title>
+<link rel="stylesheet" href="uw-toolkit-theme.css">
+</head>
+<body>
+<div class="app">
+  <main class="shell" id="app"></main>
+</div>
+<script src="uw-earnings-rules.js"></script>
+<script>
+const R=window.UWEarningsRules;
+const money=(value)=>`£${Math.round(value||0).toLocaleString()}`;
+const homeIcon=(type)=>type==='tenant'?'🔑':'🏡';
+const startDate='2026-09-01';
+const registerUrl='https://uw.partners/adrian.croft/partner/join';
+const CONTACT={
+  fullName:'Adrian Croft',
+  title:'UW Partner',
+  photoUrl:'https://raw.githubusercontent.com/aqcroft/UW_PET_GH_v2/main/Adrian_Croft.jpg',
+  whatsappNumber:'447787400800',
+  whatsappMessage:"Hi Adrian, I've just used your earnings explorer and I'd like to know more",
+  email:'adrian.croft@uw.partners',
+  emailSubject:'Your UW earnings explorer',
+  emailBody:"Hi Adrian, I've just used your earnings explorer and I'd like to know more",
+  phone:'+447787400800',
+  calendarUrl:'https://tidycal.com/aqcroft/uwcost',
+};
+const DEMO_TYPE='homeowner';
+const DEMO_SERVICES=3;
+const state={started:false,month1:[],month2:[],ownAccountLinked:false,customerPartnerUpgraded:false,habIntroDismissed:false,month2HabIntroDismissed:false,nextIntroDismissed:false,endIntroDismissed:false,expandedCustomerId:null,contactOpen:false,sayHiOpen:false,howPaidOpen:false};
+
+function makeCustomer(number,type=DEMO_TYPE,services=DEMO_SERVICES){
+  return {id:`c${number}`,type,services,supported:number<=5};
+}
+function first30MilestoneComplete(){
+  return state.ownAccountLinked&&state.customerPartnerUpgraded;
+}
+function buildContext(month1=state.month1,month2=state.month2,ownAccountLinked=state.ownAccountLinked,customerPartnerUpgraded=state.customerPartnerUpgraded){
+  const customers=[...month1.map((c,i)=>({...c,dateGathered:R.addDays(startDate,i+1),supported:true})),
+    ...month2.map((c,i)=>({...c,dateGathered:R.addDays(startDate,30+i+1),supported:false}))];
+  return {
+    startDate,
+    ownAccountQualifiesForFastStart:ownAccountLinked,
+    ownAccountDate:startDate,
+    partnerIntroduced:customerPartnerUpgraded,
+    introducedPartnerDate:R.addDays(startDate,19),
+    gatheredCustomers:customers,
+  };
+}
+function splitTotals(result){
+  const month1Ids=new Set(state.month1.map(c=>c.id));
+  const month2Ids=new Set(state.month2.map(c=>c.id));
+  const rowTotal=(row)=>row.customerBonusGatheringPartner+row.highActivityBonus+row.momentumGatheringPartner;
+  const sumRows=(rows,key)=>rows.reduce((sum,row)=>sum+(row[key]||0),0);
+  const m1Rows=result.customers.filter(row=>month1Ids.has(row.id));
+  const m2Rows=result.customers.filter(row=>month2Ids.has(row.id));
+  const first30Bonuses=result.gatheringBreakdown.qdBonus+result.gatheringBreakdown.fastStarterBonus;
+  return {
+    month1:m1Rows.reduce((sum,row)=>sum+rowTotal(row),0)+first30Bonuses,
+    month2:m2Rows.reduce((sum,row)=>sum+rowTotal(row),0),
+    month1Breakdown:[
+      ['Customer earnings',sumRows(m1Rows,'customerBonusGatheringPartner')],
+      ['High Activity Bonus',sumRows(m1Rows,'highActivityBonus')],
+      ['Fast Start + promotion',first30Bonuses],
+    ],
+    month2Breakdown:[
+      ['Customer earnings',sumRows(m2Rows,'customerBonusGatheringPartner')],
+      ['High Activity Bonus',sumRows(m2Rows,'highActivityBonus')],
+      ['Momentum',sumRows(m2Rows,'momentumGatheringPartner')],
+    ],
+    rowsById:result.customers.reduce((acc,row)=>{acc[row.id]=row;return acc;},{}),
+  };
+}
+function maxFor(month){
+  const m1=Array.from({length:month===1?5:0},(_,i)=>({id:`m1-${i}`,type:DEMO_TYPE,services:DEMO_SERVICES,supported:true}));
+  const m2=Array.from({length:month===2?5:0},(_,i)=>({id:`m2-${i}`,type:DEMO_TYPE,services:DEMO_SERVICES,supported:false}));
+  const result=R.calculateEarnings({
+    startDate,
+    ownAccountQualifiesForFastStart:month===1,
+    ownAccountDate:startDate,
+    partnerIntroduced:month===1,
+    introducedPartnerDate:R.addDays(startDate,19),
+    gatheredCustomers:[
+      ...m1.map((c,i)=>({...c,dateGathered:R.addDays(startDate,i+1)})),
+      ...m2.map((c,i)=>({...c,dateGathered:R.addDays(startDate,30+i+1)})),
+    ],
+  });
+  return result.gatheringBreakdown.total;
+}
+const maxMonth1=maxFor(1);
+const maxMonth2=maxFor(2);
+const maxTotal=maxMonth1+maxMonth2;
+
+function addCustomer(){
+  const allCount=state.month1.length+state.month2.length;
+  if(allCount>=10)return;
+  if(allCount>=5&&!first30MilestoneComplete())return;
+  const customer=makeCustomer(allCount+1,DEMO_TYPE,DEMO_SERVICES);
+  if(state.month1.length<5)state.month1.push(customer);
+  else state.month2.push(customer);
+  render();
+}
+function resetExplorer(){
+  state.month1=[];state.month2=[];state.ownAccountLinked=false;state.customerPartnerUpgraded=false;state.habIntroDismissed=false;state.month2HabIntroDismissed=false;state.nextIntroDismissed=false;state.endIntroDismissed=false;state.expandedCustomerId=null;render();
+}
+function completeFirst30Step(step){
+  if(step==='own')state.ownAccountLinked=true;
+  if(step==='partner')state.customerPartnerUpgraded=true;
+  if(first30MilestoneComplete())state.nextIntroDismissed=false;
+  render();
+}
+function dismissHabIntro(){state.habIntroDismissed=true;render();}
+function dismissMonth2HabIntro(){state.month2HabIntroDismissed=true;render();}
+function dismissNextIntro(){state.nextIntroDismissed=true;render();}
+function dismissEndIntro(){state.endIntroDismissed=true;render();}
+function start(){state.started=true;render();}
+function toggleCustomerDetails(id){
+  state.expandedCustomerId=state.expandedCustomerId===id?null:id;
+  render();
+}
+function ordinal(n){
+  const suffix=n%10===1&&n%100!==11?'st':n%10===2&&n%100!==12?'nd':n%10===3&&n%100!==13?'rd':'th';
+  return `${n}${suffix}`;
+}
+function addLabel(n){return `Add ${ordinal(n)} customer`;}
+function whatsappUrl(){return `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(CONTACT.whatsappMessage)}`;}
+function emailUrl(){return `mailto:${CONTACT.email}?subject=${encodeURIComponent(CONTACT.emailSubject)}&body=${encodeURIComponent(CONTACT.emailBody)}`;}
+function phoneUrl(){return `tel:${CONTACT.phone}`;}
+function toggleContact(){state.contactOpen=!state.contactOpen;if(!state.contactOpen)state.sayHiOpen=false;render();}
+function toggleSayHi(){state.sayHiOpen=!state.sayHiOpen;render();}
+function openHowPaid(){state.howPaidOpen=true;state.contactOpen=false;state.sayHiOpen=false;render();}
+function closeHowPaid(){state.howPaidOpen=false;render();}
+
+function tableMoney(value,extraClass=''){
+  return `<strong class="table-money ${extraClass}">${money(value)}</strong>`;
+}
+function rowBadge(label,tone=''){
+  return `<span class="row-badge ${tone}">${label}</span>`;
+}
+function detailCell(label,value){
+  return `<div class="detail-cell"><span>${label}</span><strong>${money(value)}</strong></div>`;
+}
+function renderCustomerRows(customers,rowsById,offset=0,lockedFuture=false,fastStartTotal=0){
+  return Array.from({length:5},(_,i)=>{
+    const c=customers[i];
+    const row=c&&rowsById[c.id];
+    const future=lockedFuture&&!row;
+    const isFirstPeriod=offset<5;
+    const period=isFirstPeriod?'period-first':'period-next';
+    const status=row&&row.momentumGatheringPartner>0?'momentum':row?'filled':future?'future-window':'';
+    const cls=['customer-icon',period,status].filter(Boolean).join(' ');
+    const number=offset+i+1;
+    const fastStart=row&&number===5&&first30MilestoneComplete()?fastStartTotal:0;
+    const thirdValue=isFirstPeriod?fastStart:(row?row.momentumGatheringPartner:0);
+    const thirdLabel=isFirstPeriod?'Fast Start':'Momentum';
+    const customer=row?row.customerBonusGatheringPartner:0;
+    const high=row?row.highActivityBonus:0;
+    const total=customer+high+thirdValue;
+    const partnerAwarded=row&&number===5&&state.customerPartnerUpgraded;
+    const badges=[
+      high>0?rowBadge('HAB','activity'):'',
+      fastStart>0?rowBadge('Fast Start','fast-start'):'',
+      thirdValue>0&&!isFirstPeriod?rowBadge('Momentum','momentum'):'',
+      partnerAwarded?rowBadge('Partner','partner'):'',
+    ].filter(Boolean).join('');
+    const expanded=row&&state.expandedCustomerId===row.id;
+    const rowMain=`<div class="customer-row-id">
+        <div class="${cls}">${row?homeIcon(row.type):'+'}</div>
+        <strong>${number}</strong>
+      </div>
+      <div class="row-badges">${badges}</div>
+      ${tableMoney(row?total:0,'table-row-total')}`;
+    return `<div class="customer-table-row ${future?'customer-tile-future':''} ${partnerAwarded?'customer-tile-awarded':''}" aria-label="${ordinal(number)} customer">
+      ${row?`<button class="customer-summary-row" onclick="toggleCustomerDetails('${row.id}')" aria-expanded="${expanded?'true':'false'}">${rowMain}</button>`:`<div class="customer-summary-row empty">${rowMain}</div>`}
+      ${expanded?`<div class="customer-row-detail">
+        ${detailCell('Customer',customer)}
+        ${detailCell('High Activity',high)}
+        ${detailCell(thirdLabel,thirdValue)}
+      </div>`:''}
+    </div>`;
+  }).join('');
+}
+function tableFooter(tone,total){
+  return `<div class="customer-table-footer customer-table-footer-${tone}">
+    <strong>Period total</strong>
+    ${tableMoney(total,'table-row-total')}
+  </div>`;
+}
+function customerColumn({title,copy,count,total,max,rows,tone,locked=false}){
+  return `<section class="customer-column customer-column-${tone} ${locked?'customer-column-locked':''}">
+    <div class="customer-column-head">
+      <div>
+        <div class="eyebrow">${title}</div>
+        <h2>${copy}</h2>
+      </div>
+      <span class="column-count">${count}/5</span>
+    </div>
+    <div class="progress"><span style="width:${Math.min(100,total/max*100)}%"></span></div>
+    <div class="customer-earnings-table">
+      <div class="customer-table-head">
+        <span>Customer</span>
+        <span>Bonus</span>
+        <span>Total</span>
+      </div>
+      ${rows}
+      ${tableFooter(tone,total)}
+    </div>
+  </section>`;
+}
+function assumptionsTip(){
+  return `<details class="assumption-tip">
+    <summary>ⓘ Assumptions</summary>
+    <p>This is illustrative. The guided journey uses ten 3-service homeowners, Fast Start achieved in the first 30 days, and solo eligible customers in the next 30 days. Exact earnings depend on customer mix, timing and eligibility.</p>
+  </details>`;
+}
+function contactMarkup(){
+  return `<div class="profile-bubble-wrap">
+    <button class="profile-photo-btn" onclick="toggleContact()" aria-label="${state.contactOpen?'Close contact menu':'Open contact menu'}">
+      <img src="${CONTACT.photoUrl}" alt="${CONTACT.fullName}" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">
+      <span class="initials">AC</span>
+    </button>
+    <div class="fab-actions ${state.contactOpen?'open':''}">
+      <a href="${registerUrl}" target="_blank" rel="noopener" class="fab-action-btn fab-btn-jumpin"><span>🔥</span><strong>Jump in</strong></a>
+      <a href="${CONTACT.calendarUrl}" target="_blank" rel="noopener" class="fab-action-btn fab-btn-bookin"><span>🗓️</span><strong>Book in</strong></a>
+      <button class="fab-action-btn fab-btn-curious" onclick="openHowPaid()"><span>🔍</span><strong>Curious?</strong></button>
+      <button class="fab-action-btn fab-btn-sayhi" onclick="toggleSayHi()"><span>👋</span><strong>Say hi</strong></button>
+      <div class="sayhi-icons-row ${state.sayHiOpen?'open':''}">
+        <a class="fab-icon-circle" href="${whatsappUrl()}" target="_blank" rel="noopener" aria-label="WhatsApp">☎</a>
+        <a class="fab-icon-circle" href="${emailUrl()}" aria-label="Email">✉</a>
+        <a class="fab-icon-circle" href="${phoneUrl()}" aria-label="Call">☏</a>
+      </div>
+    </div>
+  </div>`;
+}
+function paidSection(title,summary,detail,icon,tone){
+  return `<details class="paid-section paid-section-${tone}">
+    <summary><span>${icon}</span><strong>${title}</strong></summary>
+    <p>${summary}</p>
+    <div>${detail}</div>
+  </details>`;
+}
+function howPaidMarkup(){
+  if(!state.howPaidOpen)return '';
+  return `<div class="notice-backdrop howpaid-overlay" onclick="closeHowPaid()">
+    <section class="howpaid-panel" onclick="event.stopPropagation()">
+      <div class="howpaid-head">
+        <div>
+          <div class="eyebrow">Curious?</div>
+          <h2>How Partners are paid</h2>
+        </div>
+        <button class="sheet-close" onclick="closeHowPaid()">×</button>
+      </div>
+      <div class="howpaid-note">Start with your first five customers. After the Fast Start moment, you can choose to explore days 31-60.</div>
+      <div class="paid-list">
+        ${paidSection('Customer Bonus','An upfront payment when a homeowner customer joins with core services.','<div class="paid-grid"><span>1 service</span><strong>£50</strong><span>2 services</span><strong>£100</strong><span>3 services</span><strong>£250</strong><span>4 services</span><strong>£300</strong></div>','💷','blue')}
+        ${paidSection('High Activity Bonus','Extra income when enough qualifying homeowners join in the same calendar month.','<p>Here, the 4th qualifying homeowner unlocks an extra £100 for each qualifying customer in that month.</p>','🔥','amber')}
+        ${paidSection('Fast Start + promotion','The first big milestone in the first 30 days.','<p>Link your own UW customer account and upgrade one customer to Partner. When both happen, the £500 Fast Start + promotion bonus is added.</p>','🎯','green')}
+        ${paidSection('Momentum Bonus','The second 30 days becomes more independent.','<p>Solo 3+ service customers in the right window can add Momentum Bonus, while support moves to lighter-touch guidance.</p>','⚡','green')}
+        ${paidSection('Residual income','Ongoing income starts differently for tenants and homeowners.','<p>Tenants can create residual from month 1. Homeowner residual is delayed depending on service count, usually from 24 to 60 months.</p>','🔁','blue')}
+      </div>
+    </section>
+  </div>`;
+}
+function breakdownLine([label,value]){
+  return `<div class="mini-line"><span>${label}</span><strong>${money(value)}</strong></div>`;
+}
+function first30StepButton(done,label,step){
+  return `<button class="step-button ${done?'done':''}" ${done?'disabled':''} onclick="completeFirst30Step('${step}')">
+    <span>${done?'Done':'Step'}</span>
+    <strong>${label}</strong>
+  </button>`;
+}
+function monthCard({title,copy,count,total,max,breakdown=[],tiles,tone='',locked=false}){
+  return `<section class="card month-card ${tone?`month-card-${tone}`:''}" style="${locked?'opacity:.58':''}">
+    <div class="month-head">
+      <div>
+        <div class="eyebrow">${title}</div>
+        <h2>${count} of 5 customers</h2>
+      </div>
+      <div class="month-total">
+        <strong>${money(total)}</strong>
+        <div class="customer-label">of ${money(max)}</div>
+      </div>
+    </div>
+    <div class="progress"><span style="width:${Math.min(100,total/max*100)}%"></span></div>
+    <p class="muted" style="margin:0">${copy}</p>
+    ${breakdown.length?`<div class="mini-breakdown">${breakdown.map(breakdownLine).join('')}</div>`:''}
+    ${tiles?`<div class="customer-map">${tiles}</div>`:''}
+  </section>`;
+}
+function renderStarted(){
+  const result=R.calculateEarnings(buildContext());
+  const split=splitTotals(result);
+  const allCount=state.month1.length+state.month2.length;
+  const total=split.month1+split.month2;
+  const nextNumber=Math.min(10,allCount+1);
+  const milestoneStepsDone=(state.ownAccountLinked?1:0)+(state.customerPartnerUpgraded?1:0);
+  const needsUpgrade=state.month1.length>=5&&!first30MilestoneComplete();
+  const independentStage=state.month1.length>=5&&first30MilestoneComplete();
+  const stage=independentStage?'Days 31-60':'Days 1-30';
+  const journeyComplete=allCount>=10;
+  const pageHeading=independentStage?'Next 30 days':'First 30 days';
+  const headline=allCount===0?'Add your first five customers and watch the first-30-day bonuses appear.':state.month1.length<4?'Build your first five customers and keep the journey simple.':state.month1.length===4?'High Activity Bonus is now part of your first month.':needsUpgrade?'Two steps now unlock your Fast Start moment.':independentStage&&state.month2.length===0?'Your launch month is complete. Now see what a more independent second month can add.':state.month2.length===4?'Another High Activity Bonus has landed in your second month.':state.month2.length<5?'You are now exploring more independent customer gathering, with Momentum in play.':'Your first 60 days are mapped.';
+  const builderTitle=needsUpgrade?'Complete two steps':journeyComplete?'Journey complete':`Customer ${nextNumber}`;
+  const builderMeta=needsUpgrade?`${milestoneStepsDone}/2 done`:`${homeIcon(DEMO_TYPE)} ${DEMO_SERVICES} services`;
+  const builderPrimaryClass=independentStage?'button green':'button';
+  const addCustomerAction=!needsUpgrade&&!journeyComplete
+    ?`<div class="add-customer-row"><button class="${builderPrimaryClass} add-customer-main" onclick="addCustomer()">${addLabel(nextNumber)}</button></div>`
+    :'';
+  const builderControls=needsUpgrade?`
+      <p class="muted" style="margin:.75rem 0 0">Your first five customers are in. Complete both steps to include the Fast Start + promotion bonus and unlock the next 30 days.</p>
+    `:'';
+  const registerButton=`<a class="button register-link" target="_blank" rel="noopener" href="${registerUrl}">🎯Ready to earn? Register here!</a>`;
+  const noticeMarkup=!state.habIntroDismissed&&state.month1.length>=4?`<div class="notice-backdrop" onclick="dismissHabIntro()">
+      <section class="notice-popup notice-blue notice-celebration" onclick="event.stopPropagation()">
+        <div class="notice-emoji">🏆</div>
+        <div class="eyebrow">High Activity Bonus unlocked</div>
+        <h2>${money(split.month1Breakdown[1][1])} added to your first month.</h2>
+        <p class="muted">That 4th customer does more than add their own Customer Bonus. It unlocks an extra £100 for each qualifying customer in the month.</p>
+        <button class="button blue" onclick="dismissHabIntro()">Continue</button>
+      </section>
+    </div>`:needsUpgrade?`<div class="notice-backdrop">
+      <section class="notice-popup notice-celebration">
+        <div class="notice-emoji">🎯</div>
+        <div class="eyebrow">Fast Start setup</div>
+        <h2>Your first five customers are in.</h2>
+        <p class="muted">Complete both steps to add your £500 Fast Start + promotion bonus. Upgrading a customer awards them a Partner badge in your first-30-day column.</p>
+        <div class="step-actions">
+          ${first30StepButton(state.ownAccountLinked,'Link your UW account','own')}
+          ${first30StepButton(state.customerPartnerUpgraded,'Upgrade a customer','partner')}
+        </div>
+      </section>
+    </div>`:independentStage&&!state.nextIntroDismissed?`<div class="notice-backdrop">
+      <section class="notice-popup notice-green notice-celebration">
+        <div class="notice-emoji">🎉</div>
+        <div class="eyebrow">Fast Start awarded</div>
+        <h2>£500 added. Your first 30 days total is ${money(split.month1)}.</h2>
+        <div class="award-strip">
+          <span>🏅 Partner badge awarded</span>
+          <span>🎯 Fast Start + promotion included</span>
+        </div>
+        <p class="muted">You can register now, or carry on into days 31-60 to see how a more independent second 30 days can add Momentum Bonus.</p>
+        <div class="notice-actions">
+          ${registerButton}
+          <button class="button secondary" onclick="dismissNextIntro()">Explore next 30 days earnings</button>
+        </div>
+      </section>
+    </div>`:!state.month2HabIntroDismissed&&state.month2.length>=4?`<div class="notice-backdrop" onclick="dismissMonth2HabIntro()">
+      <section class="notice-popup notice-green notice-celebration" onclick="event.stopPropagation()">
+        <div class="notice-emoji">🏆</div>
+        <div class="eyebrow">High Activity Bonus unlocked again</div>
+        <h2>${money(split.month2Breakdown[1][1])} added in days 31-60.</h2>
+        <p class="muted">Your 9th customer unlocks another High Activity Bonus period, adding £100 to each qualifying customer in the green column.</p>
+        <button class="button green" onclick="dismissMonth2HabIntro()">Continue</button>
+      </section>
+    </div>`:journeyComplete&&!state.endIntroDismissed?`<div class="notice-backdrop">
+      <section class="notice-popup notice-green notice-celebration">
+        <div class="notice-emoji">🚀</div>
+        <div class="eyebrow">Full journey mapped</div>
+        <h2>${money(total)} across your first 60 days.</h2>
+        <div class="notice-actions">
+          ${registerButton}
+        </div>
+      </section>
+    </div>`:'';
+  document.body.classList.toggle('explorer-independent',independentStage);
+  document.getElementById('app').innerHTML=`
+    ${contactMarkup()}
+    <header class="topbar">
+      <div><div class="eyebrow">Earnings Explorer</div><h1>${pageHeading}</h1></div>
+    </header>
+    <section class="hero ${independentStage?'hero-independent':''}">
+      <div class="row hero-earnings-row" style="align-items:flex-start;gap:.6rem">
+        <div style="flex:1 1 auto;min-width:0">
+          <div class="eyebrow" style="color:rgba(255,255,255,.76)">Potential so far</div>
+          <div class="hero-number">${money(total)}</div>
+        </div>
+      </div>
+      <div class="hero-sub">${headline}</div>
+      <div style="margin-top:.75rem" class="progress"><span style="width:${Math.min(100,total/maxTotal*100)}%"></span></div>
+      <div style="font-size:.82rem;margin-top:.35rem;opacity:.82">${money(total)} of ${money(maxTotal)} clean 3-service homeowner journey</div>
+    </section>
+    <section class="card ${independentStage?'independence-card':''}">
+      <div class="row" style="margin-bottom:.65rem">
+        <div><div class="eyebrow">${stage}</div><h2>${builderTitle}</h2></div>
+        <strong>${builderMeta}</strong>
+      </div>
+      ${addCustomerAction}
+      <div class="customer-columns">
+        ${customerColumn({title:'Days 1-30',copy:'Customers 1-5',count:state.month1.length,total:split.month1,max:maxMonth1,rows:renderCustomerRows(state.month1,split.rowsById,0,false,split.month1Breakdown[2][1]),tone:'first'})}
+        ${customerColumn({title:'Days 31-60',copy:'Customers 6-10',count:state.month2.length,total:split.month2,max:maxMonth2,rows:renderCustomerRows(state.month2,split.rowsById,5,!independentStage),tone:'next',locked:!independentStage})}
+      </div>
+      ${builderControls}
+    </section>
+    <div class="utility-row">
+      ${assumptionsTip()}
+      <button class="button secondary button-small" onclick="resetExplorer()">Start again</button>
+    </div>
+    ${noticeMarkup}
+    ${howPaidMarkup()}
+  `;
+}
+function renderWelcome(){
+  document.body.classList.remove('explorer-independent');
+  document.getElementById('app').innerHTML=`
+    ${contactMarkup()}
+    <section class="splash-card" style="margin-top:10vh">
+      <div class="splash-top">
+        <div class="splash-wave">👋</div>
+        <h1>Welcome to your interactive earnings explorer</h1>
+      </div>
+      <div class="splash-body">
+        <div class="splash-highlight">Build your first 30 days first. When your Fast Start moment lands, choose whether to register or keep exploring days 31-60.</div>
+        <p>You help people save on essential household services they already use.</p>
+        <div class="service-cloud">
+          <span>⚡ energy</span>
+          <span>🛜 broadband</span>
+          <span>📲 mobile</span>
+          <span>☔ insurance</span>
+        </div>
+        <p><strong>When your customers win, you can earn.</strong></p>
+        <p class="splash-small">Add customers, watch the numbers change, and learn as you go.</p>
+        <button class="button splash-start" onclick="start()">Let's go</button>
+        <button class="text-button" onclick="openHowPaid()">Curious? See how Partners are paid</button>
+      </div>
+    </section>
+    ${howPaidMarkup()}`;
+}
+function render(){state.started?renderStarted():renderWelcome();}
+render();
+</script>
+</body>
+</html>
