@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -293,7 +292,7 @@ function renderStarted(){
   document.getElementById('app').innerHTML=`
     <header class="topbar">
       <div><div class="eyebrow">Earnings Explorer</div><h1>${pageHeading}</h1></div>
-      <a class="button secondary" style="display:grid;place-items:center;text-decoration:none;padding:0 .8rem" href="UW First 60 Days Tracker.html">Tracker</a>
+      <a class="button secondary" style="display:grid;place-items:center;text-decoration:none;padding:0 .8rem" href="tracker.html">Tracker</a>
     </header>
     <section class="hero ${independentStage?'hero-independent':''}">
       <div class="row" style="align-items:flex-start;gap:.6rem">
@@ -337,7 +336,7 @@ function renderWelcome(){
       <h1>Start with the first 30 days</h1>
       <p class="muted">Build your first five customer introductions, unlock the first bonus milestone, then choose whether to explore the next 30 days.</p>
       <button class="button" onclick="start()">Show me</button>
-      <a class="button secondary" style="margin-top:.55rem;display:grid;place-items:center;text-decoration:none" href="UW First 60 Days Tracker.html">Open the tracker</a>
+      <a class="button secondary" style="margin-top:.55rem;display:grid;place-items:center;text-decoration:none" href="tracker.html">Open the tracker</a>
     </section>`;
 }
 function render(){state.started?renderStarted():renderWelcome();}
@@ -345,3 +344,4 @@ render();
 </script>
 </body>
 </html>
+
