@@ -138,6 +138,12 @@ function helpResult(){
   });
 }
 function rowTotal(row){return row.customerBonusGatheringPartner+row.highActivityBonus+row.momentumGatheringPartner;}
+function trackerInSecondPhase(result){
+  return dayOfJourney()>30||result.customers.length>=6;
+}
+function customerTone(index){
+  return index<5?'first':'next';
+}
 function renderNav(){
   const items=[['home','Home'],['customers','Customers'],['help','Help']];
   document.getElementById('nav').innerHTML=`<nav class="bottom-nav"><div class="bottom-nav-inner" style="grid-template-columns:repeat(${items.length},1fr)">
@@ -145,58 +151,81 @@ function renderNav(){
   </div></nav>`;
 }
 function renderHome(result){
+  const secondPhase=trackerInSecondPhase(result);
+  const addTone=nextCustomerIndex()>=5?'green':'blue';
   return `<header class="topbar">
     <div><div class="eyebrow">First 60 days</div><h1>Day ${dayOfJourney()} of 60</h1></div>
     <a class="button secondary" style="display:grid;place-items:center;text-decoration:none;padding:0 .8rem" href="earningstool.html">Explorer</a>
   </header>
-  <section class="hero">
+  <section class="hero ${secondPhase?'hero-independent':'hero-tracker-first'}">
     <div class="eyebrow" style="color:rgba(255,255,255,.76)">Your earnings so far</div>
     <div class="hero-number">${money(result.gatheringBreakdown.total)}</div>
     <div class="hero-sub">${coach(result)}</div>
   </section>
   <section class="card">
     <div class="row" style="margin-bottom:.55rem"><strong>${result.customers.length} of 10 customers</strong><strong>${10-result.customers.length} left</strong></div>
-    <div class="progress"><span style="width:${Math.min(100,result.customers.length*10)}%"></span></div>
-    <button class="button" style="margin-top:.9rem" onclick="openCustomer()">Add customer</button>
+    <div class="progress progress-two"><span style="width:${Math.min(100,result.customers.length*10)}%"></span></div>
+    <button class="button ${addTone}" style="margin-top:.9rem" onclick="openCustomer()">Add customer</button>
   </section>
   <section class="metric-grid">
-    <div class="metric"><div class="eyebrow">Fast Start</div><strong>${result.qd.achievedWithin30?'Achieved':'In progress'}</strong></div>
-    <div class="metric"><div class="eyebrow">Momentum</div><strong>${money(result.gatheringBreakdown.momentumBonus)}</strong></div>
+    <div class="metric metric-first"><div class="eyebrow">Fast Start</div><strong>${result.qd.achievedWithin30?'Achieved':'In progress'}</strong></div>
+    <div class="metric metric-next"><div class="eyebrow">Momentum</div><strong>${money(result.gatheringBreakdown.momentumBonus)}</strong></div>
   </section>
   ${renderEarningsBreakdown(result)}
   ${renderTrackerSettings()}`;
 }
+function renderCustomerButton(c,i,rowsById){
+  const row=rowsById[c.id];
+  const total=row?rowTotal(row):0;
+  const chips=row?momentumChip(row):'';
+  const tone=customerTone(i);
+  return `<button class="list-button tracker-row tracker-row-${tone} ${row?'filled':'empty'}" onclick="openCustomer(${i})">
+    <div class="row">
+      <div class="customer-titleline"><strong>${row?`${icon(row.type)} Customer ${row.customerNumber}`:`Customer ${i+1}`}</strong>${row&&row.supported?'<span class="chip amber">Supported</span>':''}</div>
+      <strong class="tracker-row-total">${row?money(total):'Add'}</strong>
+    </div>
+    <div class="muted" style="margin-top:.25rem;font-size:.88rem">${row?`${row.dateGathered===todayISO()?'Today':row.dateGathered} · ${label(row.type)} · ${row.services} services`:'Tap to record this customer'}</div>
+    ${row?`<div class="customer-payment-grid period-${tone}">
+      ${paymentCell('Customer',row.customerBonusGatheringPartner,'earning')}
+      ${paymentCell('High activity',row.highActivityBonus,'activity')}
+      ${paymentCell('Momentum',row.momentumGatheringPartner,'momentum-pay')}
+      ${paymentCell('Residual',residualTiming(row),'residual')}
+      ${paymentCell('Total',total,'total')}
+    </div>`:''}
+    ${chips?`<div class="chip-row">${chips}</div>`:''}
+  </button>`;
+}
+function renderCustomerGroup(title,copy,tone,start,end,rowsById){
+  const customers=state.customers.slice(start,end);
+  const count=customers.filter(c=>c.type&&c.dateGathered).length;
+  return `<section class="tracker-customer-group tracker-group-${tone}">
+    <div class="tracker-group-head">
+      <div>
+        <div class="eyebrow">${title}</div>
+        <strong>${copy}</strong>
+      </div>
+      <span>${count}/5</span>
+    </div>
+    <div class="list">${customers.map((c,offset)=>renderCustomerButton(c,start+offset,rowsById)).join('')}</div>
+  </section>`;
+}
 function renderCustomers(result){
   const rowsById=result.customers.reduce((acc,row)=>{acc[row.id]=row;return acc;},{});
-  return `<header class="topbar"><div><div class="eyebrow">Tracker</div><h1>Customers</h1></div><button class="button secondary" onclick="openCustomer()" style="width:auto">Add</button></header>
-  <section class="card list">
-    ${state.customers.map((c,i)=>{
-      const row=rowsById[c.id];
-      const total=row?rowTotal(row):0;
-      const chips=row?momentumChip(row):'';
-      return `<button class="list-button" onclick="openCustomer(${i})">
-        <div class="row">
-          <div class="customer-titleline"><strong>${row?`${icon(row.type)} Customer ${row.customerNumber}`:`Customer ${i+1}`}</strong>${row&&row.supported?'<span class="chip amber">Supported</span>':''}</div>
-          <strong>${row?money(total):'Add'}</strong>
-        </div>
-        <div class="muted" style="margin-top:.25rem;font-size:.88rem">${row?`${row.dateGathered===todayISO()?'Today':row.dateGathered} · ${label(row.type)} · ${row.services} services`:'Tap to record this customer'}</div>
-        ${row?`<div class="customer-payment-grid">
-          ${paymentCell('Customer',row.customerBonusGatheringPartner)}
-          ${paymentCell('High activity',row.highActivityBonus)}
-          ${paymentCell('Momentum',row.momentumGatheringPartner)}
-          ${paymentCell('Ongoing',residualEstimate(row),'residual')}
-          ${paymentCell('Total',total,'total')}
-        </div>`:''}
-        ${chips?`<div class="chip-row">${chips}</div>`:''}
-      </button>`;
-    }).join('')}
-  </section>`;
+  const addTone=nextCustomerIndex()>=5?'green':'blue';
+  return `<header class="topbar"><div><div class="eyebrow">Tracker</div><h1>Customers</h1></div><button class="button ${addTone}" onclick="openCustomer()" style="width:auto">Add</button></header>
+  <div class="customer-groups">
+    ${renderCustomerGroup('Days 1-30','Customers 1-5', 'first',0,5,rowsById)}
+    ${renderCustomerGroup('Days 31-60','Customers 6-10', 'next',5,10,rowsById)}
+  </div>`;
 }
 function line(label,value){return `<div class="row muted"><span>${label}</span><strong>${money(value)}</strong></div>`;}
 function formatPayment(value){return typeof value==='number'?money(value):value;}
-function residualEstimate(row){
-  if(row.type==='tenant')return '£2-£3/mo';
-  if(row.type==='homeowner')return '£3-£5/mo';
+function residualTiming(row){
+  if(row.type==='tenant')return 'Month 1';
+  if(row.type==='homeowner'){
+    const months={1:24,2:36,3:60,4:60}[Number(row.services)];
+    return months?`${months} mo`:'Delayed';
+  }
   return '-';
 }
 function paymentCell(label,value,tone=''){
@@ -266,13 +295,15 @@ function renderSheet(){
   const total=preview?rowTotal(preview):0;
   const momentumText=momentumMessage(preview);
   const momentumClass=preview&&preview.momentumGatheringPartner>0?'momentum-note positive':'momentum-note';
+  const sheetTone=customerTone(editor.index);
+  const saveTone=sheetTone==='next'?'green':'blue';
   document.getElementById('sheet').innerHTML=`<div class="sheet-backdrop" onclick="closeSheet()">
-    <section class="sheet" onclick="event.stopPropagation()">
+    <section class="sheet sheet-${sheetTone}" onclick="event.stopPropagation()">
       <div class="row" style="margin-bottom:.75rem">
         <h2>Customer ${editor.index+1}</h2>
         <div style="display:flex;align-items:center;gap:.45rem">
           <button class="sheet-close" onclick="closeSheet()">×</button>
-          <button class="button" style="width:auto;min-height:2.25rem;padding:0 .8rem" onclick="saveCustomer()">Confirm</button>
+          <button class="button ${saveTone}" style="width:auto;min-height:2.25rem;padding:0 .8rem" onclick="saveCustomer()">Confirm</button>
         </div>
       </div>
       <div class="row" style="margin-bottom:.65rem">
@@ -298,7 +329,7 @@ function renderSheet(){
         <button class="segment ${d.supported?'active':''}" onclick="setDraft('supported',true)">Supported</button>
       </div>
       ${momentumText?`<p class="${momentumClass}">${momentumText}</p>`:''}
-      <div class="row" style="margin-top:.75rem;padding:.7rem;background:#f7f4fb;border-radius:.65rem"><span style="font-weight:900">Earnings</span><strong>${money(total)}</strong></div>
+      <div class="row sheet-earnings" style="margin-top:.75rem;padding:.7rem;border-radius:.65rem"><span style="font-weight:900">Earnings</span><strong>${money(total)}</strong></div>
       ${state.customers[editor.index].type?`<button class="button secondary" style="width:100%;margin-top:.5rem;color:var(--red)" onclick="clearCustomer(${editor.index});closeSheet()">Clear customer</button>`:''}
     </section>
   </div>`;
@@ -306,6 +337,8 @@ function renderSheet(){
 function render(){
   const result=getResult();
   const app=document.getElementById('app');
+  document.body.classList.add('tracker-mode');
+  document.body.classList.toggle('tracker-independent',trackerInSecondPhase(result));
   if(state.view==='earnings'){state.view='home';saveState();}
   if(state.view==='customers')app.innerHTML=renderCustomers(result);
   else if(state.view==='help')app.innerHTML=renderHelp(result);
@@ -317,4 +350,3 @@ render();
 </script>
 </body>
 </html>
-
