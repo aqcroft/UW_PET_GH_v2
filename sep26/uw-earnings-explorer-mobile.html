@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>UW Earnings Explorer</title>
+<title>Utility Warehouse Partner Earnings Explorer</title>
 <link rel="stylesheet" href="uw-toolkit-theme.css">
 </head>
 <body>
@@ -214,7 +214,7 @@ function customerColumn({title,copy='',count,total,max,rows,tone,locked=false}){
 function assumptionsTip(){
   return `<details class="assumption-tip">
     <summary>ⓘ Assumptions</summary>
-    <p>This is illustrative. The guided journey uses ten 3-service homeowners, Fast Start achieved in the first 30 days, and solo eligible customers in the next 30 days. Exact earnings depend on customer mix, timing and eligibility.</p>
+    <p>This is illustrative. The guided journey uses ten 3-service homeowners, Fast Start achieved in the first 30 days, and solo eligible customers in the next 30 days. For simplicity, this tool assumes your starting day aligns with calendar months. Exact earnings depend on customer mix, timing and eligibility.</p>
   </details>`;
 }
 function contactMarkup(){
@@ -268,9 +268,9 @@ function howPaidMarkup(){
 function breakdownLine([label,value]){
   return `<div class="mini-line"><span>${label}</span><strong>${money(value)}</strong></div>`;
 }
-function first30StepButton(done,label,step){
+function first30StepButton(done,label,step,number){
   return `<button class="step-button ${done?'done':''}" ${done?'disabled':''} onclick="completeFirst30Step('${step}')">
-    <span>${done?'Done':'Step'}</span>
+    <span>${done?'Done':`Step ${number}`}</span>
     <strong>${label}</strong>
   </button>`;
 }
@@ -302,7 +302,7 @@ function renderStarted(){
   const needsUpgrade=state.month1.length>=5&&!first30MilestoneComplete();
   const independentStage=state.month1.length>=5&&first30MilestoneComplete();
   const journeyComplete=allCount>=10;
-  const pageHeading=independentStage?'Next 30 days':'First 30 days';
+  const pageHeading=independentStage?'Days 31-60':'First 30 days';
   const coachLine=allCount===0?'Add your first five customers and watch the first-30-day bonuses appear.':state.month1.length<4?'Build your first five customers and keep the journey simple.':state.month1.length===4?'High Activity Bonus is now part of your first month.':needsUpgrade?`${milestoneStepsDone}/2 steps complete. Finish both to unlock your Fast Start moment.`:independentStage&&state.month2.length===0?'Your launch month is complete. Now see what a more independent second 30 days can add.':state.month2.length===4?'Another High Activity Bonus has landed in your second month.':state.month2.length<5?'You are now exploring more independent customer gathering, with Momentum in play.':'Your first 60 days are mapped.';
   const builderPrimaryClass=independentStage?'button green':'button';
   const addCustomerAction=!needsUpgrade&&!journeyComplete
@@ -315,18 +315,18 @@ function renderStarted(){
         <div class="notice-emoji">🏆</div>
         <div class="eyebrow">High Activity Bonus unlocked</div>
         <h2>${money(split.month1Breakdown[1][1])} added to your first month.</h2>
-        <p class="muted">That 4th customer does more than add their own Customer Bonus. It unlocks an extra £100 for each qualifying customer in the month.</p>
+        <p class="muted">Four or more 3-service homeowners in one calendar month qualify you for High Activity Bonus on every 3-service homeowner in that month.</p>
         <button class="button blue" onclick="dismissHabIntro()">Continue</button>
       </section>
     </div>`:needsUpgrade?`<div class="notice-backdrop">
       <section class="notice-popup notice-celebration">
         <div class="notice-emoji">🎯</div>
-        <div class="eyebrow">Fast Start setup</div>
-        <h2>Your first five customers are in.</h2>
-        <p class="muted">Complete both steps to add your £500 Fast Start + promotion bonus. Upgrading a customer awards them a Partner badge in your first-30-day column.</p>
+        <div class="eyebrow">Fast Start bonuses</div>
+        <h2>You've gathered 5 customers!</h2>
+        <p class="muted">£500 Fast Start bonus is awarded when you introduce one Partner and 6 customers in your first 30 days. This can be one of your customers who upgrades to be a Partner, and you can link your own customer account to your Partner account. Do both those steps now.</p>
         <div class="step-actions">
-          ${first30StepButton(state.ownAccountLinked,'Link your UW account','own')}
-          ${first30StepButton(state.customerPartnerUpgraded,'Upgrade a customer','partner')}
+          ${first30StepButton(state.customerPartnerUpgraded,'Upgrade a customer to Partner','partner',1)}
+          ${first30StepButton(state.ownAccountLinked,'Link your own customer account','own',2)}
         </div>
       </section>
     </div>`:independentStage&&!state.nextIntroDismissed?`<div class="notice-backdrop">
@@ -335,8 +335,8 @@ function renderStarted(){
         <div class="eyebrow">Fast Start awarded</div>
         <h2>£500 Bonus!</h2>
         <div class="award-strip">
-          <span><strong>🏅 1 Customer upgrades</strong></span>
-          <span><strong>💷 Fast Start Bonus</strong></span>
+          <span><strong>🏅 1 Partner introduced</strong></span>
+          <span><strong>💷 6 customers</strong></span>
         </div>
         <p class="muted">Register now, or explore what days 31-60 look like with more independent appointments and new Momentum Bonuses.</p>
         <div class="notice-actions">
@@ -349,11 +349,12 @@ function renderStarted(){
         <div class="notice-emoji">🏆</div>
         <div class="eyebrow">High Activity Bonus unlocked again</div>
         <h2>${money(split.month2Breakdown[1][1])} added in days 31-60.</h2>
-        <p class="muted">Your 9th customer unlocks another High Activity Bonus period, adding £100 to each qualifying customer in the green column.</p>
+        <p class="muted">This is the 4th 3-service homeowner in the second calendar month, so High Activity Bonus applies to every qualifying homeowner in the green column.</p>
         <button class="button green" onclick="dismissMonth2HabIntro()">Continue</button>
       </section>
     </div>`:journeyComplete&&!state.endIntroDismissed?`<div class="notice-backdrop">
-      <section class="notice-popup notice-green notice-celebration">
+      <section class="notice-popup notice-green notice-celebration notice-final" onclick="event.stopPropagation()">
+        <button class="notice-close" onclick="dismissEndIntro()" aria-label="Close">×</button>
         <div class="notice-emoji">🚀</div>
         <div class="eyebrow">Full journey mapped</div>
         <h2>${money(total)} across your first 60 days.</h2>
@@ -366,7 +367,7 @@ function renderStarted(){
   document.getElementById('app').innerHTML=`
     ${contactMarkup()}
     <header class="topbar">
-      <div><div class="eyebrow">Earnings Explorer</div><h1>${pageHeading}</h1></div>
+      <div><div class="eyebrow">Utility Warehouse Partner Earnings Explorer</div><h1>${pageHeading}</h1></div>
     </header>
     <section class="hero ${independentStage?'hero-independent':''}">
       <div class="row hero-earnings-row" style="align-items:flex-start;gap:.6rem">
@@ -374,7 +375,7 @@ function renderStarted(){
           <div class="eyebrow" style="color:rgba(255,255,255,.76)">Potential so far</div>
           <div class="hero-number">${money(total)}</div>
         </div>
-        <div class="hero-meta-pill">${homeIcon(DEMO_TYPE)} ${DEMO_SERVICES} service homeowners</div>
+        <div class="hero-meta-pill"><span class="hero-house">${homeIcon(DEMO_TYPE)}</span><span>${DEMO_SERVICES} service homeowners</span></div>
       </div>
       <div style="margin-top:.75rem" class="progress"><span style="width:${Math.min(100,total/maxTotal*100)}%"></span></div>
       <div class="hero-progress-caption">${money(total)} of ${money(maxTotal)}</div>
