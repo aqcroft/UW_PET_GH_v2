@@ -37,6 +37,8 @@ const state={
   linkedOwnAccount:false,
   mentorBonusApplied:false,
   mentorBonusPulse:false,
+  habIntroDismissed:false,
+  month2HabIntroDismissed:false,
   momentumIntroDismissed:false,
   momentumAppliedIds:[],
   momentumRevealComplete:false,
@@ -143,6 +145,8 @@ function resetExplorer(){
   state.linkedOwnAccount=false;
   state.mentorBonusApplied=false;
   state.mentorBonusPulse=false;
+  state.habIntroDismissed=false;
+  state.month2HabIntroDismissed=false;
   state.momentumIntroDismissed=false;
   state.momentumAppliedIds=[];
   state.momentumRevealComplete=false;
@@ -166,6 +170,11 @@ function applyMentorBonus(){
     state.mentorBonusPulse=false;
     render();
   },1300);
+}
+function dismissHabIntro(month){
+  if(month===1)state.habIntroDismissed=true;
+  else state.month2HabIntroDismissed=true;
+  render();
 }
 function momentumRevealId(){
   const row=R.calculateEarnings(buildContext()).customers.find(row=>row.customerNumber===6&&row.momentumRecruiter>0);
@@ -356,7 +365,19 @@ function noticeMarkup(result,split){
   const needsFastStartSteps=state.customers.length>=5&&!fastStartStepsComplete();
   const needsMentorBonus=state.customers.length>=5&&fastStartStepsComplete()&&!state.mentorBonusApplied;
   const pendingMomentum=state.customers.length>=6&&!state.momentumIntroDismissed&&result.customers.some(row=>row.customerNumber===6&&row.momentumRecruiter>0);
+  const needsMonth1Hab=state.customers.length>=4&&!state.habIntroDismissed;
+  const needsMonth2Hab=state.customers.length>=9&&!state.month2HabIntroDismissed;
   const complete=state.customers.length>=10&&!state.finalDismissed;
+  if(needsMonth1Hab)return `<div class="notice-backdrop">
+    <section class="notice-popup notice-blue notice-celebration" onclick="event.stopPropagation()">
+      <div class="notice-emoji">🏆</div>
+      <div class="eyebrow">Their High Activity Bonus</div>
+      <h2>You have opened an extra income door.</h2>
+      <p class="muted">Four or more 3-service homeowners in one calendar month qualify the new Partner for High Activity Bonus on every qualifying homeowner in that month.</p>
+      <p class="watch-line"><strong>This is the kind of early win your mentoring helps them see clearly.</strong></p>
+      <button class="button blue" onclick="dismissHabIntro(1)">Keep mentoring</button>
+    </section>
+  </div>`;
   if(needsFastStartSteps)return `<div class="notice-backdrop">
     <section class="notice-popup notice-celebration" onclick="event.stopPropagation()">
       <div class="notice-emoji">🎯</div>
@@ -389,6 +410,16 @@ function noticeMarkup(result,split){
       <button class="button green" onclick="startMomentumReveal()">Apply Mentor Momentum</button>
     </section>
   </div>`;
+  if(needsMonth2Hab)return `<div class="notice-backdrop">
+    <section class="notice-popup notice-green notice-celebration" onclick="event.stopPropagation()">
+      <div class="notice-emoji">🏆</div>
+      <div class="eyebrow">Their High Activity Bonus again</div>
+      <h2>The second month opens up too.</h2>
+      <p class="muted">This is their 4th 3-service homeowner in the second calendar month, so High Activity Bonus is added to their customer earnings again.</p>
+      <p class="watch-line"><strong>For them, it lands on top of Momentum. For you, the mentor story keeps building through Mentor Momentum.</strong></p>
+      <button class="button green" onclick="dismissHabIntro(2)">Keep going</button>
+    </section>
+  </div>`;
   if(complete)return `<div class="notice-backdrop">
     <section class="notice-popup notice-green notice-celebration notice-final" onclick="event.stopPropagation()">
       <button class="notice-close" onclick="dismissFinal()" aria-label="Close">×</button>
@@ -406,9 +437,11 @@ function noticeMarkup(result,split){
 function coachLine(result,split){
   if(state.momentumRevealInProgress)return 'Watch the first Mentor Momentum Bonus land on their 6th customer.';
   if(state.customers.length===0)return 'Add their first five customers to see how supported appointments build mentor income.';
+  if(state.customers.length===4)return 'Their 4th qualifying customer shows them how High Activity Bonus can change the month.';
   if(state.customers.length<5)return 'In their first 30 days, you are actively supporting appointments and earning support income.';
   if(state.customers.length===5&&!state.mentorBonusApplied)return 'Their first five customers are in. Help them complete the two Fast Start steps.';
   if(state.customers.length===5)return 'The first 30 day mentor story is complete. Now move into days 31-60.';
+  if(state.customers.length===9)return 'Their second month now has High Activity Bonus on top of Momentum.';
   if(state.customers.length<10)return 'Support payments stop in days 31-60, but Mentor Momentum can still build with each eligible independent customer.';
   return 'The mentor story is mapped. This is the power of helping one Partner build early confidence.';
 }
