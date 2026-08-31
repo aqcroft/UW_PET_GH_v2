@@ -127,6 +127,7 @@ p{line-height:1.5}
 .customer-table-head span:last-child{text-align:right}
 .customer-table-row{position:relative;background:rgba(255,255,255,.82);border:1px solid rgba(232,228,238,.9);border-radius:.58rem;overflow:hidden}
 .customer-row-hab-pulse{animation:habPulse 1.15s ease both}
+.customer-row-momentum-pulse{animation:momentumPulse 1.15s ease both}
 .customer-summary-row{width:100%;min-height:2.34rem;border:none;background:transparent;color:inherit;padding:.32rem .36rem;text-align:left}
 button.customer-summary-row{cursor:pointer}
 .customer-summary-row.empty{opacity:.72}
@@ -271,6 +272,11 @@ button.customer-summary-row{cursor:pointer}
 @keyframes habPulse{
   0%{transform:scale(1);box-shadow:none}
   35%{transform:scale(1.025);background:#fff8df;border-color:#f3c84f;box-shadow:0 0 0 2px rgba(243,200,79,.42),0 10px 22px rgba(156,91,0,.12)}
+  100%{transform:scale(1);box-shadow:none}
+}
+@keyframes momentumPulse{
+  0%{transform:scale(1);box-shadow:none}
+  35%{transform:scale(1.025);background:#effdf4;border-color:#63c989;box-shadow:0 0 0 2px rgba(99,201,137,.38),0 10px 22px rgba(20,122,74,.12)}
   100%{transform:scale(1);box-shadow:none}
 }
 @media (min-width:760px){
