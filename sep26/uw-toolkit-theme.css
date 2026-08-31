@@ -165,6 +165,7 @@ body.mentor-journey .customer-column-next .column-count{background:#e8fbf8;color
 .customer-table-head span:last-child{text-align:right}
 .customer-table-row{position:relative;background:rgba(255,255,255,.82);border:1px solid rgba(232,228,238,.9);border-radius:.58rem;overflow:hidden}
 .customer-row-hab-pulse{animation:habPulse 1.15s ease both}
+.customer-row-faststart-pulse{animation:fastStartPulse 1.15s ease both}
 .customer-row-momentum-pulse{animation:momentumPulse 1.15s ease both}
 .customer-summary-row{width:100%;min-height:2.34rem;border:none;background:transparent;color:inherit;padding:.32rem .36rem;text-align:left}
 button.customer-summary-row{cursor:pointer}
@@ -174,7 +175,7 @@ button.customer-summary-row{cursor:pointer}
 .customer-row-id>strong{font-size:.92rem;line-height:1}
 .row-badges{display:flex;justify-content:center;gap:.18rem;min-width:0;flex-wrap:wrap}
 .row-badge{border-radius:999px;background:#fff4df;color:#92400e;border:1px solid rgba(156,91,0,.18);padding:.12rem .28rem;font-size:.5rem;font-weight:950;line-height:1;text-transform:uppercase}
-.row-badge.momentum,.row-badge.partner{background:#edf8f1;color:var(--green);border-color:rgba(20,122,74,.18)}
+.row-badge.momentum,.row-badge.partner,.row-badge.account{background:#edf8f1;color:var(--green);border-color:rgba(20,122,74,.18)}
 .row-badge.fast-start{background:#fff4df;color:#92400e;border-color:#f3c84f}
 .table-money{display:block;min-width:0;text-align:right;font-size:.8rem;font-weight:950;line-height:1.05;white-space:nowrap}
 .table-row-total{font-size:.86rem}
@@ -311,11 +312,14 @@ body.mentor-journey .notice-green{background:#e8fbf8;border-color:#b9ebe4}
 .paid-section-green summary{background:#edf8f1;color:var(--green)}
 .paid-section-amber summary{background:#fff4df;color:var(--amber)}
 .step-actions{display:grid;grid-template-columns:1fr 1fr;gap:.55rem}
-.step-button{min-height:4.35rem;border:1px solid #e4d894;border-radius:.72rem;background:#fff;color:var(--purple);display:grid;align-content:center;gap:.2rem;padding:.6rem;font-weight:850;cursor:pointer;text-align:left}
+.faststart-copy{line-height:1.48}
+.step-button{min-height:4.35rem;border:1px solid rgba(29,79,145,.3);border-radius:.72rem;background:#eff6ff;color:var(--blue);display:grid;grid-template-columns:1fr auto;align-items:center;gap:.52rem;padding:.65rem .68rem;font-weight:850;cursor:pointer;text-align:left}
 .step-button span{font-size:.7rem;text-transform:uppercase;color:var(--muted);font-weight:950}
-.step-button strong{line-height:1.15}
-.step-button.done{background:#edf8f1;border-color:#bfe2cc;color:var(--green)}
-.step-button.done span{color:var(--green)}
+.step-button strong{grid-row:2;line-height:1.12}
+.step-check{grid-column:2;grid-row:1 / span 2;width:1.28rem;height:1.28rem;border:2px solid rgba(29,79,145,.58);border-radius:.32rem;display:grid;place-items:center;color:#fff!important;font-size:.78rem!important;line-height:1;background:#fff;text-transform:none!important}
+.step-button.done{background:linear-gradient(145deg,#173c78,var(--blue));border-color:var(--blue);color:#fff}
+.step-button.done span{color:rgba(255,255,255,.78)}
+.step-button.done .step-check{background:#fff;color:var(--blue)!important;border-color:#fff}
 .bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:120;background:rgba(255,255,255,.94);backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:.45rem max(.7rem,env(safe-area-inset-left)) max(.55rem,env(safe-area-inset-bottom))}
 .bottom-nav-inner{max-width:28rem;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:.3rem}
 .nav-button{border:none;background:transparent;color:var(--muted);border-radius:.65rem;min-height:2.55rem;font-weight:900;cursor:pointer}
@@ -403,6 +407,11 @@ body.mentor-journey .fab-icon-circle{background:#101a2c;border:1px solid var(--l
 @keyframes habPulse{
   0%{transform:scale(1);box-shadow:none}
   35%{transform:scale(1.025);background:#fff8df;border-color:#f3c84f;box-shadow:0 0 0 2px rgba(243,200,79,.42),0 10px 22px rgba(156,91,0,.12)}
+  100%{transform:scale(1);box-shadow:none}
+}
+@keyframes fastStartPulse{
+  0%{transform:scale(1);box-shadow:none}
+  35%{transform:scale(1.025);background:#eef5ff;border-color:var(--blue);box-shadow:0 0 0 2px rgba(29,79,145,.26),0 10px 22px rgba(29,79,145,.12)}
   100%{transform:scale(1);box-shadow:none}
 }
 @keyframes momentumPulse{
