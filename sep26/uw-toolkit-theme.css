@@ -113,6 +113,9 @@ body.mentor-journey .coach-box-next{background:#e8fbf8;border-color:#b9ebe4;colo
 .splash-body{padding:1.05rem;text-align:center}
 .splash-body p{margin:.7rem 0;color:#374151;font-size:.92rem}
 .splash-highlight{border:1px solid #bcd4f6;background:linear-gradient(135deg,#eff6ff,#edf8f1);border-radius:.55rem;color:#173c78;font-weight:950;padding:.62rem .7rem;font-size:.9rem;line-height:1.35}
+.income-chip-grid{display:grid;gap:.45rem;margin:.72rem 0}
+.income-chip{display:flex;align-items:center;justify-content:flex-start;gap:.5rem;border:1px solid var(--line);border-radius:.58rem;background:#fbf9ff;padding:.5rem .65rem;color:var(--ink);font-size:.84rem;font-weight:950;text-align:left}
+.income-chip span{font-size:1.05rem;line-height:1}
 .service-cloud{display:grid;grid-template-columns:1fr 1fr;gap:.25rem .55rem;margin:.65rem auto .75rem;max-width:17rem;color:#394152;font-size:.88rem}
 .splash-small{font-size:.85rem!important}
 .splash-start{width:100%;margin-top:.55rem;background:linear-gradient(135deg,var(--blue),var(--green));box-shadow:0 8px 22px rgba(29,79,145,.22)}
@@ -123,6 +126,7 @@ body.mentor-journey .splash-top{background:linear-gradient(135deg,#141027 0%,#24
 body.mentor-journey .splash-body{background:#101a2c}
 body.mentor-journey .splash-body p{color:#d5dded}
 body.mentor-journey .splash-highlight{border-color:rgba(116,164,255,.34);background:linear-gradient(135deg,rgba(116,164,255,.16),rgba(54,213,189,.12));color:#e8f0ff}
+body.mentor-journey .income-chip{background:rgba(247,249,255,.07);border-color:rgba(188,204,235,.2);color:#eef4ff}
 body.mentor-journey .splash-start{background:linear-gradient(135deg,var(--blue),var(--green));box-shadow:0 12px 28px rgba(54,213,189,.22);color:#06111f}
 .text-button{border:none;background:transparent;color:var(--blue);font-weight:950;cursor:pointer;padding:.7rem .4rem .2rem}
 .independence-card{border-color:#cdebd8;background:#fbfffc}
@@ -311,6 +315,8 @@ body.mentor-journey .notice-green{background:#e8fbf8;border-color:#b9ebe4}
 .paid-section-blue summary{background:#eff6ff;color:var(--blue)}
 .paid-section-green summary{background:#edf8f1;color:var(--green)}
 .paid-section-amber summary{background:#fff4df;color:var(--amber)}
+.paid-section-purple summary{background:#f4efff;color:var(--purple)}
+.paid-section-slate summary{background:#eef2f7;color:#374151}
 .step-actions{display:grid;grid-template-columns:1fr 1fr;gap:.55rem}
 .faststart-copy{line-height:1.48}
 .step-button{min-height:4.35rem;border:1px solid rgba(29,79,145,.3);border-radius:.72rem;background:#eff6ff;color:var(--blue);display:grid;grid-template-columns:1fr auto;align-items:center;gap:.52rem;padding:.65rem .68rem;font-weight:850;cursor:pointer;text-align:left}
@@ -402,6 +408,8 @@ body.mentor-journey .paid-grid{background:rgba(247,249,255,.06)}
 body.mentor-journey .paid-section-blue summary{background:rgba(116,164,255,.14);color:#dce8ff}
 body.mentor-journey .paid-section-green summary{background:rgba(54,213,189,.13);color:#d8fff7}
 body.mentor-journey .paid-section-amber summary{background:rgba(255,209,102,.13);color:#ffe0a0}
+body.mentor-journey .paid-section-purple summary{background:rgba(180,139,255,.14);color:#e7dcff}
+body.mentor-journey .paid-section-slate summary{background:rgba(148,163,184,.15);color:#e5ecf6}
 body.mentor-journey .fab-action-btn,
 body.mentor-journey .fab-icon-circle{background:#101a2c;border:1px solid var(--line);color:var(--ink);box-shadow:0 10px 24px rgba(0,0,0,.3)}
 @keyframes habPulse{

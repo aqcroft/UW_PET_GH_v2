@@ -265,9 +265,13 @@ function howPaidMarkup(){
       </div>
       <div class="howpaid-note">This standalone version shows what can happen after your own first 10 customers, when you help one new Partner build their early momentum.</div>
       <div class="paid-list">
-        ${paidSection('Supported appointments','In their first 30 days, you actively support early customer appointments.','<p>In this simple 3-service homeowner demo, your supporting bonus is £125 per supported customer appointment.</p>','🤝','blue')}
-        ${paidSection('Fast Start Mentor Bonus','You earn this when a Partner you introduce reaches QD* in their first 30 days.','<p>The tool combines QD mentor and Fast Starter mentor payments as a £400 moment.</p>','🎯','amber')}
-        ${paidSection('Mentor Momentum','In days 31-60, appointment support steps back but Momentum can still reward you.','<p>Eligible unsupported 3+ service customers can pay Momentum Bonus to the new Partner and to you as the recruiting Partner.</p>','⚡','green')}
+        ${paidSection('Customer Bonus','The new Partner earns customer bonuses as they gather homeowners.','<p>This demo keeps their customer journey simple by using 3-service homeowners.</p>','💷','blue')}
+        ${paidSection('High Activity Bonus','Four or more 3-service homeowners in a calendar month can unlock extra income for them.','<p>It adds £100 to each qualifying homeowner in that calendar month.</p>','🔥','amber')}
+        ${paidSection('Residual Income','Ongoing income starts differently for tenants and homeowners.','<p>Tenants can create residual from month 1. Homeowner residual is delayed depending on service count.</p>','🔁','blue')}
+        ${paidSection('Promotion & Fast Starter Bonus','Their first 30 day milestones matter because they build confidence.','<p>They can earn Fast Start bonuses when they introduce 1 Partner and 6 customers in their first 30 days.</p>','📈','green')}
+        ${paidSection('Supporting Customer Bonus','In their first 30 days, you actively support early customer appointments.','<p>In this simple demo, your supporting bonus is £125 per supported customer appointment.</p>','🤝','purple')}
+        ${paidSection('Mentor Bonus','You earn this when a Partner you introduce reaches QD* in their first 30 days.','<p>The tool combines QD mentor and Fast Starter mentor payments as a £400 moment.</p>','🎓','slate')}
+        ${paidSection('Momentum Bonus','In days 31-60, appointment support steps back but Momentum can still reward both of you.','<p>Eligible unsupported 3+ service customers can pay Momentum Bonus to the new Partner and to you as the recruiting Partner.</p>','⚡','green')}
       </div>
     </section>
   </div>`;
@@ -372,9 +376,9 @@ function noticeMarkup(result,split){
     <section class="notice-popup notice-blue notice-celebration" onclick="event.stopPropagation()">
       <div class="notice-emoji">🏆</div>
       <div class="eyebrow">Their High Activity Bonus</div>
-      <h2>You have opened an extra income door.</h2>
-      <p class="muted">Four or more 3-service homeowners in one calendar month qualify the new Partner for High Activity Bonus on every qualifying homeowner in that month.</p>
-      <p class="watch-line"><strong>This is the kind of early win your mentoring helps them see clearly.</strong></p>
+      <h2>A reminder from your own journey.</h2>
+      <p class="muted">Just like you, 4 or more 3-service homeowners in one calendar month means your new Partner earns £100 High Activity Bonus on all 4.</p>
+      <p class="watch-line"><strong>This is an early win your mentoring helps them see clearly.</strong></p>
       <button class="button blue" onclick="dismissHabIntro(1)">Keep mentoring</button>
     </section>
   </div>`;
@@ -414,9 +418,9 @@ function noticeMarkup(result,split){
     <section class="notice-popup notice-green notice-celebration" onclick="event.stopPropagation()">
       <div class="notice-emoji">🏆</div>
       <div class="eyebrow">Their High Activity Bonus again</div>
-      <h2>The second month opens up too.</h2>
-      <p class="muted">This is their 4th 3-service homeowner in the second calendar month, so High Activity Bonus is added to their customer earnings again.</p>
-      <p class="watch-line"><strong>For them, it lands on top of Momentum. For you, the mentor story keeps building through Mentor Momentum.</strong></p>
+      <h2>A second month reminder.</h2>
+      <p class="muted">Just like you, 4 or more 3-service homeowners in one calendar month means your new Partner earns £100 High Activity Bonus on all 4.</p>
+      <p class="watch-line"><strong>In days 31-60, that lands on top of their Momentum Bonus.</strong></p>
       <button class="button green" onclick="dismissHabIntro(2)">Keep going</button>
     </section>
   </div>`;
@@ -440,10 +444,10 @@ function coachLine(result,split){
   if(state.customers.length===4)return 'Their 4th qualifying customer shows them how High Activity Bonus can change the month.';
   if(state.customers.length<5)return 'In their first 30 days, you are actively supporting appointments and earning support income.';
   if(state.customers.length===5&&!state.mentorBonusApplied)return 'Their first five customers are in. Help them complete the two Fast Start steps.';
-  if(state.customers.length===5)return 'The first 30 day mentor story is complete. Now move into days 31-60.';
+  if(state.customers.length===5)return 'Their first 30 day milestone is complete. Now move into days 31-60.';
   if(state.customers.length===9)return 'Their second month now has High Activity Bonus on top of Momentum.';
   if(state.customers.length<10)return 'Support payments stop in days 31-60, but Mentor Momentum can still build with each eligible independent customer.';
-  return 'The mentor story is mapped. This is the power of helping one Partner build early confidence.';
+  return 'The mentor journey is mapped. This is the power of helping one Partner build early confidence.';
 }
 function renderStarted(){
   const result=R.calculateEarnings(buildContext());
@@ -515,9 +519,14 @@ function renderWelcome(){
         <h1>Welcome to the Utility Warehouse mentor earnings explorer</h1>
       </div>
       <div class="splash-body">
-        <div class="splash-highlight">Once you have built your own first 10, the next story is helping one new Partner do the same.</div>
-        <p>See how supported appointments, Fast Start Mentor Bonus and Mentor Momentum can build when you help someone launch well.</p>
-        <p><strong>When your Partner wins, your mentor story grows too. 🏆</strong></p>
+        <div class="splash-highlight">Once you've introduced your first 10 customers, the next chapter is helping one new Partner do the same.</div>
+        <p>Reaching 10 personal customers helps unlock the path towards Team Leader and opens new income streams.</p>
+        <div class="income-chip-grid">
+          <div class="income-chip"><span>🤝</span><strong>Supporting bonuses</strong></div>
+          <div class="income-chip"><span>🎓</span><strong>Fast Start Mentor bonuses</strong></div>
+          <div class="income-chip"><span>⚡</span><strong>Mentor Momentum bonuses</strong></div>
+        </div>
+        <p><strong>The more you support and coach your new Partners, the more you can succeed too. 🏆</strong></p>
         <button class="button splash-start" onclick="start()">Let's go!</button>
       </div>
     </section>
