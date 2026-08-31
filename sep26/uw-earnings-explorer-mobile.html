@@ -31,13 +31,18 @@ const CONTACT={
 };
 const DEMO_TYPE='homeowner';
 const DEMO_SERVICES=3;
-const state={started:false,month1:[],month2:[],ownAccountLinked:false,customerPartnerUpgraded:false,habIntroDismissed:false,month2HabIntroDismissed:false,nextIntroDismissed:false,endIntroDismissed:false,expandedCustomerId:null,contactOpen:false,sayHiOpen:false,howPaidOpen:false};
+const state={started:false,month1:[],month2:[],ownAccountLinked:false,customerPartnerUpgraded:false,habIntroDismissed:false,month2HabIntroDismissed:false,month1HabAppliedIds:[],month2HabAppliedIds:[],month1HabRevealComplete:false,month2HabRevealComplete:false,habRevealInProgress:false,habRevealToken:0,habPulseId:null,nextIntroDismissed:false,endIntroDismissed:false,expandedCustomerId:null,contactOpen:false,sayHiOpen:false,howPaidOpen:false};
 
 function makeCustomer(number,type=DEMO_TYPE,services=DEMO_SERVICES){
   return {id:`c${number}`,type,services,supported:number<=5};
 }
 function first30MilestoneComplete(){
   return state.ownAccountLinked&&state.customerPartnerUpgraded;
+}
+function visibleHabRow(row,month){
+  const ids=month===1?state.month1HabAppliedIds:state.month2HabAppliedIds;
+  const complete=month===1?state.month1HabRevealComplete:state.month2HabRevealComplete;
+  return {...row,highActivityBonus:complete||ids.includes(row.id)?row.highActivityBonus:0};
 }
 function buildContext(month1=state.month1,month2=state.month2,ownAccountLinked=state.ownAccountLinked,customerPartnerUpgraded=state.customerPartnerUpgraded){
   const customers=[...month1.map((c,i)=>({...c,dateGathered:R.addDays(startDate,i+1),supported:true})),
@@ -56,9 +61,10 @@ function splitTotals(result){
   const month2Ids=new Set(state.month2.map(c=>c.id));
   const rowTotal=(row)=>row.customerBonusGatheringPartner+row.highActivityBonus+row.momentumGatheringPartner;
   const sumRows=(rows,key)=>rows.reduce((sum,row)=>sum+(row[key]||0),0);
-  const m1Rows=result.customers.filter(row=>month1Ids.has(row.id));
-  const m2Rows=result.customers.filter(row=>month2Ids.has(row.id));
+  const m1Rows=result.customers.filter(row=>month1Ids.has(row.id)).map(row=>visibleHabRow(row,1));
+  const m2Rows=result.customers.filter(row=>month2Ids.has(row.id)).map(row=>visibleHabRow(row,2));
   const first30Bonuses=result.gatheringBreakdown.qdBonus+result.gatheringBreakdown.fastStarterBonus;
+  const rowsById=[...m1Rows,...m2Rows].reduce((acc,row)=>{acc[row.id]=row;return acc;},{});
   return {
     month1:m1Rows.reduce((sum,row)=>sum+rowTotal(row),0)+first30Bonuses,
     month2:m2Rows.reduce((sum,row)=>sum+rowTotal(row),0),
@@ -72,7 +78,7 @@ function splitTotals(result){
       ['High Activity Bonus',sumRows(m2Rows,'highActivityBonus')],
       ['Momentum',sumRows(m2Rows,'momentumGatheringPartner')],
     ],
-    rowsById:result.customers.reduce((acc,row)=>{acc[row.id]=row;return acc;},{}),
+    rowsById,
   };
 }
 function maxFor(month){
@@ -97,6 +103,7 @@ const maxTotal=maxMonth1+maxMonth2;
 
 function addCustomer(){
   const allCount=state.month1.length+state.month2.length;
+  if(state.habRevealInProgress)return;
   if(allCount>=10)return;
   if(allCount>=5&&!first30MilestoneComplete())return;
   const customer=makeCustomer(allCount+1,DEMO_TYPE,DEMO_SERVICES);
@@ -105,7 +112,7 @@ function addCustomer(){
   render();
 }
 function resetExplorer(){
-  state.month1=[];state.month2=[];state.ownAccountLinked=false;state.customerPartnerUpgraded=false;state.habIntroDismissed=false;state.month2HabIntroDismissed=false;state.nextIntroDismissed=false;state.endIntroDismissed=false;state.expandedCustomerId=null;render();
+  state.month1=[];state.month2=[];state.ownAccountLinked=false;state.customerPartnerUpgraded=false;state.habIntroDismissed=false;state.month2HabIntroDismissed=false;state.month1HabAppliedIds=[];state.month2HabAppliedIds=[];state.month1HabRevealComplete=false;state.month2HabRevealComplete=false;state.habRevealInProgress=false;state.habRevealToken+=1;state.habPulseId=null;state.nextIntroDismissed=false;state.endIntroDismissed=false;state.expandedCustomerId=null;render();
 }
 function completeFirst30Step(step){
   if(step==='own')state.ownAccountLinked=true;
@@ -113,8 +120,38 @@ function completeFirst30Step(step){
   if(first30MilestoneComplete())state.nextIntroDismissed=false;
   render();
 }
-function dismissHabIntro(){state.habIntroDismissed=true;render();}
-function dismissMonth2HabIntro(){state.month2HabIntroDismissed=true;render();}
+function habRevealIds(month){
+  const ids=new Set((month===1?state.month1:state.month2).map(c=>c.id));
+  return R.calculateEarnings(buildContext()).customers.filter(row=>ids.has(row.id)&&row.highActivityBonus>0).map(row=>row.id);
+}
+function startHabReveal(month){
+  if(state.habRevealInProgress)return;
+  const targetIds=habRevealIds(month);
+  const applied=month===1?state.month1HabAppliedIds:state.month2HabAppliedIds;
+  if(month===1)state.habIntroDismissed=true;
+  else state.month2HabIntroDismissed=true;
+  state.habRevealInProgress=true;
+  state.habRevealToken+=1;
+  const token=state.habRevealToken;
+  const applyNext=(index)=>{
+    if(token!==state.habRevealToken)return;
+    if(index>=targetIds.length){
+      state.habRevealInProgress=false;
+      state.habPulseId=null;
+      if(month===1)state.month1HabRevealComplete=true;
+      else state.month2HabRevealComplete=true;
+      render();
+      return;
+    }
+    const id=targetIds[index];
+    if(!applied.includes(id))applied.push(id);
+    state.habPulseId=id;
+    render();
+    window.setTimeout(()=>applyNext(index+1),1500);
+  };
+  render();
+  window.setTimeout(()=>applyNext(0),450);
+}
 function dismissNextIntro(){state.nextIntroDismissed=true;render();}
 function dismissEndIntro(){state.endIntroDismissed=true;render();}
 function start(){state.started=true;render();}
@@ -174,7 +211,7 @@ function renderCustomerRows(customers,rowsById,offset=0,lockedFuture=false,fastS
       </div>
       <div class="row-badges">${badges}</div>
       ${tableMoney(row?total:0,'table-row-total')}`;
-    return `<div class="customer-table-row ${future?'customer-tile-future':''} ${partnerAwarded?'customer-tile-awarded':''}" aria-label="${ordinal(number)} customer">
+    return `<div class="customer-table-row ${future?'customer-tile-future':''} ${partnerAwarded?'customer-tile-awarded':''} ${row&&state.habPulseId===row.id?'customer-row-hab-pulse':''}" aria-label="${ordinal(number)} customer">
       ${row?`<button class="customer-summary-row" onclick="toggleCustomerDetails('${row.id}')" aria-expanded="${expanded?'true':'false'}">${rowMain}</button>`:`<div class="customer-summary-row empty">${rowMain}</div>`}
       ${expanded?`<div class="customer-row-detail">
         ${detailCell('Customer',customer)}
@@ -303,20 +340,21 @@ function renderStarted(){
   const independentStage=state.month1.length>=5&&first30MilestoneComplete();
   const journeyComplete=allCount>=10;
   const pageHeading=independentStage?'Days 31-60':'First 30 days';
-  const coachLine=allCount===0?'Add your first five customers and watch the first-30-day bonuses appear.':state.month1.length<4?'Build your first five customers and keep the journey simple.':state.month1.length===4?'High Activity Bonus is now part of your first month.':needsUpgrade?`${milestoneStepsDone}/2 steps complete. Finish both to unlock your Fast Start moment.`:independentStage&&state.month2.length===0?'Your launch month is complete. Now see what a more independent second 30 days can add.':state.month2.length===4?'Another High Activity Bonus has landed in your second month.':state.month2.length<5?'You are now exploring more independent customer gathering, with Momentum in play.':'Your first 60 days are mapped.';
+  const coachLine=state.habRevealInProgress?'Watch the £100 High Activity Bonus land on each qualifying customer.':allCount===0?'Add your first five customers and watch the first-30-day bonuses appear.':state.month1.length<4?'Build your first five customers and keep the journey simple.':state.month1.length===4?'High Activity Bonus is now part of your first month.':needsUpgrade?`${milestoneStepsDone}/2 steps complete. Finish both to unlock your Fast Start moment.`:independentStage&&state.month2.length===0?'Your launch month is complete. Now see what a more independent second 30 days can add.':state.month2.length===4?'Another High Activity Bonus has landed in your second month.':state.month2.length<5?'You are now exploring more independent customer gathering, with Momentum in play.':'Your first 60 days are mapped.';
   const builderPrimaryClass=independentStage?'button green':'button';
   const addCustomerAction=!needsUpgrade&&!journeyComplete
-    ?`<div class="add-customer-row"><button class="${builderPrimaryClass} add-customer-main" onclick="addCustomer()">${addLabel(nextNumber)}</button></div>`
+    ?`<div class="add-customer-row"><button class="${builderPrimaryClass} add-customer-main" ${state.habRevealInProgress?'disabled':''} onclick="addCustomer()">${state.habRevealInProgress?'Applying High Activity Bonus...':addLabel(nextNumber)}</button></div>`
     :'';
   const builderControls='';
   const registerButton=`<a class="button register-link" target="_blank" rel="noopener" href="${registerUrl}">🎯Ready to earn? Register here!</a>`;
-  const noticeMarkup=!state.habIntroDismissed&&state.month1.length>=4?`<div class="notice-backdrop" onclick="dismissHabIntro()">
+  const noticeMarkup=!state.habIntroDismissed&&state.month1.length>=4?`<div class="notice-backdrop">
       <section class="notice-popup notice-blue notice-celebration" onclick="event.stopPropagation()">
         <div class="notice-emoji">🏆</div>
         <div class="eyebrow">High Activity Bonus unlocked</div>
-        <h2>${money(split.month1Breakdown[1][1])} added to your first month.</h2>
+        <h2>High Activity Bonus is ready.</h2>
         <p class="muted">Four or more 3-service homeowners in one calendar month qualify you for High Activity Bonus on every 3-service homeowner in that month.</p>
-        <button class="button blue" onclick="dismissHabIntro()">Continue</button>
+        <p class="watch-line"><strong>Watch as each customer has the £100 High Activity Bonus applied.</strong></p>
+        <button class="button blue" onclick="startHabReveal(1)">Apply High Activity Bonus</button>
       </section>
     </div>`:needsUpgrade?`<div class="notice-backdrop">
       <section class="notice-popup notice-celebration">
@@ -344,13 +382,14 @@ function renderStarted(){
           <button class="button secondary" onclick="dismissNextIntro()">Explore next 30 days earnings</button>
         </div>
       </section>
-    </div>`:!state.month2HabIntroDismissed&&state.month2.length>=4?`<div class="notice-backdrop" onclick="dismissMonth2HabIntro()">
+    </div>`:!state.month2HabIntroDismissed&&state.month2.length>=4?`<div class="notice-backdrop">
       <section class="notice-popup notice-green notice-celebration" onclick="event.stopPropagation()">
         <div class="notice-emoji">🏆</div>
         <div class="eyebrow">High Activity Bonus unlocked again</div>
-        <h2>${money(split.month2Breakdown[1][1])} added in days 31-60.</h2>
+        <h2>High Activity Bonus is ready again.</h2>
         <p class="muted">This is the 4th 3-service homeowner in the second calendar month, so High Activity Bonus applies to every qualifying homeowner in the green column.</p>
-        <button class="button green" onclick="dismissMonth2HabIntro()">Continue</button>
+        <p class="watch-line"><strong>Watch as each customer has the £100 High Activity Bonus applied.</strong></p>
+        <button class="button green" onclick="startHabReveal(2)">Apply High Activity Bonus</button>
       </section>
     </div>`:journeyComplete&&!state.endIntroDismissed?`<div class="notice-backdrop">
       <section class="notice-popup notice-green notice-celebration notice-final" onclick="event.stopPropagation()">
