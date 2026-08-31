@@ -17,6 +17,7 @@ const money=(value)=>`£${Math.round(value||0).toLocaleString()}`;
 const homeIcon=(type)=>type==='tenant'?'🔑':'🏡';
 const startDate='2026-09-01';
 const registerUrl='https://uw.partners/adrian.croft/partner/join';
+const mentorUrl=window.location.protocol==='file:'?'UW Mentor Earnings Explorer.html':'uw-mentor-earnings-explorer.html';
 const CONTACT={
   fullName:'Adrian Croft',
   title:'UW Partner',
@@ -385,6 +386,7 @@ function renderStarted(){
     :'';
   const builderControls='';
   const registerButton=`<a class="button register-link" target="_blank" rel="noopener" href="${registerUrl}">🎯Ready to earn? Register here!</a>`;
+  const mentorButton=`<a class="button secondary register-link mentor-link-button" href="${mentorUrl}">See the Mentor Story</a>`;
   const noticeMarkup=!state.habIntroDismissed&&state.month1.length>=4?`<div class="notice-backdrop">
       <section class="notice-popup notice-blue notice-celebration" onclick="event.stopPropagation()">
         <div class="notice-emoji">🏆</div>
@@ -447,6 +449,7 @@ function renderStarted(){
         <h2>${money(total)} in your first 60 days</h2>
         <p class="muted">Still have questions? Tap my profile pic to get in touch or book in a no-commitment chat.</p>
         <div class="notice-actions">
+          ${mentorButton}
           ${registerButton}
         </div>
       </section>
