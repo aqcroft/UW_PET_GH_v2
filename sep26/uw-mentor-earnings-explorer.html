@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Utility Warehouse Mentor Earnings Explorer</title>
+<link rel="stylesheet" href="uw-toolkit-theme.css">
+</head>
+<body class="mentor-journey">
+<div class="app">
+  <main class="shell" id="app"></main>
+</div>
+<script src="uw-earnings-rules.js"></script>
+<script>
+const R=window.UWEarningsRules;
+const money=(value)=>`£${Math.round(value||0).toLocaleString()}`;
+const startDate='2026-09-01';
+const registerUrl='https://uw.partners/adrian.croft/partner/join';
+const CONTACT={
+  fullName:'Adrian Croft',
+  photoUrl:'https://raw.githubusercontent.com/aqcroft/UW_PET_GH_v2/main/Adrian_Croft.jpg',
+  whatsappNumber:'447787400800',
+  whatsappMessage:"Hi Adrian, I've just used your mentor earnings explorer and I'd like to know more",
+  email:'adrian.croft@uw.partners',
+  emailSubject:'Your UW mentor earnings explorer',
+  emailBody:"Hi Adrian, I've just used your mentor earnings explorer and I'd like to know more",
+  phone:'+447787400800',
+  calendarUrl:'https://tidycal.com/aqcroft/uwcost',
+};
+const DEMO_TYPE='homeowner';
+const DEMO_SERVICES=3;
+const MENTOR_FAST_START_TOTAL=R.QD_MENTOR_BONUS+R.FAST_STARTER_MENTOR_BONUS;
+const state={
+  started:false,
+  customers:[],
+  introducedPartner:false,
+  linkedOwnAccount:false,
+  mentorBonusApplied:false,
+  mentorBonusPulse:false,
+  momentumIntroDismissed:false,
+  momentumAppliedIds:[],
+  momentumRevealComplete:false,
+  momentumRevealInProgress:false,
+  momentumRevealToken:0,
+  momentumPulseId:null,
+  finalDismissed:false,
+  expandedCustomerId:null,
+  contactOpen:false,
+  sayHiOpen:false,
+  howPaidOpen:false,
+};
+
+function homeIcon(){return '🏡';}
+function makeCustomer(number){
+  return {
+    id:`m${number}`,
+    type:DEMO_TYPE,
+    services:DEMO_SERVICES,
+    supported:number<=5,
+  };
+}
+function dateFor(number){
+  return R.addDays(startDate,number<=5?number:30+number-5);
+}
+function fastStartStepsComplete(){
+  return state.introducedPartner&&state.linkedOwnAccount;
+}
+function buildContext(){
+  return {
+    startDate,
+    ownAccountQualifiesForFastStart:fastStartStepsComplete(),
+    ownAccountDate:startDate,
+    partnerIntroduced:fastStartStepsComplete(),
+    introducedPartnerDate:R.addDays(startDate,19),
+    gatheredCustomers:state.customers.map((customer,index)=>({
+      ...customer,
+      dateGathered:dateFor(index+1),
+      supported:index<5,
+    })),
+  };
+}
+function fullContext(){
+  return {
+    startDate,
+    ownAccountQualifiesForFastStart:true,
+    ownAccountDate:startDate,
+    partnerIntroduced:true,
+    introducedPartnerDate:R.addDays(startDate,19),
+    gatheredCustomers:Array.from({length:10},(_,i)=>({
+      id:`max${i+1}`,
+      type:DEMO_TYPE,
+      services:DEMO_SERVICES,
+      supported:i<5,
+      dateGathered:dateFor(i+1),
+    })),
+  };
+}
+const maxResult=R.calculateEarnings(fullContext());
+const maxMentorTotal=maxResult.recruiterBreakdown.total;
+const maxPartnerTotal=maxResult.gatheringBreakdown.total;
+const maxMonth1Mentor=5*(R.CUSTOMER_BONUS_TABLE.homeowner[3]*0.5)+MENTOR_FAST_START_TOTAL;
+const maxMonth2Mentor=5*R.MOMENTUM_RECRUITER_AMOUNT;
+
+function visibleRow(row){
+  const firstMomentum=row.customerNumber===6&&row.momentumRecruiter>0;
+  const momentumShown=state.momentumRevealComplete||state.momentumAppliedIds.includes(row.id);
+  return firstMomentum&&!momentumShown?{...row,momentumRecruiter:0,momentumGatheringPartner:0}:row;
+}
+function splitMentor(result){
+  const rows=result.customers.map(visibleRow);
+  const month1Rows=rows.filter(row=>row.customerNumber<=5);
+  const month2Rows=rows.filter(row=>row.customerNumber>5);
+  const supportTotal=month1Rows.reduce((sum,row)=>sum+row.supportingCustomerBonus,0);
+  const mentorFastStart=state.mentorBonusApplied?MENTOR_FAST_START_TOTAL:0;
+  const momentumTotal=month2Rows.reduce((sum,row)=>sum+row.momentumRecruiter,0);
+  const partnerFastStart=state.mentorBonusApplied
+    ?result.gatheringBreakdown.qdBonus+result.gatheringBreakdown.fastStarterBonus
+    :0;
+  const partnerTotal=rows.reduce((sum,row)=>sum+row.customerBonusGatheringPartner+row.highActivityBonus+row.momentumGatheringPartner,0)+partnerFastStart;
+  const rowsById=rows.reduce((acc,row)=>{acc[row.id]=row;return acc;},{});
+  return {
+    rows,
+    rowsById,
+    month1:supportTotal+mentorFastStart,
+    month2:momentumTotal,
+    supportTotal,
+    mentorFastStart,
+    momentumTotal,
+    total:supportTotal+mentorFastStart+momentumTotal,
+    partnerTotal,
+  };
+}
+function addCustomer(){
+  if(state.momentumRevealInProgress)return;
+  if(state.customers.length>=10)return;
+  if(state.customers.length>=5&&!state.mentorBonusApplied)return;
+  state.customers.push(makeCustomer(state.customers.length+1));
+  render();
+}
+function resetExplorer(){
+  state.customers=[];
+  state.introducedPartner=false;
+  state.linkedOwnAccount=false;
+  state.mentorBonusApplied=false;
+  state.mentorBonusPulse=false;
+  state.momentumIntroDismissed=false;
+  state.momentumAppliedIds=[];
+  state.momentumRevealComplete=false;
+  state.momentumRevealInProgress=false;
+  state.momentumRevealToken+=1;
+  state.momentumPulseId=null;
+  state.finalDismissed=false;
+  state.expandedCustomerId=null;
+  render();
+}
+function completeFastStartStep(step){
+  if(step==='partner')state.introducedPartner=true;
+  if(step==='own')state.linkedOwnAccount=true;
+  render();
+}
+function applyMentorBonus(){
+  state.mentorBonusApplied=true;
+  state.mentorBonusPulse=true;
+  render();
+  window.setTimeout(()=>{
+    state.mentorBonusPulse=false;
+    render();
+  },1300);
+}
+function momentumRevealId(){
+  const row=R.calculateEarnings(buildContext()).customers.find(row=>row.customerNumber===6&&row.momentumRecruiter>0);
+  return row?row.id:null;
+}
+function startMomentumReveal(){
+  if(state.momentumRevealInProgress)return;
+  const id=momentumRevealId();
+  state.momentumIntroDismissed=true;
+  if(!id){
+    state.momentumRevealComplete=true;
+    render();
+    return;
+  }
+  state.momentumRevealInProgress=true;
+  state.momentumRevealToken+=1;
+  const token=state.momentumRevealToken;
+  render();
+  window.setTimeout(()=>{
+    if(token!==state.momentumRevealToken)return;
+    if(!state.momentumAppliedIds.includes(id))state.momentumAppliedIds.push(id);
+    state.momentumPulseId=id;
+    render();
+    window.setTimeout(()=>{
+      if(token!==state.momentumRevealToken)return;
+      state.momentumRevealInProgress=false;
+      state.momentumPulseId=null;
+      state.momentumRevealComplete=true;
+      render();
+    },1500);
+  },450);
+}
+function dismissFinal(){state.finalDismissed=true;render();}
+function start(){state.started=true;render();}
+function toggleCustomerDetails(id){
+  state.expandedCustomerId=state.expandedCustomerId===id?null:id;
+  render();
+}
+function ordinal(n){
+  const suffix=n%10===1&&n%100!==11?'st':n%10===2&&n%100!==12?'nd':n%10===3&&n%100!==13?'rd':'th';
+  return `${n}${suffix}`;
+}
+function addLabel(n){return `Add their ${ordinal(n)} customer`;}
+function whatsappUrl(){return `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(CONTACT.whatsappMessage)}`;}
+function emailUrl(){return `mailto:${CONTACT.email}?subject=${encodeURIComponent(CONTACT.emailSubject)}&body=${encodeURIComponent(CONTACT.emailBody)}`;}
+function phoneUrl(){return `tel:${CONTACT.phone}`;}
+function toggleContact(){state.contactOpen=!state.contactOpen;if(!state.contactOpen)state.sayHiOpen=false;render();}
+function toggleSayHi(){state.sayHiOpen=!state.sayHiOpen;render();}
+function openHowPaid(){state.howPaidOpen=true;state.contactOpen=false;state.sayHiOpen=false;render();}
+function closeHowPaid(){state.howPaidOpen=false;render();}
+
+function contactMarkup(){
+  return `<div class="profile-bubble-wrap">
+    <button class="profile-photo-btn" onclick="toggleContact()" aria-label="${state.contactOpen?'Close contact menu':'Open contact menu'}">
+      <img src="${CONTACT.photoUrl}" alt="${CONTACT.fullName}" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">
+      <span class="initials">AC</span>
+    </button>
+    <div class="fab-actions ${state.contactOpen?'open':''}">
+      <a href="${registerUrl}" target="_blank" rel="noopener" class="fab-action-btn fab-btn-jumpin"><span>🔥</span><strong>Jump in</strong></a>
+      <a href="${CONTACT.calendarUrl}" target="_blank" rel="noopener" class="fab-action-btn fab-btn-bookin"><span>🗓️</span><strong>Book in</strong></a>
+      <button class="fab-action-btn fab-btn-curious" onclick="openHowPaid()"><span>🔍</span><strong>Curious?</strong></button>
+      <button class="fab-action-btn fab-btn-sayhi" onclick="toggleSayHi()"><span>👋</span><strong>Say hi</strong></button>
+      <div class="sayhi-icons-row ${state.sayHiOpen?'open':''}">
+        <a class="fab-icon-circle" href="${whatsappUrl()}" target="_blank" rel="noopener" aria-label="WhatsApp">☎</a>
+        <a class="fab-icon-circle" href="${emailUrl()}" aria-label="Email">✉</a>
+        <a class="fab-icon-circle" href="${phoneUrl()}" aria-label="Call">☏</a>
+      </div>
+    </div>
+  </div>`;
+}
+function paidSection(title,summary,detail,icon,tone){
+  return `<details class="paid-section paid-section-${tone}">
+    <summary><span>${icon}</span><strong>${title}</strong></summary>
+    <p>${summary}</p>
+    <div>${detail}</div>
+  </details>`;
+}
+function howPaidMarkup(){
+  if(!state.howPaidOpen)return '';
+  return `<div class="notice-backdrop howpaid-overlay" onclick="closeHowPaid()">
+    <section class="howpaid-panel" onclick="event.stopPropagation()">
+      <div class="howpaid-head">
+        <div>
+          <div class="eyebrow">Mentor story</div>
+          <h2>How the mentor income works</h2>
+        </div>
+        <button class="sheet-close" onclick="closeHowPaid()">×</button>
+      </div>
+      <div class="howpaid-note">This standalone version shows what can happen after your own first 10 customers, when you help one new Partner build their early momentum.</div>
+      <div class="paid-list">
+        ${paidSection('Supported appointments','In their first 30 days, you actively support early customer appointments.','<p>In this simple 3-service homeowner demo, your supporting bonus is £125 per supported customer appointment.</p>','🤝','blue')}
+        ${paidSection('Fast Start Mentor Bonus','You earn this when a Partner you introduce reaches QD* in their first 30 days.','<p>The tool combines QD mentor and Fast Starter mentor payments as a £400 moment.</p>','🎯','amber')}
+        ${paidSection('Mentor Momentum','In days 31-60, appointment support steps back but Momentum can still reward you.','<p>Eligible unsupported 3+ service customers can pay Momentum Bonus to the new Partner and to you as the recruiting Partner.</p>','⚡','green')}
+      </div>
+    </section>
+  </div>`;
+}
+function assumptionsTip(){
+  return `<details class="assumption-tip">
+    <summary>ⓘ Assumptions</summary>
+    <p>This is illustrative. It assumes one new Partner follows a clean ten customer journey using 3-service homeowners, their first five appointments are actively supported, they achieve QD* in their first 30 days, and days 31-60 align with the next calendar month.</p>
+  </details>`;
+}
+function detailCell(label,value){
+  return `<div class="detail-cell"><span>${label}</span><strong>${money(value)}</strong></div>`;
+}
+function rowBadge(label,tone=''){
+  return `<span class="row-badge ${tone}">${label}</span>`;
+}
+function tableMoney(value,extraClass=''){
+  return `<strong class="table-money ${extraClass}">${money(value)}</strong>`;
+}
+function renderMentorRows(customers,rowsById,offset=0,lockedFuture=false){
+  return Array.from({length:5},(_,i)=>{
+    const number=offset+i+1;
+    const c=customers[i];
+    const row=c&&rowsById[c.id];
+    const future=lockedFuture&&!row;
+    const isFirstPeriod=offset<5;
+    const support=row?row.supportingCustomerBonus:0;
+    const momentum=row?row.momentumRecruiter:0;
+    const fastStart=row&&number===5&&state.mentorBonusApplied?MENTOR_FAST_START_TOTAL:0;
+    const total=support+momentum+fastStart;
+    const cls=['customer-icon',isFirstPeriod?'period-first':'period-next',row?'filled':future?'future-window':''].filter(Boolean).join(' ');
+    const badges=[
+      support>0?rowBadge('Support',''):'',
+      fastStart>0?rowBadge('£400','fast-start'):'',
+      momentum>0?rowBadge('Momentum','momentum'):'',
+    ].filter(Boolean).join('');
+    const expanded=row&&state.expandedCustomerId===row.id;
+    const pulseClass=row&&state.momentumPulseId===row.id?'customer-row-momentum-pulse':'';
+    return `<div class="customer-table-row ${future?'customer-tile-future':''} ${pulseClass}" aria-label="${ordinal(number)} customer">
+      ${row?`<button class="customer-summary-row" onclick="toggleCustomerDetails('${row.id}')" aria-expanded="${expanded?'true':'false'}">
+        <div class="customer-row-id"><div class="${cls}">${homeIcon()}</div><strong>${number}</strong></div>
+        <div class="row-badges">${badges}</div>
+        ${tableMoney(total,'table-row-total')}
+      </button>`:`<div class="customer-summary-row empty">
+        <div class="customer-row-id"><div class="${cls}">+</div><strong>${number}</strong></div>
+        <div class="row-badges"></div>
+        ${tableMoney(0,'table-row-total')}
+      </div>`}
+      ${expanded?`<div class="customer-row-detail">
+        ${detailCell('Support',support)}
+        ${detailCell(number<=5?'Mentor bonus':'Momentum',number<=5?fastStart:momentum)}
+        ${detailCell('Their earnings',row.customerBonusGatheringPartner+row.highActivityBonus+row.momentumGatheringPartner)}
+      </div>`:''}
+    </div>`;
+  }).join('');
+}
+function mentorBonusRow(split){
+  return `<div class="mentor-bonus-row ${state.mentorBonusApplied?'active':''} ${state.mentorBonusPulse?'pulse':''}">
+    <span>Fast Start Mentor</span>
+    <strong>${money(split.mentorFastStart)}</strong>
+  </div>`;
+}
+function tableFooter(tone,total){
+  return `<div class="customer-table-footer customer-table-footer-${tone}">
+    <strong>Total</strong>
+    ${tableMoney(total,'table-row-total')}
+  </div>`;
+}
+function mentorColumn({title,count,total,max,rows,tone,locked=false,note='',bonusRow=''}) {
+  return `<section class="customer-column customer-column-${tone} ${locked?'customer-column-locked':''}">
+    <div class="customer-column-head">
+      <div><div class="eyebrow">${title}</div>${note?`<h2>${note}</h2>`:''}</div>
+      <span class="column-count">${count}/5</span>
+    </div>
+    <div class="progress"><span style="width:${Math.min(100,total/max*100)}%"></span></div>
+    <div class="customer-earnings-table">
+      <div class="customer-table-head">
+        <span>Customer</span>
+        <span>Mentor pay</span>
+        <span>Total</span>
+      </div>
+      ${rows}
+      ${bonusRow}
+      ${tableFooter(tone,total)}
+    </div>
+  </section>`;
+}
+function fastStartStepButton(done,label,step,number){
+  return `<button class="step-button ${done?'done':''}" ${done?'disabled':''} onclick="completeFastStartStep('${step}')">
+    <span>${done?'Done':`Step ${number}`}</span>
+    <strong>${label}</strong>
+  </button>`;
+}
+function noticeMarkup(result,split){
+  const needsFastStartSteps=state.customers.length>=5&&!fastStartStepsComplete();
+  const needsMentorBonus=state.customers.length>=5&&fastStartStepsComplete()&&!state.mentorBonusApplied;
+  const pendingMomentum=state.customers.length>=6&&!state.momentumIntroDismissed&&result.customers.some(row=>row.customerNumber===6&&row.momentumRecruiter>0);
+  const complete=state.customers.length>=10&&!state.finalDismissed;
+  if(needsFastStartSteps)return `<div class="notice-backdrop">
+    <section class="notice-popup notice-celebration" onclick="event.stopPropagation()">
+      <div class="notice-emoji">🎯</div>
+      <div class="eyebrow">Fast Start Mentor Bonus</div>
+      <h2>Help them reach QD*.</h2>
+      <p class="muted">When a Partner you introduce reaches QD* in their first 30 days, you earn a £400 mentor bonus. They need one Partner introduced and 6 customers in total. Their own linked customer account can count as one of those customers.</p>
+      <div class="step-actions">
+        ${fastStartStepButton(state.introducedPartner,'They introduce 1 Partner','partner',1)}
+        ${fastStartStepButton(state.linkedOwnAccount,'They link their own account','own',2)}
+      </div>
+    </section>
+  </div>`;
+  if(needsMentorBonus)return `<div class="notice-backdrop">
+    <section class="notice-popup notice-green notice-celebration" onclick="event.stopPropagation()">
+      <div class="notice-emoji">🏅</div>
+      <div class="eyebrow">Mentor bonus ready</div>
+      <h2>£400 Fast Start Mentor Bonus</h2>
+      <p class="muted">Their first 30 day milestone is complete. This is the point where your mentor reward is added.</p>
+      <button class="button green" onclick="applyMentorBonus()">Apply £400 Mentor Bonus</button>
+    </section>
+  </div>`;
+  if(pendingMomentum)return `<div class="notice-backdrop">
+    <section class="notice-popup notice-green notice-celebration" onclick="event.stopPropagation()">
+      <div class="notice-emoji">⚡</div>
+      <div class="eyebrow">Mentor Momentum begins</div>
+      <h2>Your first Mentor Momentum Bonus is ready.</h2>
+      <p class="muted">In days 31-60, active appointment support steps back. You still guide them, but supporting appointment bonuses stop.</p>
+      <p class="muted">Momentum Bonus rewards eligible 3+ service appointments they complete independently, and it is paid to the recruiting Partner too.</p>
+      <p class="watch-line"><strong>Watch as the first Mentor Momentum Bonus is applied to their 6th customer.</strong></p>
+      <button class="button green" onclick="startMomentumReveal()">Apply Mentor Momentum</button>
+    </section>
+  </div>`;
+  if(complete)return `<div class="notice-backdrop">
+    <section class="notice-popup notice-green notice-celebration notice-final" onclick="event.stopPropagation()">
+      <button class="notice-close" onclick="dismissFinal()" aria-label="Close">×</button>
+      <div class="notice-emoji">🚀</div>
+      <div class="eyebrow">Mentor Demo Complete</div>
+      <h2>${money(split.total)} mentor income</h2>
+      <p class="muted">You helped one new Partner map a clean first 60 days. Their demo shows ${money(split.partnerTotal)} potential earnings, and you can see why helping someone else win early matters.</p>
+      <div class="notice-actions">
+        <a class="button register-link" href="${CONTACT.calendarUrl}" target="_blank" rel="noopener">Book a no-commitment chat</a>
+      </div>
+    </section>
+  </div>`;
+  return '';
+}
+function coachLine(result,split){
+  if(state.momentumRevealInProgress)return 'Watch the first Mentor Momentum Bonus land on their 6th customer.';
+  if(state.customers.length===0)return 'Add their first five customers to see how supported appointments build mentor income.';
+  if(state.customers.length<5)return 'In their first 30 days, you are actively supporting appointments and earning support income.';
+  if(state.customers.length===5&&!state.mentorBonusApplied)return 'Their first five customers are in. Help them complete the two Fast Start steps.';
+  if(state.customers.length===5)return 'The first 30 day mentor story is complete. Now move into days 31-60.';
+  if(state.customers.length<10)return 'Support payments stop in days 31-60, but Mentor Momentum can still build with each eligible independent customer.';
+  return 'The mentor story is mapped. This is the power of helping one Partner build early confidence.';
+}
+function renderStarted(){
+  const result=R.calculateEarnings(buildContext());
+  const split=splitMentor(result);
+  const count=state.customers.length;
+  const month1Count=Math.min(5,count);
+  const month2Count=Math.max(0,count-5);
+  const independentStage=count>=6||state.mentorBonusApplied;
+  const canAdd=count<10&&state.mentorBonusApplied||count<5;
+  const buttonTone=independentStage?'green':'blue';
+  const addButton=canAdd?`<div class="add-customer-row"><button class="button ${buttonTone} add-customer-main" ${state.momentumRevealInProgress?'disabled':''} onclick="addCustomer()">${state.momentumRevealInProgress?'Applying Mentor Momentum...':addLabel(count+1)}</button></div>`:'';
+  document.body.classList.toggle('explorer-independent',independentStage);
+  document.getElementById('app').innerHTML=`
+    ${contactMarkup()}
+    <header class="topbar">
+      <div><div class="eyebrow">Utility Warehouse Mentor Earnings Explorer</div><h1>${independentStage?'Mentor days 31-60':'Mentor first 30 days'}</h1></div>
+    </header>
+    <section class="hero ${independentStage?'hero-independent':'hero-tracker-first'}">
+      <div class="mentor-hero-grid">
+        <div>
+          <div class="eyebrow" style="color:rgba(255,255,255,.76)">Your mentor income</div>
+          <div class="hero-number">${money(split.total)}</div>
+        </div>
+        <div class="mentor-side-stat">
+          <span>Their demo</span>
+          <strong>${money(split.partnerTotal)}</strong>
+        </div>
+      </div>
+      <div style="margin-top:.75rem" class="progress"><span style="width:${Math.min(100,split.total/maxMentorTotal*100)}%"></span></div>
+      <div class="hero-progress-caption">${money(split.total)} of ${money(maxMentorTotal)} mentor income</div>
+    </section>
+    <section class="card customer-builder-card ${independentStage?'independence-card':''}">
+      <div class="coach-box ${independentStage?'coach-box-next':'coach-box-first'}">${coachLine(result,split)}</div>
+      ${addButton}
+      <div class="customer-columns">
+        ${mentorColumn({title:'Their days 1-30',count:month1Count,total:split.month1,max:maxMonth1Mentor,rows:renderMentorRows(state.customers.slice(0,5),split.rowsById,0,false),tone:'first',note:'Active support',bonusRow:mentorBonusRow(split)})}
+        ${mentorColumn({title:'Their days 31-60',count:month2Count,total:split.month2,max:maxMonth2Mentor,rows:renderMentorRows(state.customers.slice(5),split.rowsById,5,!independentStage),tone:'next',locked:!independentStage,note:'Mentor Momentum'})}
+      </div>
+    </section>
+    <section class="mentor-context-card">
+      <div>
+        <span>Support</span>
+        <strong>${money(split.supportTotal)}</strong>
+      </div>
+      <div>
+        <span>Fast Start Mentor</span>
+        <strong>${money(split.mentorFastStart)}</strong>
+      </div>
+      <div>
+        <span>Mentor Momentum</span>
+        <strong>${money(split.momentumTotal)}</strong>
+      </div>
+    </section>
+    <div class="utility-row">
+      ${assumptionsTip()}
+      <button class="button secondary button-small" onclick="resetExplorer()">Start again</button>
+    </div>
+    ${noticeMarkup(result,split)}
+    ${howPaidMarkup()}
+  `;
+}
+function renderWelcome(){
+  document.body.classList.remove('explorer-independent');
+  document.getElementById('app').innerHTML=`
+    ${contactMarkup()}
+    <section class="splash-card" style="margin-top:10vh">
+      <div class="splash-top">
+        <div class="splash-wave">🤝</div>
+        <h1>Welcome to the Utility Warehouse mentor earnings explorer</h1>
+      </div>
+      <div class="splash-body">
+        <div class="splash-highlight">Once you have built your own first 10, the next story is helping one new Partner do the same.</div>
+        <p>See how supported appointments, Fast Start Mentor Bonus and Mentor Momentum can build when you help someone launch well.</p>
+        <p><strong>When your Partner wins, your mentor story grows too. 🏆</strong></p>
+        <button class="button splash-start" onclick="start()">Let's go!</button>
+      </div>
+    </section>
+    ${howPaidMarkup()}`;
+}
+function render(){state.started?renderStarted():renderWelcome();}
+render();
+</script>
+</body>
+</html>
