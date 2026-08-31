@@ -31,7 +31,7 @@ const CONTACT={
 };
 const DEMO_TYPE='homeowner';
 const DEMO_SERVICES=3;
-const state={started:false,month1:[],month2:[],ownAccountLinked:false,customerPartnerUpgraded:false,habIntroDismissed:false,month2HabIntroDismissed:false,month1HabAppliedIds:[],month2HabAppliedIds:[],month1HabRevealComplete:false,month2HabRevealComplete:false,habRevealInProgress:false,habRevealToken:0,habPulseId:null,nextIntroDismissed:false,endIntroDismissed:false,expandedCustomerId:null,contactOpen:false,sayHiOpen:false,howPaidOpen:false};
+const state={started:false,month1:[],month2:[],ownAccountLinked:false,customerPartnerUpgraded:false,habIntroDismissed:false,month2HabIntroDismissed:false,month1HabAppliedIds:[],month2HabAppliedIds:[],month1HabRevealComplete:false,month2HabRevealComplete:false,habRevealInProgress:false,habRevealToken:0,habPulseId:null,momentumIntroDismissed:false,momentumAppliedIds:[],momentumRevealComplete:false,momentumRevealInProgress:false,momentumRevealToken:0,momentumPulseId:null,nextIntroDismissed:false,endIntroDismissed:false,expandedCustomerId:null,contactOpen:false,sayHiOpen:false,howPaidOpen:false};
 
 function makeCustomer(number,type=DEMO_TYPE,services=DEMO_SERVICES){
   return {id:`c${number}`,type,services,supported:number<=5};
@@ -43,6 +43,11 @@ function visibleHabRow(row,month){
   const ids=month===1?state.month1HabAppliedIds:state.month2HabAppliedIds;
   const complete=month===1?state.month1HabRevealComplete:state.month2HabRevealComplete;
   return {...row,highActivityBonus:complete||ids.includes(row.id)?row.highActivityBonus:0};
+}
+function visibleMomentumRow(row){
+  const isFirstMomentum=row.customerNumber===6&&row.momentumGatheringPartner>0;
+  const shown=state.momentumRevealComplete||state.momentumAppliedIds.includes(row.id);
+  return isFirstMomentum&&!shown?{...row,momentumGatheringPartner:0}:row;
 }
 function buildContext(month1=state.month1,month2=state.month2,ownAccountLinked=state.ownAccountLinked,customerPartnerUpgraded=state.customerPartnerUpgraded){
   const customers=[...month1.map((c,i)=>({...c,dateGathered:R.addDays(startDate,i+1),supported:true})),
@@ -62,7 +67,7 @@ function splitTotals(result){
   const rowTotal=(row)=>row.customerBonusGatheringPartner+row.highActivityBonus+row.momentumGatheringPartner;
   const sumRows=(rows,key)=>rows.reduce((sum,row)=>sum+(row[key]||0),0);
   const m1Rows=result.customers.filter(row=>month1Ids.has(row.id)).map(row=>visibleHabRow(row,1));
-  const m2Rows=result.customers.filter(row=>month2Ids.has(row.id)).map(row=>visibleHabRow(row,2));
+  const m2Rows=result.customers.filter(row=>month2Ids.has(row.id)).map(row=>visibleMomentumRow(visibleHabRow(row,2)));
   const first30Bonuses=result.gatheringBreakdown.qdBonus+result.gatheringBreakdown.fastStarterBonus;
   const rowsById=[...m1Rows,...m2Rows].reduce((acc,row)=>{acc[row.id]=row;return acc;},{});
   return {
@@ -103,7 +108,7 @@ const maxTotal=maxMonth1+maxMonth2;
 
 function addCustomer(){
   const allCount=state.month1.length+state.month2.length;
-  if(state.habRevealInProgress)return;
+  if(state.habRevealInProgress||state.momentumRevealInProgress)return;
   if(allCount>=10)return;
   if(allCount>=5&&!first30MilestoneComplete())return;
   const customer=makeCustomer(allCount+1,DEMO_TYPE,DEMO_SERVICES);
@@ -112,7 +117,7 @@ function addCustomer(){
   render();
 }
 function resetExplorer(){
-  state.month1=[];state.month2=[];state.ownAccountLinked=false;state.customerPartnerUpgraded=false;state.habIntroDismissed=false;state.month2HabIntroDismissed=false;state.month1HabAppliedIds=[];state.month2HabAppliedIds=[];state.month1HabRevealComplete=false;state.month2HabRevealComplete=false;state.habRevealInProgress=false;state.habRevealToken+=1;state.habPulseId=null;state.nextIntroDismissed=false;state.endIntroDismissed=false;state.expandedCustomerId=null;render();
+  state.month1=[];state.month2=[];state.ownAccountLinked=false;state.customerPartnerUpgraded=false;state.habIntroDismissed=false;state.month2HabIntroDismissed=false;state.month1HabAppliedIds=[];state.month2HabAppliedIds=[];state.month1HabRevealComplete=false;state.month2HabRevealComplete=false;state.habRevealInProgress=false;state.habRevealToken+=1;state.habPulseId=null;state.momentumIntroDismissed=false;state.momentumAppliedIds=[];state.momentumRevealComplete=false;state.momentumRevealInProgress=false;state.momentumRevealToken+=1;state.momentumPulseId=null;state.nextIntroDismissed=false;state.endIntroDismissed=false;state.expandedCustomerId=null;render();
 }
 function completeFirst30Step(step){
   if(step==='own')state.ownAccountLinked=true;
@@ -151,6 +156,37 @@ function startHabReveal(month){
   };
   render();
   window.setTimeout(()=>applyNext(0),450);
+}
+function momentumRevealId(){
+  const row=R.calculateEarnings(buildContext()).customers.find(row=>row.customerNumber===6&&row.momentumGatheringPartner>0);
+  return row?row.id:null;
+}
+function startMomentumReveal(){
+  if(state.habRevealInProgress||state.momentumRevealInProgress)return;
+  const id=momentumRevealId();
+  state.momentumIntroDismissed=true;
+  if(!id){
+    state.momentumRevealComplete=true;
+    render();
+    return;
+  }
+  state.momentumRevealInProgress=true;
+  state.momentumRevealToken+=1;
+  const token=state.momentumRevealToken;
+  render();
+  window.setTimeout(()=>{
+    if(token!==state.momentumRevealToken)return;
+    if(!state.momentumAppliedIds.includes(id))state.momentumAppliedIds.push(id);
+    state.momentumPulseId=id;
+    render();
+    window.setTimeout(()=>{
+      if(token!==state.momentumRevealToken)return;
+      state.momentumRevealInProgress=false;
+      state.momentumPulseId=null;
+      state.momentumRevealComplete=true;
+      render();
+    },1500);
+  },450);
 }
 function dismissNextIntro(){state.nextIntroDismissed=true;render();}
 function dismissEndIntro(){state.endIntroDismissed=true;render();}
@@ -211,7 +247,7 @@ function renderCustomerRows(customers,rowsById,offset=0,lockedFuture=false,fastS
       </div>
       <div class="row-badges">${badges}</div>
       ${tableMoney(row?total:0,'table-row-total')}`;
-    return `<div class="customer-table-row ${future?'customer-tile-future':''} ${partnerAwarded?'customer-tile-awarded':''} ${row&&state.habPulseId===row.id?'customer-row-hab-pulse':''}" aria-label="${ordinal(number)} customer">
+    return `<div class="customer-table-row ${future?'customer-tile-future':''} ${partnerAwarded?'customer-tile-awarded':''} ${row&&state.habPulseId===row.id?'customer-row-hab-pulse':''} ${row&&state.momentumPulseId===row.id?'customer-row-momentum-pulse':''}" aria-label="${ordinal(number)} customer">
       ${row?`<button class="customer-summary-row" onclick="toggleCustomerDetails('${row.id}')" aria-expanded="${expanded?'true':'false'}">${rowMain}</button>`:`<div class="customer-summary-row empty">${rowMain}</div>`}
       ${expanded?`<div class="customer-row-detail">
         ${detailCell('Customer',customer)}
@@ -339,11 +375,13 @@ function renderStarted(){
   const needsUpgrade=state.month1.length>=5&&!first30MilestoneComplete();
   const independentStage=state.month1.length>=5&&first30MilestoneComplete();
   const journeyComplete=allCount>=10;
+  const revealInProgress=state.habRevealInProgress||state.momentumRevealInProgress;
+  const hasPendingMomentumIntro=!state.momentumIntroDismissed&&result.customers.some(row=>row.customerNumber===6&&row.momentumGatheringPartner>0);
   const pageHeading=independentStage?'Days 31-60':'First 30 days';
-  const coachLine=state.habRevealInProgress?'Watch the £100 High Activity Bonus land on each qualifying customer.':allCount===0?'Add your first five customers and watch the first-30-day bonuses appear.':state.month1.length<4?'Build your first five customers and keep the journey simple.':state.month1.length===4?'High Activity Bonus is now part of your first month.':needsUpgrade?`${milestoneStepsDone}/2 steps complete. Finish both to unlock your Fast Start moment.`:independentStage&&state.month2.length===0?'Your launch month is complete. Now see what a more independent second 30 days can add.':state.month2.length===4?'Another High Activity Bonus has landed in your second month.':state.month2.length<5?'You are now exploring more independent customer gathering, with Momentum in play.':'Your first 60 days are mapped.';
+  const coachLine=state.habRevealInProgress?'Watch the £100 High Activity Bonus land on each qualifying customer.':state.momentumRevealInProgress?'Watch the first Momentum Bonus land on your 6th customer.':allCount===0?'Add your first five customers and watch the first-30-day bonuses appear.':state.month1.length<4?'Build your first five customers and keep the journey simple.':state.month1.length===4?'High Activity Bonus is now part of your first month.':needsUpgrade?`${milestoneStepsDone}/2 steps complete. Finish both to unlock your Fast Start moment.`:independentStage&&state.month2.length===0?'Your launch month is complete. Now see what a more independent second 30 days can add.':state.month2.length===4?'Another High Activity Bonus has landed on top of Momentum.':state.month2.length<5?'You are now exploring more independent customer gathering, with Momentum in play.':'Your first 60 days are mapped.';
   const builderPrimaryClass=independentStage?'button green':'button';
   const addCustomerAction=!needsUpgrade&&!journeyComplete
-    ?`<div class="add-customer-row"><button class="${builderPrimaryClass} add-customer-main" ${state.habRevealInProgress?'disabled':''} onclick="addCustomer()">${state.habRevealInProgress?'Applying High Activity Bonus...':addLabel(nextNumber)}</button></div>`
+    ?`<div class="add-customer-row"><button class="${builderPrimaryClass} add-customer-main" ${revealInProgress?'disabled':''} onclick="addCustomer()">${state.habRevealInProgress?'Applying High Activity Bonus...':state.momentumRevealInProgress?'Applying Momentum Bonus...':addLabel(nextNumber)}</button></div>`
     :'';
   const builderControls='';
   const registerButton=`<a class="button register-link" target="_blank" rel="noopener" href="${registerUrl}">🎯Ready to earn? Register here!</a>`;
@@ -382,12 +420,22 @@ function renderStarted(){
           <button class="button secondary" onclick="dismissNextIntro()">Explore next 30 days earnings</button>
         </div>
       </section>
+    </div>`:hasPendingMomentumIntro?`<div class="notice-backdrop">
+      <section class="notice-popup notice-green notice-celebration" onclick="event.stopPropagation()">
+        <div class="notice-emoji">⚡</div>
+        <div class="eyebrow">Momentum Bonus unlocked</div>
+        <h2>Your first Momentum Bonus is ready.</h2>
+        <p class="muted">In days 31-60, the focus shifts to helping you build independence. Momentum Bonus rewards eligible 3+ service appointments you complete without active appointment support.</p>
+        <p class="muted">It can apply to both tenants and homeowners.</p>
+        <p class="watch-line"><strong>Watch as your first Momentum Bonus is applied to your 6th customer.</strong></p>
+        <button class="button green" onclick="startMomentumReveal()">Apply Momentum Bonus</button>
+      </section>
     </div>`:!state.month2HabIntroDismissed&&state.month2.length>=4?`<div class="notice-backdrop">
       <section class="notice-popup notice-green notice-celebration" onclick="event.stopPropagation()">
         <div class="notice-emoji">🏆</div>
         <div class="eyebrow">High Activity Bonus unlocked again</div>
         <h2>High Activity Bonus is ready again.</h2>
-        <p class="muted">This is the 4th 3-service homeowner in the second calendar month, so High Activity Bonus applies to every qualifying homeowner in the green column.</p>
+        <p class="muted">This is the 4th 3-service homeowner in the second calendar month. High Activity Bonus is added on top of Momentum Bonus and applies to every qualifying homeowner in the green column.</p>
         <p class="watch-line"><strong>Watch as each customer has the £100 High Activity Bonus applied.</strong></p>
         <button class="button green" onclick="startHabReveal(2)">Apply High Activity Bonus</button>
       </section>
