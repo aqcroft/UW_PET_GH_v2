@@ -438,11 +438,10 @@ function noticeMarkup(result,split){
   const complete=state.customers.length>=10&&!state.finalDismissed;
   if(needsMonth1Hab)return `<div class="notice-backdrop">
     <section class="notice-popup notice-blue notice-celebration" onclick="event.stopPropagation()">
-      <div class="notice-emoji">🏆</div>
+      <div class="notice-emoji">🔥</div>
       <div class="eyebrow">Their High Activity Bonus</div>
       <h2>A reminder from your own journey.</h2>
-      <p class="muted">Just like you, 4 or more 3-service homeowners in one calendar month means your new Partner earns £100 High Activity Bonus on all 4.</p>
-      <p class="watch-line"><strong>This is an early win your mentoring helps them see clearly.</strong></p>
+      <p class="muted">Just like you, 4 or more <strong>3-service homeowners</strong> in one calendar month means your new Partner earns £100 High Activity Bonus on all 4.</p>
       <button class="button blue" onclick="dismissHabIntro(1)">Keep mentoring</button>
     </section>
   </div>`;
@@ -483,22 +482,21 @@ function noticeMarkup(result,split){
   </div>`;
   if(pendingMomentum)return `<div class="notice-backdrop">
     <section class="notice-popup notice-green notice-celebration" onclick="event.stopPropagation()">
-      <div class="notice-emoji">⚡</div>
-      <div class="eyebrow">Mentor Momentum begins</div>
-      <h2>Your first Mentor Momentum Bonus is ready.</h2>
-      <p class="muted">In days 31-60, active appointment support steps back. You still guide them, but supporting appointment bonuses stop.</p>
-      <p class="muted">Momentum Bonus rewards eligible 3+ service appointments they complete independently, and it is paid to the recruiting Partner too.</p>
-      <p class="watch-line"><strong>Watch as the first Mentor Momentum Bonus is applied to their 6th customer.</strong></p>
+      <div class="notice-emoji">🎓⚡</div>
+      <div class="eyebrow milestone-heading">Mentor Momentum begins</div>
+      <p class="muted">In days 31-60, active appointment support stops, along with supporting bonuses.</p>
+      <p class="muted">Momentum Bonus rewards <strong>3+ service customers from unsupported appointments</strong>. Both the new Partner and the mentor are paid £125.</p>
+      <p class="watch-line"><strong>Watch as Mentor Momentum is applied to their 6th customer.</strong></p>
       <button class="button green" onclick="startMomentumReveal()">Apply Mentor Momentum</button>
     </section>
   </div>`;
   if(needsMonth2Hab)return `<div class="notice-backdrop">
     <section class="notice-popup notice-green notice-celebration" onclick="event.stopPropagation()">
-      <div class="notice-emoji">🏆</div>
-      <div class="eyebrow">Their High Activity Bonus again</div>
+      <div class="notice-emoji">🔥</div>
+      <div class="eyebrow milestone-heading">Their High Activity Bonus again</div>
       <h2>A second month reminder.</h2>
-      <p class="muted">Just like you, 4 or more 3-service homeowners in one calendar month means your new Partner earns £100 High Activity Bonus on all 4.</p>
-      <p class="watch-line"><strong>In days 31-60, that lands on top of their Momentum Bonus.</strong></p>
+      <p class="muted">Just like you, 4 or more <strong>3-service homeowners</strong> in one calendar month means your new Partner earns £100 High Activity Bonus on all 4.</p>
+      <p class="watch-line"><strong>In days 31-60, your new Partner earns both High Activity Bonus and Momentum Bonus.</strong></p>
       <button class="button green" onclick="dismissHabIntro(2)">Keep going</button>
     </section>
   </div>`;
@@ -510,6 +508,11 @@ function noticeMarkup(result,split){
       <h2>${money(split.total)} mentor income</h2>
       <p class="muted">You helped one new Partner earn ${money(split.partnerTotal)} in their first 60 days<br>and you earned ${money(split.total)} yourself.</p>
       <p class="muted"><strong>That's just one Partner.</strong> What if you mentored two while continuing to gather your own customers?</p>
+      <div class="mentor-total-strip">
+        <div class="mentor-total-chip"><span>🤝 Supporting</span><strong>${money(split.supportTotal)}</strong></div>
+        <div class="mentor-total-chip"><span>🎓 Fast Start Mentor</span><strong>${money(split.mentorFastStart)}</strong></div>
+        <div class="mentor-total-chip"><span>🎓⚡ Mentor Momentum</span><strong>${money(split.momentumTotal)}</strong></div>
+      </div>
       <div class="notice-actions">
         ${registerButton}
         ${chatButton}
@@ -519,7 +522,7 @@ function noticeMarkup(result,split){
   return '';
 }
 function coachLine(result,split){
-  if(state.momentumRevealInProgress)return 'Watch the first Mentor Momentum Bonus land on their 6th customer.';
+  if(state.momentumRevealInProgress)return 'Watch Mentor Momentum apply to their 6th customer.';
   if(state.mentorBonusRevealInProgress)return 'Applying Fast Start Mentor criteria.';
   if(state.customers.length===0)return 'Add their first five customers to see how supported appointments build mentor income.';
   if(state.customers.length===4)return 'Their 4th qualifying customer shows them how High Activity Bonus can change the month.';
@@ -607,12 +610,12 @@ function renderWelcome(){
         <h1>Welcome to the Utility Warehouse mentor earnings explorer</h1>
       </div>
       <div class="splash-body">
-        <div class="splash-highlight">Once you've introduced your first 10 customers, the next chapter is helping one new Partner do the same.</div>
-        <p>Reaching 10 personal customers helps unlock the path towards Team Leader and opens new income streams.</p>
+        <div class="splash-highlight">Once you've introduced your first 10 customers<br>the next chapter is helping one new Partner do the same.</div>
+        <p>Reaching 10 personal customers is a critical step for promotion to Team Leader. Plus it unlocks three new income streams.</p>
         <div class="income-chip-grid">
           <div class="income-chip"><span>🤝</span><strong>Supporting bonuses</strong><em>up to £150</em></div>
           <div class="income-chip"><span>🎓</span><strong>Fast Start Mentor</strong><em>up to £400</em></div>
-          <div class="income-chip"><span>⚡</span><strong>Mentor Momentum</strong><em>£125 x 5</em></div>
+          <div class="income-chip"><span>🎓⚡</span><strong>Mentor Momentum</strong><em>up to 5 x £125</em></div>
         </div>
         <p><strong>The more you support and coach your new Partners, the more you can succeed too. 🏆</strong></p>
         <button class="button splash-start" onclick="start()">Let's go!</button>
