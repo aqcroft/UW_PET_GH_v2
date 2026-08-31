@@ -397,8 +397,18 @@ function fastStartFlash(){
   const pulse=state.fastStartRevealInProgress||state.fastStartRevealComplete&&!state.nextIntroDismissed;
   return `<div class="fast-start-flash ${active?'active':'ghost'} ${pulse?'pulse':''}" aria-live="polite">
     <span class="flash-icon">🏆</span>
-    <span><strong>£500</strong> Fast Start</span>
-    <small>${state.fastStartAccountBadgeApplied?'✓ Own account linked':'Own account link ready'}</small>
+    <span><strong>£500</strong> Fast Start Bonus</span>
+    <small>${active?'Bonus achieved':'Ready to unlock'}</small>
+  </div>`;
+}
+function titleOwnAccountBadge(){
+  if(!state.fastStartAccountBadgeApplied)return '';
+  const pulse=state.fastStartRevealInProgress||state.fastStartRevealComplete&&!state.nextIntroDismissed;
+  return `<span class="own-account-title-badge ${pulse?'pulse':''}">🔗 Own account linked</span>`;
+}
+function celebrationGlitter(){
+  return `<div class="celebration-glitter" aria-hidden="true">
+    ${Array.from({length:34},(_,i)=>`<span style="--x:${(i*37)%100}%;--d:${(i%8)*.08}s;--s:${.78+(i%7)*.08};--r:${(i*29)%360}deg">✨</span>`).join('')}
   </div>`;
 }
 function monthCard({title,copy,count,total,max,breakdown=[],tiles,tone='',locked=false}){
@@ -469,6 +479,7 @@ function renderStarted(){
       </section>
     </div>`:independentStage&&!state.nextIntroDismissed&&!state.fastStartRevealInProgress?`<div class="notice-backdrop">
       <section class="notice-popup notice-green notice-celebration">
+        ${celebrationGlitter()}
         <div class="notice-emoji">🎉</div>
         <div class="eyebrow">Fast Start awarded</div>
         <h2>£500 Bonus!</h2>
@@ -520,7 +531,7 @@ function renderStarted(){
   document.getElementById('app').innerHTML=`
     ${contactMarkup()}
     <header class="topbar">
-      <div><div class="eyebrow">Utility Warehouse Partner Earnings Explorer</div><h1>${pageHeading}</h1></div>
+      <div><div class="eyebrow">Utility Warehouse Partner Earnings Explorer</div><div class="title-row"><h1>${pageHeading}</h1>${titleOwnAccountBadge()}</div></div>
     </header>
     <section class="hero ${independentStage?'hero-independent':''}">
       <div class="row hero-earnings-row" style="align-items:flex-start;gap:.6rem">

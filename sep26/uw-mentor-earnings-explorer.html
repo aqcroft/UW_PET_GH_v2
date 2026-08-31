@@ -36,6 +36,7 @@ const state={
   introducedPartner:false,
   linkedOwnAccount:false,
   mentorBonusApplied:false,
+  mentorBonusRevealInProgress:false,
   mentorBonusPulse:false,
   habIntroDismissed:false,
   month2HabIntroDismissed:false,
@@ -144,6 +145,7 @@ function resetExplorer(){
   state.introducedPartner=false;
   state.linkedOwnAccount=false;
   state.mentorBonusApplied=false;
+  state.mentorBonusRevealInProgress=false;
   state.mentorBonusPulse=false;
   state.habIntroDismissed=false;
   state.month2HabIntroDismissed=false;
@@ -158,17 +160,24 @@ function resetExplorer(){
   render();
 }
 function completeFastStartStep(step){
+  if(state.mentorBonusApplied||state.mentorBonusRevealInProgress)return;
   if(step==='partner')state.introducedPartner=true;
   if(step==='own')state.linkedOwnAccount=true;
   render();
 }
 function applyMentorBonus(){
-  state.mentorBonusApplied=true;
+  if(state.mentorBonusApplied||state.mentorBonusRevealInProgress||!fastStartStepsComplete())return;
+  state.mentorBonusRevealInProgress=true;
   state.mentorBonusPulse=true;
   render();
   window.setTimeout(()=>{
-    state.mentorBonusPulse=false;
+    state.mentorBonusApplied=true;
     render();
+    window.setTimeout(()=>{
+      state.mentorBonusPulse=false;
+      state.mentorBonusRevealInProgress=false;
+      render();
+    },1400);
   },1300);
 }
 function dismissHabIntro(month){
@@ -360,14 +369,31 @@ function mentorColumn({title,count,total,max,rows,tone,locked=false,note='',bonu
   </section>`;
 }
 function fastStartStepButton(done,label,step,number){
-  return `<button class="step-button ${done?'done':''}" ${done?'disabled':''} onclick="completeFastStartStep('${step}')">
+  return `<button class="step-button ${done?'done':''}" ${done||state.mentorBonusRevealInProgress?'disabled':''} onclick="completeFastStartStep('${step}')">
     <span>${done?'Done':`Step ${number}`}</span>
     <strong>${label}</strong>
+    <span class="step-check" aria-hidden="true">${done?'✓':''}</span>
   </button>`;
+}
+function mentorFastStartFlash(){
+  const show=state.customers.length>=5||state.mentorBonusApplied||state.mentorBonusRevealInProgress;
+  if(!show)return '';
+  const active=state.mentorBonusApplied;
+  const pulse=state.mentorBonusPulse||state.mentorBonusRevealInProgress;
+  return `<div class="fast-start-flash mentor-fast-start-flash ${active?'active':'ghost'} ${pulse?'pulse':''}" aria-live="polite">
+    <span class="flash-icon">🎓</span>
+    <span><strong>£400</strong> Fast Start Mentor</span>
+    <small>${active?'Bonus achieved':'Ready to unlock'}</small>
+  </div>`;
+}
+function celebrationGlitter(){
+  return `<div class="celebration-glitter" aria-hidden="true">
+    ${Array.from({length:32},(_,i)=>`<span style="--x:${(i*41)%100}%;--d:${(i%8)*.08}s;--s:${.78+(i%7)*.08};--r:${(i*31)%360}deg">✨</span>`).join('')}
+  </div>`;
 }
 function noticeMarkup(result,split){
   const needsFastStartSteps=state.customers.length>=5&&!fastStartStepsComplete();
-  const needsMentorBonus=state.customers.length>=5&&fastStartStepsComplete()&&!state.mentorBonusApplied;
+  const needsMentorBonus=state.customers.length>=5&&fastStartStepsComplete()&&!state.mentorBonusApplied&&!state.mentorBonusRevealInProgress;
   const pendingMomentum=state.customers.length>=6&&!state.momentumIntroDismissed&&result.customers.some(row=>row.customerNumber===6&&row.momentumRecruiter>0);
   const needsMonth1Hab=state.customers.length>=4&&!state.habIntroDismissed;
   const needsMonth2Hab=state.customers.length>=9&&!state.month2HabIntroDismissed;
@@ -456,12 +482,20 @@ function renderStarted(){
   const month1Count=Math.min(5,count);
   const month2Count=Math.max(0,count-5);
   const independentStage=count>=6||state.mentorBonusApplied;
-  const canAdd=count<10&&state.mentorBonusApplied||count<5;
+  const canAdd=(count<10&&state.mentorBonusApplied||count<5)&&!state.mentorBonusRevealInProgress;
   const buttonTone=independentStage?'green':'blue';
-  const addButton=canAdd?`<div class="add-customer-row"><button class="button ${buttonTone} add-customer-main" ${state.momentumRevealInProgress?'disabled':''} onclick="addCustomer()">${state.momentumRevealInProgress?'Applying Mentor Momentum...':addLabel(count+1)}</button></div>`:'';
+  const addButton=canAdd?`<button class="button ${buttonTone} add-customer-main" ${state.momentumRevealInProgress?'disabled':''} onclick="addCustomer()">${state.momentumRevealInProgress?'Applying Mentor Momentum...':addLabel(count+1)}</button>`:'';
+  const actionRail=mentorFastStartFlash()||addButton
+    ?`<div class="add-customer-row action-rail">
+        <div class="action-rail-side">${mentorFastStartFlash()}</div>
+        <div class="action-rail-main">${addButton}</div>
+        <div class="action-rail-side"></div>
+      </div>`
+    :'';
   document.body.classList.toggle('explorer-independent',independentStage);
   document.getElementById('app').innerHTML=`
     ${contactMarkup()}
+    ${state.mentorBonusPulse?celebrationGlitter():''}
     <header class="topbar">
       <div><div class="eyebrow">Utility Warehouse Mentor Earnings Explorer</div><h1>${independentStage?'Mentor days 31-60':'Mentor first 30 days'}</h1></div>
     </header>
@@ -481,9 +515,9 @@ function renderStarted(){
     </section>
     <section class="card customer-builder-card ${independentStage?'independence-card':''}">
       <div class="coach-box ${independentStage?'coach-box-next':'coach-box-first'}">${coachLine(result,split)}</div>
-      ${addButton}
+      ${actionRail}
       <div class="customer-columns">
-        ${mentorColumn({title:'Their days 1-30',count:month1Count,total:split.month1,max:maxMonth1Mentor,rows:renderMentorRows(state.customers.slice(0,5),split.rowsById,0,false),tone:'first',note:'Active support',bonusRow:mentorBonusRow(split)})}
+        ${mentorColumn({title:'Their days 1-30',count:month1Count,total:split.month1,max:maxMonth1Mentor,rows:renderMentorRows(state.customers.slice(0,5),split.rowsById,0,false),tone:'first',note:'Active support'})}
         ${mentorColumn({title:'Their days 31-60',count:month2Count,total:split.month2,max:maxMonth2Mentor,rows:renderMentorRows(state.customers.slice(5),split.rowsById,5,!independentStage),tone:'next',locked:!independentStage,note:'Mentor Momentum'})}
       </div>
     </section>
