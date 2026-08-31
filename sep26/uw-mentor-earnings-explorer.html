@@ -177,8 +177,8 @@ function applyMentorBonus(){
       state.mentorBonusPulse=false;
       state.mentorBonusRevealInProgress=false;
       render();
-    },1400);
-  },1300);
+    },1500);
+  },1500);
 }
 function dismissHabIntro(month){
   if(month===1)state.habIntroDismissed=true;
@@ -383,7 +383,7 @@ function mentorFastStartFlash(){
   return `<div class="fast-start-flash mentor-fast-start-flash ${active?'active':'ghost'} ${pulse?'pulse':''}" aria-live="polite">
     <span class="flash-icon">🎓</span>
     <span><strong>£400</strong> Fast Start Mentor</span>
-    <small>${active?'Bonus achieved':'Ready to unlock'}</small>
+    ${active?'':'<small>Ready to unlock</small>'}
   </div>`;
 }
 function celebrationGlitter(){
@@ -395,7 +395,7 @@ function noticeMarkup(result,split){
   const needsFastStartSteps=state.customers.length>=5&&!fastStartStepsComplete();
   const needsMentorBonus=state.customers.length>=5&&fastStartStepsComplete()&&!state.mentorBonusApplied&&!state.mentorBonusRevealInProgress;
   const pendingMomentum=state.customers.length>=6&&!state.momentumIntroDismissed&&result.customers.some(row=>row.customerNumber===6&&row.momentumRecruiter>0);
-  const needsMonth1Hab=state.customers.length>=4&&!state.habIntroDismissed;
+  const needsMonth1Hab=state.customers.length===4&&!state.habIntroDismissed;
   const needsMonth2Hab=state.customers.length>=9&&!state.month2HabIntroDismissed;
   const complete=state.customers.length>=10&&!state.finalDismissed;
   if(needsMonth1Hab)return `<div class="notice-backdrop">
@@ -556,9 +556,9 @@ function renderWelcome(){
         <div class="splash-highlight">Once you've introduced your first 10 customers, the next chapter is helping one new Partner do the same.</div>
         <p>Reaching 10 personal customers helps unlock the path towards Team Leader and opens new income streams.</p>
         <div class="income-chip-grid">
-          <div class="income-chip"><span>🤝</span><strong>Supporting bonuses</strong></div>
-          <div class="income-chip"><span>🎓</span><strong>Fast Start Mentor bonuses</strong></div>
-          <div class="income-chip"><span>⚡</span><strong>Mentor Momentum bonuses</strong></div>
+          <div class="income-chip"><span>🤝</span><strong>Supporting bonuses</strong><em>up to £150</em></div>
+          <div class="income-chip"><span>🎓</span><strong>Mentor bonuses</strong><em>up to £500</em></div>
+          <div class="income-chip"><span>⚡</span><strong>Mentor Momentum</strong><em>£125 x 5</em></div>
         </div>
         <p><strong>The more you support and coach your new Partners, the more you can succeed too. 🏆</strong></p>
         <button class="button splash-start" onclick="start()">Let's go!</button>

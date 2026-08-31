@@ -157,10 +157,10 @@ function startFastStartReveal(){
           state.fastStartRevealInProgress=false;
           state.fastStartPulseId=null;
           render();
-        },1200);
-      },1050);
-    },1050);
-  },650);
+        },1500);
+      },1500);
+    },1500);
+  },450);
 }
 function habRevealIds(month){
   const ids=new Set((month===1?state.month1:state.month2).map(c=>c.id));
@@ -398,7 +398,7 @@ function fastStartFlash(){
   return `<div class="fast-start-flash ${active?'active':'ghost'} ${pulse?'pulse':''}" aria-live="polite">
     <span class="flash-icon">🏆</span>
     <span><strong>£500</strong> Fast Start Bonus</span>
-    <small>${active?'Bonus achieved':'Ready to unlock'}</small>
+    ${active?'':'<small>Ready to unlock</small>'}
   </div>`;
 }
 function titleOwnAccountBadge(){
@@ -456,8 +456,8 @@ function renderStarted(){
     :'';
   const builderControls='';
   const registerButton=`<a class="button register-link" target="_blank" rel="noopener" href="${registerUrl}">🎯Ready to earn? Register here!</a>`;
-  const mentorButton=`<a class="button secondary register-link mentor-link-button" href="${mentorUrl}">See the Mentor Story</a>`;
-  const noticeMarkup=!state.habIntroDismissed&&state.month1.length>=4?`<div class="notice-backdrop">
+  const mentorButton=`<a class="button secondary register-link mentor-link-button" href="${mentorUrl}">See the Mentor Journey</a>`;
+  const noticeMarkup=!state.habIntroDismissed&&state.month1.length===4?`<div class="notice-backdrop">
       <section class="notice-popup notice-blue notice-celebration" onclick="event.stopPropagation()">
         <div class="notice-emoji">🏆</div>
         <div class="eyebrow">High Activity Bonus unlocked</div>
@@ -498,10 +498,9 @@ function renderStarted(){
         <div class="notice-emoji">⚡</div>
         <div class="eyebrow">Momentum Bonus unlocked</div>
         <h2>Your first Momentum Bonus is ready.</h2>
-        <p class="muted">Your 6th 3-service homeowner just earned you another £250! The focus shifts to helping you build independence:</p>
-        <p class="muted"><strong>Momentum Bonus</strong> rewards you with an <strong>additional £125</strong> for every successful customer signup between your 6th and 10th in days 31-60 on appointments where you haven't had an experienced Partner supporting you.</p>
-        <p class="muted">Momentum Bonus can apply to both tenants and homeowners.</p>
-        <p class="watch-line"><strong>Watch as your first Momentum Bonus is applied to your 6th customer, taking your earnings from £250 to £375.</strong></p>
+        <p class="muted">Your 6th 3-service homeowner adds another £250 Customer Bonus.</p>
+        <p class="muted"><strong>Momentum Bonus</strong> rewards eligible unsupported 3+ service signups with an extra <strong>£125</strong> in days 31-60. It can apply to tenants and homeowners.</p>
+        <p class="watch-line"><strong>Watch it lift this customer from £250 to £375.</strong></p>
         <button class="button green" onclick="startMomentumReveal()">Apply Momentum Bonus</button>
       </section>
     </div>`:!state.month2HabIntroDismissed&&state.month2.length>=4?`<div class="notice-backdrop">
@@ -509,8 +508,8 @@ function renderStarted(){
         <div class="notice-emoji">🏆</div>
         <div class="eyebrow">High Activity Bonus unlocked again</div>
         <h2>High Activity Bonus is ready again.</h2>
-        <p class="muted">This is the 4th 3-service homeowner in your second calendar month. High Activity Bonus is added on top of Customer Bonus and Momentum Bonus, so each of the four £375 customers now becomes £475.</p>
-        <p class="muted">A 5th 3-service homeowner in this period would also be worth £475. Beyond your first 60 days, without Momentum Bonus, a 3-service homeowner would earn £350.</p>
+        <p class="muted">This is your 4th 3-service homeowner in the second calendar month, so High Activity Bonus now lands too.</p>
+        <p class="muted">It sits on top of Customer Bonus and Momentum Bonus: each £375 customer becomes £475.</p>
         <p class="watch-line"><strong>Watch as each customer has the £100 High Activity Bonus applied.</strong></p>
         <button class="button green" onclick="startHabReveal(2)">Apply High Activity Bonus</button>
       </section>
@@ -530,6 +529,7 @@ function renderStarted(){
   document.body.classList.toggle('explorer-independent',independentStage);
   document.getElementById('app').innerHTML=`
     ${contactMarkup()}
+    ${state.fastStartRevealComplete&&!state.nextIntroDismissed?celebrationGlitter():''}
     <header class="topbar">
       <div><div class="eyebrow">Utility Warehouse Partner Earnings Explorer</div><div class="title-row"><h1>${pageHeading}</h1>${titleOwnAccountBadge()}</div></div>
     </header>
