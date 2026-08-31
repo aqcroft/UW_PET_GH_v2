@@ -415,8 +415,12 @@ body.mentor-journey .notice-backdrop{background:rgba(2,6,15,.52)}
 body.mentor-journey .notice-popup{background:#fff;border-color:#dce4fa;color:#1f2937;box-shadow:0 24px 64px rgba(0,0,0,.42)}
 body.mentor-journey .notice-blue{background:#eef2ff;border-color:#c8d5f5}
 body.mentor-journey .notice-green{background:#e8fbf8;border-color:#b9ebe4}
+body.mentor-journey .notice-popup h2,
+body.mentor-journey .notice-popup strong{color:#101827}
+body.mentor-journey .notice-popup .eyebrow{color:#5f6678}
 body.mentor-journey .notice-popup .muted{color:#586174}
 body.mentor-journey .notice-popup .watch-line{color:#101827}
+body.mentor-journey .notice-popup .button.secondary{background:#fff;color:var(--purple);border-color:#d9d2e6}
 body.mentor-journey .notice-close{background:#fff;color:#1f2937;border:1px solid #dce4fa}
 body.mentor-journey .sheet-close{background:rgba(247,249,255,.1);color:#f7f9ff;border:1px solid rgba(188,204,235,.18)}
 body.mentor-journey .notice-popup .step-button{background:#eff6ff;border-color:rgba(29,79,145,.3);color:var(--blue)}
