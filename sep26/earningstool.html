@@ -128,8 +128,8 @@ function completeFirst30Step(step){
   if(state.fastStartRevealInProgress||state.fastStartRevealComplete)return;
   if(step==='own')state.ownAccountLinked=true;
   if(step==='partner')state.customerPartnerUpgraded=true;
-  render();
   if(first30StepsComplete())startFastStartReveal();
+  else render();
 }
 function startFastStartReveal(){
   if(state.fastStartRevealInProgress||state.fastStartRevealComplete||!first30StepsComplete())return;
@@ -149,11 +149,15 @@ function startFastStartReveal(){
       render();
       window.setTimeout(()=>{
         if(token!==state.fastStartRevealToken)return;
-        state.fastStartRevealInProgress=false;
-        state.fastStartPulseId=null;
         state.fastStartRevealComplete=true;
         state.nextIntroDismissed=false;
         render();
+        window.setTimeout(()=>{
+          if(token!==state.fastStartRevealToken)return;
+          state.fastStartRevealInProgress=false;
+          state.fastStartPulseId=null;
+          render();
+        },1200);
       },1050);
     },1050);
   },650);
@@ -268,7 +272,7 @@ function renderCustomerRows(customers,rowsById,offset=0,lockedFuture=false,fastS
     const total=customer+high+thirdValue;
     const fastStartBadgeTarget=row&&number===FAST_START_BADGE_CUSTOMER_NUMBER;
     const partnerAwarded=fastStartBadgeTarget&&state.fastStartPartnerBadgeApplied;
-    const accountLinked=fastStartBadgeTarget&&state.fastStartAccountBadgeApplied;
+    const accountLinked=false;
     const badges=[
       high>0?rowBadge('HAB','activity'):'',
       fastStart>0?rowBadge('Fast Start','fast-start'):'',
@@ -386,6 +390,17 @@ function first30StepButton(done,label,step,number){
     <span class="step-check" aria-hidden="true">${done?'✓':''}</span>
   </button>`;
 }
+function fastStartFlash(){
+  const show=state.month1.length>=5||state.fastStartRevealComplete;
+  if(!show)return '';
+  const active=state.fastStartRevealComplete;
+  const pulse=state.fastStartRevealInProgress||state.fastStartRevealComplete&&!state.nextIntroDismissed;
+  return `<div class="fast-start-flash ${active?'active':'ghost'} ${pulse?'pulse':''}" aria-live="polite">
+    <span class="flash-icon">🏆</span>
+    <span><strong>£500</strong> Fast Start</span>
+    <small>${state.fastStartAccountBadgeApplied?'✓ Own account linked':'Own account link ready'}</small>
+  </div>`;
+}
 function monthCard({title,copy,count,total,max,breakdown=[],tiles,tone='',locked=false}){
   return `<section class="card month-card ${tone?`month-card-${tone}`:''}" style="${locked?'opacity:.58':''}">
     <div class="month-head">
@@ -411,7 +426,7 @@ function renderStarted(){
   const total=split.month1+split.month2;
   const nextNumber=Math.min(10,allCount+1);
   const milestoneStepsDone=(state.ownAccountLinked?1:0)+(state.customerPartnerUpgraded?1:0);
-  const needsUpgrade=state.month1.length>=5&&!first30MilestoneComplete();
+  const needsUpgrade=state.month1.length>=5&&!first30MilestoneComplete()&&!state.fastStartRevealInProgress;
   const independentStage=state.month1.length>=5&&first30MilestoneComplete();
   const journeyComplete=allCount>=10;
   const revealInProgress=state.habRevealInProgress||state.momentumRevealInProgress||state.fastStartRevealInProgress;
@@ -419,8 +434,15 @@ function renderStarted(){
   const pageHeading=independentStage?'Days 31-60':'First 30 days';
   const coachLine=state.habRevealInProgress?'Watch the £100 High Activity Bonus land on each qualifying customer.':state.fastStartRevealInProgress?'Watch the Fast Start steps land before the £500 bonus is added.':state.momentumRevealInProgress?'Watch the first Momentum Bonus land on your 6th customer.':allCount===0?'Add your first five customers and watch the first-30-day bonuses appear.':state.month1.length<4?'Build your first five customers and keep the journey simple.':state.month1.length===4?'High Activity Bonus is now part of your first month.':needsUpgrade?`${milestoneStepsDone}/2 steps complete. Finish both to unlock your Fast Start moment.`:independentStage&&state.month2.length===0?'Your launch month is complete. Now see what a more independent second 30 days can add.':state.month2.length===4?'Another High Activity Bonus has landed on top of Momentum.':state.month2.length<5?'You are now exploring more independent customer gathering, with Momentum in play.':'Your first 60 days are mapped.';
   const builderPrimaryClass=independentStage?'button green':'button';
-  const addCustomerAction=!needsUpgrade&&!journeyComplete
-    ?`<div class="add-customer-row"><button class="${builderPrimaryClass} add-customer-main" ${revealInProgress?'disabled':''} onclick="addCustomer()">${state.habRevealInProgress?'Applying High Activity Bonus...':state.momentumRevealInProgress?'Applying Momentum Bonus...':addLabel(nextNumber)}</button></div>`
+  const addCustomerAction=!needsUpgrade&&!journeyComplete&&!state.fastStartRevealInProgress
+    ?`<button class="${builderPrimaryClass} add-customer-main" ${revealInProgress?'disabled':''} onclick="addCustomer()">${state.habRevealInProgress?'Applying High Activity Bonus...':state.momentumRevealInProgress?'Applying Momentum Bonus...':addLabel(nextNumber)}</button>`
+    :'';
+  const actionRail=fastStartFlash()||addCustomerAction
+    ?`<div class="add-customer-row action-rail">
+        <div class="action-rail-side">${fastStartFlash()}</div>
+        <div class="action-rail-main">${addCustomerAction}</div>
+        <div class="action-rail-side"></div>
+      </div>`
     :'';
   const builderControls='';
   const registerButton=`<a class="button register-link" target="_blank" rel="noopener" href="${registerUrl}">🎯Ready to earn? Register here!</a>`;
@@ -435,27 +457,26 @@ function renderStarted(){
         <button class="button blue" onclick="startHabReveal(1)">Apply High Activity Bonus</button>
       </section>
     </div>`:needsUpgrade?`<div class="notice-backdrop">
-      <section class="notice-popup notice-celebration">
+      <section class="notice-popup notice-celebration notice-faststart-setup" onclick="event.stopPropagation()">
         <div class="notice-emoji">🎯</div>
         <div class="eyebrow">Fast Start bonuses</div>
         <h2>You've gathered 5 customers!</h2>
         <p class="muted faststart-copy">£500 Fast Start bonus is awarded when you introduce <strong>1 Partner</strong> and <strong>6 customers</strong> in your first 30 days.<br>The Partner can be one of your customers who upgrades.<br>The 6th customer can be you linking your own customer account to your Partner account.<br>Do both those steps below now:</p>
-        ${state.fastStartRevealInProgress?'<p class="watch-line"><strong>Watch as the two Fast Start steps are applied before the £500 bonus lands.</strong></p>':''}
         <div class="step-actions">
           ${first30StepButton(state.customerPartnerUpgraded,'Upgrade a<br>customer<br>to Partner','partner',1)}
           ${first30StepButton(state.ownAccountLinked,'Link your<br>own customer<br>account','own',2)}
         </div>
       </section>
-    </div>`:independentStage&&!state.nextIntroDismissed?`<div class="notice-backdrop">
+    </div>`:independentStage&&!state.nextIntroDismissed&&!state.fastStartRevealInProgress?`<div class="notice-backdrop">
       <section class="notice-popup notice-green notice-celebration">
         <div class="notice-emoji">🎉</div>
         <div class="eyebrow">Fast Start awarded</div>
         <h2>£500 Bonus!</h2>
-        <div class="award-strip">
-          <span><strong>🏅 1 Partner introduced</strong></span>
-          <span><strong>💷 6 customers</strong></span>
+        <div class="award-strip award-strip-ticked">
+          <span><strong>✓ 🏅 1 Partner introduced</strong></span>
+          <span><strong>✓ 💷 6 customers</strong></span>
         </div>
-        <p class="muted">Register now, or explore what days 31-60 look like with more independent appointments and new Momentum Bonuses.</p>
+        <p class="muted">Register below to start earning.<br>Or explore how Momentum Bonuses add another £125 per customer so you could earn £2,375 with your next 5 customers over the next 30 days.</p>
         <div class="notice-actions">
           ${registerButton}
           <button class="button secondary" onclick="dismissNextIntro()">Explore next 30 days earnings</button>
@@ -477,7 +498,8 @@ function renderStarted(){
         <div class="notice-emoji">🏆</div>
         <div class="eyebrow">High Activity Bonus unlocked again</div>
         <h2>High Activity Bonus is ready again.</h2>
-        <p class="muted">This is the 4th 3-service homeowner in the second calendar month. High Activity Bonus is added on top of Momentum Bonus and applies to every qualifying homeowner in the green column.</p>
+        <p class="muted">This is the 4th 3-service homeowner in your second calendar month. High Activity Bonus is added on top of Customer Bonus and Momentum Bonus, so each of the four £375 customers now becomes £475.</p>
+        <p class="muted">A 5th 3-service homeowner in this period would also be worth £475. Beyond your first 60 days, without Momentum Bonus, a 3-service homeowner would earn £350.</p>
         <p class="watch-line"><strong>Watch as each customer has the £100 High Activity Bonus applied.</strong></p>
         <button class="button green" onclick="startHabReveal(2)">Apply High Activity Bonus</button>
       </section>
@@ -513,7 +535,7 @@ function renderStarted(){
     </section>
     <section class="card customer-builder-card ${independentStage?'independence-card':''}">
       <div class="coach-box ${independentStage?'coach-box-next':'coach-box-first'}">${coachLine}</div>
-      ${addCustomerAction}
+      ${actionRail}
       <div class="customer-columns">
         ${customerColumn({title:'Days 1-30',count:state.month1.length,total:split.month1,max:maxMonth1,rows:renderCustomerRows(state.month1,split.rowsById,0,false,split.month1Breakdown[2][1]),tone:'first'})}
         ${customerColumn({title:'Days 31-60',count:state.month2.length,total:split.month2,max:maxMonth2,rows:renderCustomerRows(state.month2,split.rowsById,5,!independentStage),tone:'next',locked:!independentStage})}
@@ -522,6 +544,7 @@ function renderStarted(){
     </section>
     <div class="utility-row">
       ${assumptionsTip()}
+      ${journeyComplete?mentorButton:''}
       <button class="button secondary button-small" onclick="resetExplorer()">Start again</button>
     </div>
     ${noticeMarkup}
