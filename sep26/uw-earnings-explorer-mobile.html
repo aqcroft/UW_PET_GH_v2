@@ -356,8 +356,9 @@ function renderStarted(){
       <section class="notice-popup notice-green notice-celebration notice-final" onclick="event.stopPropagation()">
         <button class="notice-close" onclick="dismissEndIntro()" aria-label="Close">×</button>
         <div class="notice-emoji">🚀</div>
-        <div class="eyebrow">Full journey mapped</div>
-        <h2>${money(total)} across your first 60 days.</h2>
+        <div class="eyebrow">Full Demo Complete</div>
+        <h2>${money(total)} in your first 60 days</h2>
+        <p class="muted">Still have questions? Tap my profile pic to get in touch or book in a no-commitment chat.</p>
         <div class="notice-actions">
           ${registerButton}
         </div>
@@ -404,21 +405,21 @@ function renderWelcome(){
     <section class="splash-card" style="margin-top:10vh">
       <div class="splash-top">
         <div class="splash-wave">👋</div>
-        <h1>Welcome to your interactive earnings explorer</h1>
+        <h1>Welcome to the Utility Warehouse interactive earnings explorer</h1>
       </div>
       <div class="splash-body">
-        <div class="splash-highlight">Build your first 30 days first. When your Fast Start moment lands, choose whether to register or keep exploring days 31-60.</div>
-        <p>You help people save on essential household services they already use.</p>
+        <div class="splash-highlight">Take a look to better understand your potential earnings as an Authorised Partner in your first 30 and 60 days.</div>
+        <p>Authorised Partners help people save on essential household services they already use:</p>
         <div class="service-cloud">
           <span>⚡ energy</span>
           <span>🛜 broadband</span>
           <span>📲 mobile</span>
           <span>☔ insurance</span>
         </div>
-        <p><strong>When your customers win, you can earn.</strong></p>
-        <p class="splash-small">Add customers, watch the numbers change, and learn as you go.</p>
-        <button class="button splash-start" onclick="start()">Let's go</button>
-        <button class="text-button" onclick="openHowPaid()">Curious? See how Partners are paid</button>
+        <p><strong>Bundles build benefits - for customers and Partners.</strong></p>
+        <p><strong>When customers win, Partners win. 🏆</strong></p>
+        <p class="splash-small">Add customers to better understand the bonuses new Partners are paid.</p>
+        <button class="button splash-start" onclick="start()">Let's go!</button>
       </div>
     </section>
     ${howPaidMarkup()}`;
