@@ -39,6 +39,8 @@ const state={
   mentorBonusRevealInProgress:false,
   mentorBonusRevealToken:0,
   mentorBonusPulse:false,
+  mentorAccountPulse:false,
+  mentorBonusFlashPulse:false,
   mentorPartnerBadgeApplied:false,
   mentorAccountBadgeApplied:false,
   mentorMilestonePulseId:null,
@@ -154,6 +156,8 @@ function resetExplorer(){
   state.mentorBonusRevealInProgress=false;
   state.mentorBonusRevealToken+=1;
   state.mentorBonusPulse=false;
+  state.mentorAccountPulse=false;
+  state.mentorBonusFlashPulse=false;
   state.mentorPartnerBadgeApplied=false;
   state.mentorAccountBadgeApplied=false;
   state.mentorMilestonePulseId=null;
@@ -184,29 +188,46 @@ function startMentorBonusReveal(){
   state.mentorBonusRevealToken+=1;
   const token=state.mentorBonusRevealToken;
   render();
-  window.setTimeout(()=>{
-    if(token!==state.mentorBonusRevealToken)return;
-    state.mentorPartnerBadgeApplied=true;
-    state.mentorMilestonePulseId='m3';
-    render();
-    window.setTimeout(()=>{
-      if(token!==state.mentorBonusRevealToken)return;
-      state.mentorAccountBadgeApplied=true;
-      state.mentorMilestonePulseId=null;
+  const wait=(ms)=>new Promise(resolve=>window.setTimeout(resolve,ms));
+  const isCurrent=()=>token===state.mentorBonusRevealToken;
+  const clearPulses=()=>{
+    state.mentorMilestonePulseId=null;
+    state.mentorAccountPulse=false;
+    state.mentorBonusPulse=false;
+    state.mentorBonusFlashPulse=false;
+  };
+  const doublePulse=async(type)=>{
+    for(let i=0;i<2;i++){
+      if(!isCurrent())return false;
+      clearPulses();
+      if(type==='partner')state.mentorMilestonePulseId='m3';
+      if(type==='account')state.mentorAccountPulse=true;
+      if(type==='flash'){state.mentorBonusPulse=true;state.mentorBonusFlashPulse=true;}
       render();
-      window.setTimeout(()=>{
-        if(token!==state.mentorBonusRevealToken)return;
-        state.mentorBonusApplied=true;
-        state.mentorBonusPulse=true;
-        render();
-        window.setTimeout(()=>{
-          if(token!==state.mentorBonusRevealToken)return;
-          state.mentorBonusRevealInProgress=false;
-          render();
-        },1500);
-      },1500);
-    },1500);
-  },450);
+      await wait(1450);
+      if(!isCurrent())return false;
+      clearPulses();
+      render();
+      await wait(250);
+    }
+    return true;
+  };
+  (async()=>{
+    await wait(450);
+    if(!isCurrent())return;
+    state.mentorPartnerBadgeApplied=true;
+    if(!await doublePulse('partner'))return;
+    state.mentorAccountBadgeApplied=true;
+    if(!await doublePulse('account'))return;
+    state.mentorBonusApplied=true;
+    render();
+    await wait(300);
+    if(!await doublePulse('flash'))return;
+    if(!isCurrent())return;
+    state.mentorBonusRevealInProgress=false;
+    clearPulses();
+    render();
+  })();
 }
 function dismissMentorAward(){state.mentorAwardDismissed=true;render();}
 function dismissMentorNextIntro(){state.mentorNextIntroDismissed=true;state.mentorBonusPulse=false;render();}
@@ -256,7 +277,12 @@ function ordinal(n){
   const suffix=n%10===1&&n%100!==11?'st':n%10===2&&n%100!==12?'nd':n%10===3&&n%100!==13?'rd':'th';
   return `${n}${suffix}`;
 }
-function addLabel(n){return `Add their ${ordinal(n)} customer`;}
+function addLabel(n){
+  return `<span class="add-label-text"><span class="add-label-main">Add their ${ordinal(n)}</span><span class="add-label-sub">customer</span></span><span class="add-label-icon">${homeIcon()}</span>`;
+}
+function applyingBonusLabel(name,icon){
+  return `<span class="add-label-text"><span class="add-label-sub">Applying Bonus:</span><span class="add-label-main">${name}</span></span><span class="add-label-icon">${icon}</span>`;
+}
 function whatsappUrl(){return `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(CONTACT.whatsappMessage)}`;}
 function emailUrl(){return `mailto:${CONTACT.email}?subject=${encodeURIComponent(CONTACT.emailSubject)}&body=${encodeURIComponent(CONTACT.emailBody)}`;}
 function phoneUrl(){return `tel:${CONTACT.phone}`;}
@@ -339,15 +365,14 @@ function renderMentorRows(customers,rowsById,offset=0,lockedFuture=false){
     const isFirstPeriod=offset<5;
     const support=row?row.supportingCustomerBonus:0;
     const momentum=row?row.momentumRecruiter:0;
-    const fastStart=row&&number===5&&state.mentorBonusApplied?MENTOR_FAST_START_TOTAL:0;
+    const fastStart=0;
     const total=support+momentum+fastStart;
     const cls=['customer-icon',isFirstPeriod?'period-first':'period-next',row?'filled':future?'future-window':''].filter(Boolean).join(' ');
     const partnerAwarded=row&&number===3&&state.mentorPartnerBadgeApplied;
     const badges=[
-      support>0?rowBadge('Support',''):'',
-      fastStart>0?rowBadge('£400','fast-start'):'',
-      momentum>0?rowBadge('Momentum','momentum'):'',
-      partnerAwarded?rowBadge('Partner','partner'):'',
+      support>0?rowBadge('🤝 Support',''):'',
+      momentum>0?rowBadge('🎓⚡ Momentum','momentum'):'',
+      partnerAwarded?rowBadge('🏅 Partner','partner'):'',
     ].filter(Boolean).join('');
     const expanded=row&&state.expandedCustomerId===row.id;
     const pulseClass=row&&state.momentumPulseId===row.id?'customer-row-momentum-pulse':row&&state.mentorMilestonePulseId===row.id?'customer-row-faststart-pulse':'';
@@ -361,10 +386,10 @@ function renderMentorRows(customers,rowsById,offset=0,lockedFuture=false){
         <div class="row-badges"></div>
         ${tableMoney(0,'table-row-total')}
       </div>`}
-      ${expanded?`<div class="customer-row-detail">
-        ${detailCell('Support',support)}
-        ${detailCell(number<=5?'Mentor bonus':'Momentum',number<=5?fastStart:momentum)}
-        ${detailCell('Their earnings',row.customerBonusGatheringPartner+row.highActivityBonus+row.momentumGatheringPartner)}
+      ${expanded?`<div class="customer-row-detail ${isFirstPeriod?'customer-row-detail-compact':''}">
+        ${detailCell('🤝 Support',support)}
+        ${!isFirstPeriod?detailCell('🎓⚡ Momentum',momentum):''}
+        ${detailCell('💷 Their earnings',row.customerBonusGatheringPartner+row.highActivityBonus+row.momentumGatheringPartner)}
       </div>`:''}
     </div>`;
   }).join('');
@@ -411,16 +436,16 @@ function mentorFastStartFlash(){
   const show=state.customers.length>=5||state.mentorBonusApplied||state.mentorBonusRevealInProgress;
   if(!show)return '';
   const active=state.mentorBonusApplied;
-  const pulse=state.mentorBonusPulse||state.mentorBonusRevealInProgress;
+  const pulse=state.mentorBonusFlashPulse;
   return `<div class="fast-start-flash mentor-fast-start-flash ${active?'active':'ghost'} ${pulse?'pulse':''}" aria-live="polite">
-    <span class="flash-icon">🎓</span>
-    <span><strong>£400</strong> Fast Start Mentor</span>
+    <span class="flash-icon">📈</span>
+    <span><strong>£400 Fast</strong><br>Start Mentor</span>
     ${active?'':'<small>Ready to unlock</small>'}
   </div>`;
 }
 function mentorTitleOwnAccountBadge(){
   if(!state.mentorAccountBadgeApplied)return '';
-  const pulse=state.mentorBonusRevealInProgress||state.mentorBonusApplied&&!state.mentorAwardDismissed;
+  const pulse=state.mentorAccountPulse;
   return `<span class="own-account-title-badge mentor-account-badge ${pulse?'pulse':''}">🔗 Their own account linked</span>`;
 }
 function celebrationGlitter(){
@@ -429,8 +454,8 @@ function celebrationGlitter(){
   </div>`;
 }
 function noticeMarkup(result,split){
-  const registerButton=`<a class="button register-link" target="_blank" rel="noopener" href="${registerUrl}">🎯Ready to earn? Register here!</a>`;
-  const chatButton=`<a class="button secondary register-link" target="_blank" rel="noopener" href="${CONTACT.calendarUrl}">Got questions? Book a chat</a>`;
+  const registerButton=`<a class="button blue register-link tall-action" target="_blank" rel="noopener" href="${registerUrl}"><span>🎯 Ready to earn? Register here!</span><small>(new tab)</small></a>`;
+  const chatButton=`<a class="button secondary register-link tall-action" target="_blank" rel="noopener" href="${CONTACT.calendarUrl}"><span>🗓️ Got questions? Book a chat</span><small>(new tab)</small></a>`;
   const needsFastStartSteps=state.customers.length>=5&&!fastStartStepsComplete()&&!state.mentorBonusRevealInProgress;
   const pendingMomentum=state.customers.length>=6&&!state.momentumIntroDismissed&&result.customers.some(row=>row.customerNumber===6&&row.momentumRecruiter>0);
   const needsMonth1Hab=state.customers.length===4&&!state.habIntroDismissed;
@@ -461,8 +486,7 @@ function noticeMarkup(result,split){
     <section class="notice-popup notice-green notice-celebration" onclick="event.stopPropagation()">
       ${celebrationGlitter()}
       <div class="notice-emoji">🏅</div>
-      <div class="eyebrow">Fast Start Mentor awarded</div>
-      <h2>£400 Fast Start Mentor Bonus</h2>
+      <h2>£400 Fast Start Mentor Bonus Awarded!</h2>
       <p class="muted">You helped your new Partner qualify. They have also earned their own £500 Fast Start bonus.</p>
       <button class="button green" onclick="dismissMentorAward()">Choose your next step</button>
     </section>
@@ -476,7 +500,8 @@ function noticeMarkup(result,split){
       <div class="notice-actions">
         ${registerButton}
         ${chatButton}
-        <button class="button secondary" onclick="dismissMentorNextIntro()">Explore next 30 days earnings</button>
+        <div class="or-divider">OR</div>
+        <button class="button secondary tall-action" onclick="dismissMentorNextIntro()"><span>Explore next 30 days earnings</span></button>
       </div>
     </section>
   </div>`;
@@ -542,7 +567,7 @@ function renderStarted(){
   const independentStage=count>=6||state.mentorBonusApplied;
   const canAdd=(count<10&&state.mentorBonusApplied&&state.mentorNextIntroDismissed||count<5)&&!state.mentorBonusRevealInProgress;
   const buttonTone=independentStage?'green':'blue';
-  const addButton=canAdd?`<button class="button ${buttonTone} add-customer-main" ${state.momentumRevealInProgress?'disabled':''} onclick="addCustomer()">${state.momentumRevealInProgress?'Applying Mentor Momentum...':addLabel(count+1)}</button>`:'';
+  const addButton=canAdd?`<button class="button ${buttonTone} add-customer-main" ${state.momentumRevealInProgress?'disabled':''} onclick="addCustomer()">${state.momentumRevealInProgress?applyingBonusLabel('Mentor Momentum','🎓⚡'):addLabel(count+1)}</button>`:'';
   const actionRail=mentorFastStartFlash()||addButton
     ?`<div class="add-customer-row action-rail">
         <div class="action-rail-side">${mentorFastStartFlash()}</div>

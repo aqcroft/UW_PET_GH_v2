@@ -163,7 +163,6 @@ function startFastStartReveal(){
   (async()=>{
     await wait(450);
     if(token!==state.fastStartRevealToken)return;
-    if(!await doublePulse('customer'))return;
     state.fastStartPartnerBadgeApplied=true;
     if(!await doublePulse('partner'))return;
     state.fastStartAccountBadgeApplied=true;
@@ -297,8 +296,8 @@ function renderCustomerRows(customers,rowsById,offset=0,lockedFuture=false,fastS
     const partnerAwarded=fastStartBadgeTarget&&state.fastStartPartnerBadgeApplied;
     const accountLinked=false;
     const badges=[
-      high>0?rowBadge('HAB','activity'):'',
-      thirdValue>0&&!isFirstPeriod?rowBadge('Momentum','momentum'):'',
+      high>0?rowBadge('🔥 High Activity','activity'):'',
+      thirdValue>0&&!isFirstPeriod?rowBadge('⚡ Momentum','momentum'):'',
       partnerAwarded?rowBadge('Partner','partner'):'',
       accountLinked?rowBadge('Account','account'):'',
     ].filter(Boolean).join('');
@@ -312,9 +311,9 @@ function renderCustomerRows(customers,rowsById,offset=0,lockedFuture=false,fastS
     return `<div class="customer-table-row ${future?'customer-tile-future':''} ${partnerAwarded||accountLinked?'customer-tile-awarded':''} ${row&&state.habPulseId===row.id?'customer-row-hab-pulse':''} ${row&&state.momentumPulseId===row.id?'customer-row-momentum-pulse':''} ${row&&state.fastStartPulseId===row.id?'customer-row-faststart-pulse':''}" aria-label="${ordinal(number)} customer">
       ${row?`<button class="customer-summary-row" onclick="toggleCustomerDetails('${row.id}')" aria-expanded="${expanded?'true':'false'}">${rowMain}</button>`:`<div class="customer-summary-row empty">${rowMain}</div>`}
       ${expanded?`<div class="customer-row-detail ${isFirstPeriod?'customer-row-detail-compact':''}">
-        ${detailCell('Customer',customer)}
-        ${detailCell('High Activity',high)}
-        ${!isFirstPeriod?detailCell(thirdLabel,thirdValue):''}
+        ${detailCell('💷 Customer',customer)}
+        ${detailCell('🔥 High Activity',high)}
+        ${!isFirstPeriod?detailCell('⚡ Momentum',thirdValue):''}
       </div>`:''}
     </div>`;
   }).join('');
@@ -418,8 +417,8 @@ function fastStartFlash(){
   const active=state.fastStartRevealComplete;
   const pulse=state.fastStartFlashPulse;
   return `<div class="fast-start-flash ${active?'active':'ghost'} ${pulse?'pulse':''}" aria-live="polite">
-    <span class="flash-icon">🏆</span>
-    <span><strong>£500</strong> Fast Start Bonus</span>
+    <span class="flash-icon">📈</span>
+    <span><strong>£500 Fast</strong><br>Start Bonus</span>
     ${active?'':'<small>Ready to unlock</small>'}
   </div>`;
 }
@@ -477,9 +476,9 @@ function renderStarted(){
       </div>`
     :'';
   const builderControls='';
-  const registerButton=`<a class="button blue register-link" target="_blank" rel="noopener" href="${registerUrl}">🎯Ready to earn? Register here!</a>`;
-  const chatButton=`<a class="button secondary register-link" target="_blank" rel="noopener" href="${CONTACT.calendarUrl}">Got questions? Book a chat</a>`;
-  const mentorButton=`<a class="button secondary register-link mentor-link-button" href="${mentorUrl}">Explore Mentor Journey</a>`;
+  const registerButton=`<a class="button blue register-link tall-action" target="_blank" rel="noopener" href="${registerUrl}"><span>🎯 Ready to earn? Register here!</span><small>(new tab)</small></a>`;
+  const chatButton=`<a class="button secondary register-link tall-action" target="_blank" rel="noopener" href="${CONTACT.calendarUrl}"><span>🗓️ Got questions? Book a chat</span><small>(new tab)</small></a>`;
+  const mentorButton=`<a class="button secondary register-link mentor-link-button tall-action" href="${mentorUrl}"><span>Explore Mentor Journey</span></a>`;
   const noticeMarkup=!state.habIntroDismissed&&state.month1.length===4?`<div class="notice-backdrop">
       <section class="notice-popup notice-blue notice-celebration" onclick="event.stopPropagation()">
         <div class="notice-emoji">🔥</div>
@@ -504,8 +503,7 @@ function renderStarted(){
       <section class="notice-popup notice-green notice-celebration">
         ${celebrationGlitter()}
         <div class="notice-emoji">🎉</div>
-        <div class="eyebrow">Fast Start awarded</div>
-        <h2>£500 Fast Start Bonus!</h2>
+        <h2>£500 Fast Start Bonus Awarded!</h2>
         <div class="award-strip award-strip-ticked">
           <span><strong>✓ 🏅 1 Partner introduced</strong></span>
           <span><strong>✓ 💷 6 customers</strong></span>
@@ -522,7 +520,8 @@ function renderStarted(){
         <div class="notice-actions">
           ${registerButton}
           ${chatButton}
-          <button class="button secondary" onclick="dismissNextIntro()">Explore next 30 days earnings</button>
+          <div class="or-divider">OR</div>
+          <button class="button secondary tall-action" onclick="dismissNextIntro()"><span>Explore next 30 days earnings</span></button>
         </div>
       </section>
     </div>`:hasPendingMomentumIntro?`<div class="notice-backdrop">

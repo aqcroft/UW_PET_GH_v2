@@ -86,7 +86,7 @@ body.mentor-journey .coach-box-next{background:#e8fbf8;border-color:#b9ebe4;colo
 .action-rail{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:.5rem}
 .action-rail-main{display:grid;justify-items:center}
 .action-rail-side{min-width:0;display:flex;justify-content:flex-start}
-.add-customer-main{min-width:min(100%,14rem);box-shadow:0 10px 22px rgba(29,79,145,.16);display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:.65rem;text-align:left;line-height:1.05}
+.add-customer-main{width:min(100%,14rem);min-height:3.8rem;box-shadow:0 10px 22px rgba(29,79,145,.16);display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:.65rem;text-align:left;line-height:1.05}
 .add-customer-main.green{box-shadow:0 10px 22px rgba(20,122,74,.16)}
 .add-label-text{display:grid;gap:.08rem;min-width:0}
 .add-label-main{display:block;font-size:.96rem;font-weight:950;white-space:normal}
@@ -109,6 +109,9 @@ body.mentor-journey .coach-box-next{background:#e8fbf8;border-color:#b9ebe4;colo
 .button.cream{background:var(--cream);color:var(--purple);border:1px solid #efe6a7}
 .button:disabled{opacity:.52;cursor:not-allowed}
 .register-link{display:grid;place-items:center;text-align:center;text-decoration:none}
+.tall-action{min-height:3.85rem!important;padding:.62rem .9rem!important;display:grid!important;align-content:center;justify-items:center;gap:.16rem;line-height:1.12}
+.tall-action span{display:block;font-weight:950}
+.tall-action small{display:block;font-size:.68rem;font-weight:850;opacity:.78;line-height:1}
 .mentor-link-button{border-color:#c7d3ee;color:var(--blue)}
 .segmented{display:grid;gap:.38rem}
 .segmented.two{grid-template-columns:1fr 1fr}
@@ -194,13 +197,13 @@ body.mentor-journey .customer-column-next .column-count{background:#e8fbf8;color
 .customer-row-hab-pulse{animation:habPulse 1.15s ease both}
 .customer-row-faststart-pulse{animation:fastStartPulse 1.15s ease both}
 .customer-row-momentum-pulse{animation:momentumPulse 1.15s ease both}
-.customer-summary-row{width:100%;min-height:2.34rem;border:none;background:transparent;color:inherit;padding:.32rem .36rem;text-align:left}
+.customer-summary-row{width:100%;min-height:2.75rem;border:none;background:transparent;color:inherit;padding:.36rem;text-align:left}
 button.customer-summary-row{cursor:pointer}
 .customer-summary-row.empty{opacity:.72}
 .customer-row-id{display:flex;align-items:center;gap:.3rem;min-width:0}
 .customer-row-id>.customer-icon{width:1.58rem;height:1.58rem;border-radius:.42rem;font-size:.72rem;flex:0 0 auto}
 .customer-row-id>strong{font-size:.92rem;line-height:1}
-.row-badges{display:flex;justify-content:center;gap:.18rem;min-width:0;flex-wrap:wrap}
+.row-badges{display:grid;justify-items:center;gap:.18rem;min-width:0}
 .row-badge{border-radius:999px;background:#fff4df;color:#92400e;border:1px solid rgba(156,91,0,.18);padding:.12rem .28rem;font-size:.5rem;font-weight:950;line-height:1;text-transform:uppercase}
 .row-badge.momentum,.row-badge.partner,.row-badge.account{background:#edf8f1;color:var(--green);border-color:rgba(20,122,74,.18)}
 .row-badge.fast-start{background:#fff4df;color:#92400e;border-color:#f3c84f}
@@ -236,6 +239,7 @@ body.mentor-journey .customer-column-next .detail-cell{background:#ecfbf8;color:
 body.mentor-journey .customer-column-next .detail-cell span{color:rgba(0,124,120,.82)}
 .customer-column-first .customer-table-footer .table-row-total{background:var(--blue);color:#fff;border-radius:999px;padding:.28rem .5rem}
 .customer-column-next .customer-table-footer .table-row-total{background:var(--green);color:#fff;border-radius:999px;padding:.28rem .5rem}
+.customer-table-footer .table-row-total{font-size:1rem;padding:.36rem .62rem!important}
 .customer-tile-awarded{border-color:#f3c84f;box-shadow:0 0 0 1px rgba(243,200,79,.45),0 8px 18px rgba(156,91,0,.08)}
 .customer-tile-future{opacity:.5;filter:saturate(.72)}
 .customer-icon{height:2.4rem;border-radius:.65rem;display:grid;place-items:center;font-size:1.05rem;font-weight:950;background:#ede8f5;color:#8a8199}
@@ -489,7 +493,7 @@ body.mentor-journey .fab-icon-circle{background:#101a2c;border:1px solid var(--l
 }
 @media (max-width:420px){
   .action-rail{grid-template-columns:minmax(7.2rem,1fr) minmax(8.8rem,auto) minmax(0,.15fr);gap:.35rem}
-  .add-customer-main{min-width:min(100%,10.2rem);padding:0 .72rem}
+  .add-customer-main{width:min(100%,10.9rem);padding:0 .72rem}
   .add-label-main{font-size:.86rem}
   .add-label-sub{font-size:.64rem}
   .add-label-icon{font-size:1.18rem}
