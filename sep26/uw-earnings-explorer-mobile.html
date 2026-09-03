@@ -131,8 +131,10 @@ function completeFirst30Step(step){
   if(state.fastStartRevealInProgress||state.fastStartRevealComplete)return;
   if(step==='own')state.ownAccountLinked=true;
   if(step==='partner')state.customerPartnerUpgraded=true;
-  if(first30StepsComplete())startFastStartReveal();
-  else render();
+  if(first30StepsComplete()){
+    render();
+    window.setTimeout(()=>startFastStartReveal(),650);
+  }else render();
 }
 function startFastStartReveal(){
   if(state.fastStartRevealInProgress||state.fastStartRevealComplete||!first30StepsComplete())return;
@@ -205,7 +207,7 @@ function startHabReveal(month){
       return;
     }
     const id=targetIds[index];
-    state.bonusPreview={id,amount:R.HAB_PER_QUALIFYING_CUSTOMER,icon:'🔥'};
+    state.bonusPreview={id,amount:R.HAB_PER_QUALIFYING_CUSTOMER,tone:'hab'};
     render();
     window.setTimeout(()=>{
       if(token!==state.habRevealToken)return;
@@ -242,7 +244,7 @@ function startMomentumRevealForId(id){
   render();
   window.setTimeout(()=>{
     if(token!==state.momentumRevealToken)return;
-    state.bonusPreview={id,amount:R.MOMENTUM_GATHERING_PARTNER_AMOUNT,icon:'⚡'};
+    state.bonusPreview={id,amount:R.MOMENTUM_GATHERING_PARTNER_AMOUNT,tone:'momentum'};
     render();
     window.setTimeout(()=>{
       if(token!==state.momentumRevealToken)return;
@@ -297,7 +299,7 @@ function detailCell(label,value){
 }
 function bonusPreviewFor(row){
   return row&&state.bonusPreview&&state.bonusPreview.id===row.id
-    ?`<span class="bonus-preview">${state.bonusPreview.icon} +${money(state.bonusPreview.amount).slice(1)}</span>`
+    ?`<span class="bonus-preview ${state.bonusPreview.tone||''}">+${money(state.bonusPreview.amount).slice(1)}</span>`
     :'';
 }
 function renderCustomerRows(customers,rowsById,offset=0,lockedFuture=false,fastStartTotal=0){
@@ -444,7 +446,16 @@ function fastStartFlash(){
   return `<div class="fast-start-flash ${active?'active':'ghost'} ${pulse?'pulse':''}" aria-live="polite">
     <span class="flash-icon">🏆</span>
     <span><strong>£500 Fast</strong><br>Start Bonus</span>
-    ${active?'':'<small>Ready to unlock</small>'}
+  </div>`;
+}
+function momentumFlash(){
+  const show=state.nextIntroDismissed||state.month2.length>0||state.momentumRevealInProgress||state.momentumAppliedIds.length>0;
+  if(!show)return '';
+  const active=state.month2.length>0||state.momentumRevealInProgress||state.momentumAppliedIds.length>0;
+  const pulse=!!state.momentumPulseId;
+  return `<div class="fast-start-flash momentum-flash ${active?'active':'ghost'} ${pulse?'pulse':''}" aria-live="polite">
+    <span class="flash-icon">⚡</span>
+    <span><strong>£125</strong><br>Momentum</span>
   </div>`;
 }
 function titleOwnAccountBadge(){
@@ -491,53 +502,54 @@ function renderStarted(){
   const pageHeading=independentStage&&state.nextIntroDismissed?'Days 31-60':'First 30 days';
   const coachLine=state.habRevealInProgress?'Watch the £100 High Activity Bonus apply to each qualifying customer.':state.fastStartRevealInProgress?'Applying Fast Start bonus criteria.':state.momentumRevealInProgress?'Watch the Momentum Bonus apply as an extra £125.':allCount===0?'Add your first five customers and watch the first-30-day bonuses appear.':state.month1.length<4?'Build your first five customers and keep the journey simple.':state.month1.length===4?'You have qualified for £100 High Activity Bonus for all 3-service homeowners.':needsUpgrade?`${milestoneStepsDone}/2 steps complete. Finish both to unlock your Fast Start moment.`:independentStage&&state.month2.length===0?'Your launch month is complete. Now see what a more independent second 30 days can add.':state.month2.length===4?'Another High Activity Bonus is now added on top of Momentum.':state.month2.length<5?'You are now exploring more independent customer gathering, with Momentum in play.':'Your first 60 days are mapped.';
   const builderPrimaryClass=independentStage?'button green':'button';
+  const addButtonClass=state.habRevealInProgress?'button hab':state.momentumRevealInProgress?'button green':builderPrimaryClass;
   const addCustomerAction=!needsUpgrade&&!journeyComplete&&!state.fastStartRevealInProgress
-    ?`<button class="${builderPrimaryClass} add-customer-main" ${revealInProgress?'disabled':''} onclick="addCustomer()">${state.habRevealInProgress?applyingBonusLabel('High Activity Bonus','🔥'):state.momentumRevealInProgress?applyingBonusLabel('Momentum Bonus','⚡'):addLabel(nextNumber)}</button>`
+    ?`<button class="${addButtonClass} add-customer-main" ${revealInProgress?'disabled':''} onclick="addCustomer()">${state.habRevealInProgress?applyingBonusLabel('High Activity','🔥'):state.momentumRevealInProgress?applyingBonusLabel('Momentum Bonus','⚡'):addLabel(nextNumber)}</button>`
     :'';
-  const actionRail=fastStartFlash()||addCustomerAction
+  const actionRail=fastStartFlash()||addCustomerAction||momentumFlash()
     ?`<div class="add-customer-row action-rail">
         <div class="action-rail-side">${fastStartFlash()}</div>
         <div class="action-rail-main">${addCustomerAction}</div>
-        <div class="action-rail-side"></div>
+        <div class="action-rail-side action-rail-side-right">${momentumFlash()}</div>
       </div>`
     :'';
   const builderControls='';
   const registerButton=`<a class="button blue register-link tall-action" target="_blank" rel="noopener" href="${registerUrl}"><span>🎯 Ready to earn? Register here!</span><small>(new tab)</small></a>`;
   const chatButton=`<a class="button secondary register-link tall-action" target="_blank" rel="noopener" href="${CONTACT.calendarUrl}"><span><span class="calendar-glyph" aria-hidden="true"></span> Got questions? Book a chat</span><small>(new tab)</small></a>`;
-  const mentorButton=`<a class="button secondary register-link mentor-link-button tall-action" href="${mentorUrl}"><span>Explore Mentor Journey</span></a>`;
+  const mentorButton=`<a class="button secondary register-link mentor-link-button tall-action" href="${mentorUrl}"><span>🔍 Explore Mentor Journey</span></a>`;
   const noticeMarkup=!state.habIntroDismissed&&state.month1.length===4?`<div class="notice-backdrop">
-      <section class="notice-popup notice-blue notice-celebration" onclick="event.stopPropagation()">
+      <section class="notice-popup notice-hab notice-celebration" onclick="event.stopPropagation()">
         <div class="notice-emoji">🔥</div>
         <div class="eyebrow milestone-heading">High Activity Bonus unlocked</div>
         <p class="muted">Four or more <strong>3-service homeowners</strong> in one calendar month qualify you for High Activity Bonus on every 3-service homeowner in that month.</p>
         <p class="watch-line"><strong>Watch as each customer has the £100 High Activity Bonus applied.</strong></p>
-        <button class="button blue" onclick="startHabReveal(1)">Apply High Activity Bonus</button>
+        <button class="button hab" onclick="startHabReveal(1)">Apply High Activity Bonus</button>
       </section>
     </div>`:needsUpgrade?`<div class="notice-backdrop">
-      <section class="notice-popup notice-celebration notice-faststart-setup" onclick="event.stopPropagation()">
+      <section class="notice-popup notice-blue notice-celebration notice-faststart-setup" onclick="event.stopPropagation()">
         <div class="notice-emoji">🎯</div>
         <div class="eyebrow">Fast Start bonuses</div>
         <h2>You've gathered 5 customers!</h2>
-        <p class="muted faststart-copy">£500 Fast Start bonus is awarded when you introduce <strong>1 Partner</strong> and <strong>6 customers</strong> in your first 30 days.<br>The Partner can be one of your customers who upgrades.<br>The 6th customer can be you linking your own customer account to your Partner account.<br>Do both those steps below now:</p>
+        <p class="muted faststart-copy">£500 Fast Start bonus is awarded when you introduce <strong>1 Partner</strong> and <strong>6 customers</strong> in your first 30 days.<br><br>The Partner can be one of your customers who upgrades.<br>The 6th customer can be you linking your own customer account to your Partner account.<br><br>Do both those steps below now:</p>
         <div class="step-actions">
           ${first30StepButton(state.customerPartnerUpgraded,'Upgrade a<br>customer<br>to Partner','partner',1)}
           ${first30StepButton(state.ownAccountLinked,'Link your<br>own customer<br>account','own',2)}
         </div>
       </section>
     </div>`:independentStage&&!state.fastStartAwardDismissed&&!state.fastStartRevealInProgress?`<div class="notice-backdrop">
-      <section class="notice-popup notice-green notice-celebration">
+      <section class="notice-popup notice-blue notice-celebration">
         ${celebrationGlitter()}
         <div class="notice-emoji">🏆</div>
         <h2>£500 Fast Start Bonus Awarded!</h2>
         <div class="award-strip award-strip-ticked">
           <span><strong>✓ 🏅 1 Partner introduced</strong></span>
-          <span><strong>✓ 🏡 6 homeowners</strong></span>
+          <span><strong>✓ 💷 6 customers</strong></span>
         </div>
         <p class="muted">A big first milestone: your Fast Start bonus is in place.</p>
-        <button class="button green" onclick="dismissFastStartAward()">Choose your next step</button>
+        <button class="button blue" onclick="dismissFastStartAward()">Choose your next step</button>
       </section>
     </div>`:independentStage&&state.fastStartAwardDismissed&&!state.nextIntroDismissed&&!state.fastStartRevealInProgress?`<div class="notice-backdrop">
-      <section class="notice-popup notice-green notice-celebration" onclick="event.stopPropagation()">
+      <section class="notice-popup notice-hab notice-celebration" onclick="event.stopPropagation()">
         <div class="notice-emoji">🧭</div>
         <div class="eyebrow">What next?</div>
         <h2>Ready when you are.</h2>
@@ -546,7 +558,7 @@ function renderStarted(){
           ${registerButton}
           ${chatButton}
           <div class="or-divider">OR</div>
-          <button class="button secondary tall-action" onclick="dismissNextIntro()"><span>Explore next 30 days earnings</span></button>
+          <button class="button secondary tall-action" onclick="dismissNextIntro()"><span>🔍 Explore days 31-60</span></button>
         </div>
       </section>
     </div>`:hasPendingMomentumIntro?`<div class="notice-backdrop">
@@ -566,9 +578,9 @@ function renderStarted(){
         <p class="muted">This is your 4th 3-service homeowner in the second calendar month.</p>
         <p class="muted">High Activity Bonus is paid <strong>on top of</strong> Customer Bonus and Momentum Bonus: <strong>each £375 customer becomes £475.</strong></p>
         <p class="watch-line"><strong>Watch as each customer has the £100 High Activity Bonus applied.</strong></p>
-        <button class="button green" onclick="startHabReveal(2)">Apply High Activity Bonus</button>
+        <button class="button hab" onclick="startHabReveal(2)">Apply High Activity Bonus</button>
       </section>
-    </div>`:journeyComplete&&!state.endIntroDismissed?`<div class="notice-backdrop">
+    </div>`:journeyComplete&&!state.endIntroDismissed&&!state.momentumRevealInProgress&&!hasPendingMomentum?`<div class="notice-backdrop">
       <section class="notice-popup notice-green notice-celebration notice-final" onclick="event.stopPropagation()">
         <button class="notice-close" onclick="dismissEndIntro()" aria-label="Close">×</button>
         <div class="notice-emoji">🚀</div>

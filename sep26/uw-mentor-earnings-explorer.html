@@ -185,8 +185,10 @@ function completeFastStartStep(step){
   if(state.mentorBonusApplied||state.mentorBonusRevealInProgress)return;
   if(step==='partner')state.introducedPartner=true;
   if(step==='own')state.linkedOwnAccount=true;
-  if(fastStartStepsComplete())startMentorBonusReveal();
-  else render();
+  if(fastStartStepsComplete()){
+    render();
+    window.setTimeout(()=>startMentorBonusReveal(),650);
+  }else render();
 }
 function startMentorBonusReveal(){
   if(state.mentorBonusApplied||state.mentorBonusRevealInProgress||!fastStartStepsComplete())return;
@@ -265,7 +267,7 @@ function startMomentumRevealForId(id){
   render();
   window.setTimeout(()=>{
     if(token!==state.momentumRevealToken)return;
-    state.bonusPreview={id,amount:R.MOMENTUM_RECRUITER_AMOUNT,icon:'🎓⚡'};
+    state.bonusPreview={id,amount:R.MOMENTUM_RECRUITER_AMOUNT,tone:'momentum'};
     render();
     window.setTimeout(()=>{
       if(token!==state.momentumRevealToken)return;
@@ -371,7 +373,7 @@ function rowBadge(label,tone=''){
 }
 function bonusPreviewFor(row){
   return row&&state.bonusPreview&&state.bonusPreview.id===row.id
-    ?`<span class="bonus-preview">${state.bonusPreview.icon} +${money(state.bonusPreview.amount).slice(1)}</span>`
+    ?`<span class="bonus-preview ${state.bonusPreview.tone||''}">+${money(state.bonusPreview.amount).slice(1)}</span>`
     :'';
 }
 function tableMoney(value,extraClass=''){
@@ -391,7 +393,7 @@ function renderMentorRows(customers,rowsById,offset=0,lockedFuture=false){
     const cls=['customer-icon',isFirstPeriod?'period-first':'period-next',row?'filled':future?'future-window':''].filter(Boolean).join(' ');
     const partnerAwarded=row&&number===3&&state.mentorPartnerBadgeApplied;
     const badges=[
-      support>0?rowBadge('🤝 Supporting',''):'',
+      support>0?rowBadge('🤝 Supporting','support'):'',
       momentum>0?rowBadge('🎓⚡ Momentum','momentum'):'',
       partnerAwarded?rowBadge('🏅 Partner','partner'):'',
     ].filter(Boolean).join('');
@@ -462,7 +464,16 @@ function mentorFastStartFlash(){
   return `<div class="fast-start-flash mentor-fast-start-flash ${active?'active':'ghost'} ${pulse?'pulse':''}" aria-live="polite">
     <span class="flash-icon">🏆🎓</span>
     <span><strong>£400 Fast</strong><br>Start Mentor</span>
-    ${active?'':'<small>Ready to unlock</small>'}
+  </div>`;
+}
+function mentorMomentumFlash(){
+  const show=state.mentorNextIntroDismissed||state.customers.length>5||state.momentumRevealInProgress||state.momentumAppliedIds.length>0;
+  if(!show)return '';
+  const active=state.customers.length>5||state.momentumRevealInProgress||state.momentumAppliedIds.length>0;
+  const pulse=!!state.momentumPulseId;
+  return `<div class="fast-start-flash momentum-flash mentor-momentum-flash ${active?'active':'ghost'} ${pulse?'pulse':''}" aria-live="polite">
+    <span class="flash-icon">🎓⚡</span>
+    <span><strong>£125</strong><br>Momentum</span>
   </div>`;
 }
 function mentorTitleOwnAccountBadge(){
@@ -485,7 +496,7 @@ function noticeMarkup(result,split){
   const needsMonth2Hab=state.customers.length>=9&&!state.month2HabIntroDismissed;
   const complete=state.customers.length>=10&&!state.finalDismissed;
   if(needsMonth1Hab)return `<div class="notice-backdrop">
-    <section class="notice-popup notice-blue notice-celebration" onclick="event.stopPropagation()">
+    <section class="notice-popup notice-hab notice-celebration" onclick="event.stopPropagation()">
       <div class="notice-emoji">🔥</div>
       <div class="eyebrow">Their High Activity Bonus</div>
       <h2>A reminder from your own journey.</h2>
@@ -494,11 +505,11 @@ function noticeMarkup(result,split){
     </section>
   </div>`;
   if(needsFastStartSteps)return `<div class="notice-backdrop">
-    <section class="notice-popup notice-celebration" onclick="event.stopPropagation()">
+    <section class="notice-popup notice-blue notice-celebration" onclick="event.stopPropagation()">
       <div class="notice-emoji">🎯</div>
       <div class="eyebrow">Fast Start Mentor Bonus</div>
       <h2>Help them reach QD*.</h2>
-      <p class="muted">When a Partner you introduce reaches QD* in their first 30 days, you earn a £400 mentor bonus. They need one Partner introduced and 6 customers in total. Their own linked customer account can count as one of those customers.</p>
+      <p class="muted">When a Partner you introduce reaches QD* in their first 30 days, you earn a <strong>£400 mentor bonus</strong>.<br><br>They need <strong>1 Partner</strong> introduced and <strong>6 customers</strong> in total. Their own linked customer account can count as one of those customers.</p>
       <div class="step-actions">
         ${fastStartStepButton(state.introducedPartner,'They introduce 1 Partner','partner',1)}
         ${fastStartStepButton(state.linkedOwnAccount,'They link their own account','own',2)}
@@ -506,12 +517,12 @@ function noticeMarkup(result,split){
     </section>
   </div>`;
   if(state.mentorBonusApplied&&!state.mentorAwardDismissed&&!state.mentorBonusRevealInProgress)return `<div class="notice-backdrop">
-    <section class="notice-popup notice-green notice-celebration" onclick="event.stopPropagation()">
+    <section class="notice-popup notice-blue notice-celebration" onclick="event.stopPropagation()">
       ${celebrationGlitter()}
       <div class="notice-emoji">🏆🎓</div>
       <h2>£400 Fast Start Mentor Bonus Awarded!</h2>
       <p class="muted">You helped your new Partner qualify. They have also earned their own £500 Fast Start bonus.</p>
-      <button class="button green" onclick="dismissMentorAward()">Choose your next step</button>
+      <button class="button blue" onclick="dismissMentorAward()">Choose your next step</button>
     </section>
   </div>`;
   if(state.mentorBonusApplied&&state.mentorAwardDismissed&&!state.mentorNextIntroDismissed&&!state.mentorBonusRevealInProgress)return `<div class="notice-backdrop">
@@ -524,7 +535,7 @@ function noticeMarkup(result,split){
         ${registerButton}
         ${chatButton}
         <div class="or-divider">OR</div>
-        <button class="button secondary tall-action" onclick="dismissMentorNextIntro()"><span>Explore next 30 days earnings</span></button>
+        <button class="button secondary tall-action" onclick="dismissMentorNextIntro()"><span>🔍 Explore days 31-60</span></button>
       </div>
     </section>
   </div>`;
@@ -539,7 +550,7 @@ function noticeMarkup(result,split){
     </section>
   </div>`;
   if(needsMonth2Hab&&!state.momentumRevealInProgress&&!hasPendingMomentum)return `<div class="notice-backdrop">
-    <section class="notice-popup notice-green notice-celebration" onclick="event.stopPropagation()">
+    <section class="notice-popup notice-hab notice-celebration" onclick="event.stopPropagation()">
       <div class="notice-emoji">🔥</div>
       <div class="eyebrow milestone-heading">Their High Activity Bonus again</div>
       <h2>A second month reminder.</h2>
@@ -548,7 +559,7 @@ function noticeMarkup(result,split){
       <button class="button green" onclick="dismissHabIntro(2)">Keep going</button>
     </section>
   </div>`;
-  if(complete)return `<div class="notice-backdrop">
+  if(complete&&!state.momentumRevealInProgress&&!hasPendingMomentum)return `<div class="notice-backdrop">
     <section class="notice-popup notice-green notice-celebration notice-final" onclick="event.stopPropagation()">
       <button class="notice-close" onclick="dismissFinal()" aria-label="Close">×</button>
       <div class="notice-emoji">🚀</div>
@@ -593,11 +604,11 @@ function renderStarted(){
   const canAdd=(count<10&&state.mentorBonusApplied&&state.mentorNextIntroDismissed||count<5)&&!state.mentorBonusRevealInProgress;
   const buttonTone=independentStage?'green':'blue';
   const addButton=canAdd?`<button class="button ${buttonTone} add-customer-main" ${state.momentumRevealInProgress?'disabled':''} onclick="addCustomer()">${state.momentumRevealInProgress?applyingBonusLabel('Mentor Momentum','🎓⚡'):addLabel(count+1)}</button>`:'';
-  const actionRail=mentorFastStartFlash()||addButton
+  const actionRail=mentorFastStartFlash()||addButton||mentorMomentumFlash()
     ?`<div class="add-customer-row action-rail">
         <div class="action-rail-side">${mentorFastStartFlash()}</div>
         <div class="action-rail-main">${addButton}</div>
-        <div class="action-rail-side"></div>
+        <div class="action-rail-side action-rail-side-right">${mentorMomentumFlash()}</div>
       </div>`
     :'';
   document.body.classList.toggle('explorer-independent',independentStage);
