@@ -54,6 +54,7 @@ const state={
   momentumRevealInProgress:false,
   momentumRevealToken:0,
   momentumPulseId:null,
+  bonusPreview:null,
   finalDismissed:false,
   expandedCustomerId:null,
   contactOpen:false,
@@ -113,9 +114,9 @@ const maxMonth1Mentor=5*(R.CUSTOMER_BONUS_TABLE.homeowner[3]*0.5)+MENTOR_FAST_ST
 const maxMonth2Mentor=5*R.MOMENTUM_RECRUITER_AMOUNT;
 
 function visibleRow(row){
-  const firstMomentum=row.customerNumber===6&&row.momentumRecruiter>0;
-  const momentumShown=state.momentumRevealComplete||state.momentumAppliedIds.includes(row.id);
-  return firstMomentum&&!momentumShown?{...row,momentumRecruiter:0,momentumGatheringPartner:0}:row;
+  const hasMomentum=row.momentumRecruiter>0;
+  const momentumShown=state.momentumAppliedIds.includes(row.id);
+  return hasMomentum&&!momentumShown?{...row,momentumRecruiter:0,momentumGatheringPartner:0}:row;
 }
 function splitMentor(result){
   const rows=result.customers.map(visibleRow);
@@ -145,8 +146,12 @@ function addCustomer(){
   if(state.momentumRevealInProgress)return;
   if(state.customers.length>=10)return;
   if(state.customers.length>=5&&!state.mentorBonusApplied)return;
-  state.customers.push(makeCustomer(state.customers.length+1));
+  const customer=makeCustomer(state.customers.length+1);
+  state.customers.push(customer);
   render();
+  if(Number(customer.id.slice(1))>6){
+    window.setTimeout(()=>startMomentumRevealForId(customer.id),220);
+  }
 }
 function resetExplorer(){
   state.customers=[];
@@ -171,6 +176,7 @@ function resetExplorer(){
   state.momentumRevealInProgress=false;
   state.momentumRevealToken+=1;
   state.momentumPulseId=null;
+  state.bonusPreview=null;
   state.finalDismissed=false;
   state.expandedCustomerId=null;
   render();
@@ -244,6 +250,10 @@ function startMomentumReveal(){
   if(state.momentumRevealInProgress)return;
   const id=momentumRevealId();
   state.momentumIntroDismissed=true;
+  startMomentumRevealForId(id);
+}
+function startMomentumRevealForId(id){
+  if(state.momentumRevealInProgress)return;
   if(!id){
     state.momentumRevealComplete=true;
     render();
@@ -255,6 +265,11 @@ function startMomentumReveal(){
   render();
   window.setTimeout(()=>{
     if(token!==state.momentumRevealToken)return;
+    state.bonusPreview={id,amount:R.MOMENTUM_RECRUITER_AMOUNT,icon:'🎓⚡'};
+    render();
+    window.setTimeout(()=>{
+      if(token!==state.momentumRevealToken)return;
+      state.bonusPreview=null;
     if(!state.momentumAppliedIds.includes(id))state.momentumAppliedIds.push(id);
     state.momentumPulseId=id;
     render();
@@ -265,6 +280,7 @@ function startMomentumReveal(){
       state.momentumRevealComplete=true;
       render();
     },1500);
+    },900);
   },450);
 }
 function dismissFinal(){state.finalDismissed=true;render();}
@@ -333,9 +349,9 @@ function howPaidMarkup(){
         ${paidSection('Customer Bonus','The new Partner earns customer bonuses as they gather homeowners.','<p>This demo keeps their customer journey simple by using 3-service homeowners.</p>','💷','blue')}
         ${paidSection('High Activity Bonus','Four or more 3-service homeowners in a calendar month can unlock extra income for them.','<p>It adds £100 to each qualifying homeowner in that calendar month.</p>','🔥','amber')}
         ${paidSection('Residual Income','Ongoing income starts differently for tenants and homeowners.','<p>Tenants can create residual from month 1. Homeowner residual is delayed depending on service count.</p>','🔁','blue')}
-        ${paidSection('Promotion & Fast Starter Bonus','Their first 30 day milestones matter because they build confidence.','<p>They can earn Fast Start bonuses when they introduce 1 Partner and 6 customers in their first 30 days.</p>','📈','green')}
+        ${paidSection('Promotion & Fast Starter Bonus','Their first 30 day milestones matter because they build confidence.','<p>They can earn Fast Start bonuses when they introduce 1 Partner and 6 customers in their first 30 days.</p>','🏆','green')}
         ${paidSection('Supporting Customer Bonus','In their first 30 days, you actively support early customer appointments.','<p>In this simple demo, your supporting bonus is £125 per supported customer appointment.</p>','🤝','purple')}
-        ${paidSection('Mentor Bonus','You earn this when a Partner you introduce reaches QD* in their first 30 days.','<p>The tool combines QD mentor and Fast Starter mentor payments as a £400 moment.</p>','🎓','slate')}
+        ${paidSection('Mentor Bonus','You earn this when a Partner you introduce reaches QD* in their first 30 days.','<p>The tool combines QD mentor and Fast Starter mentor payments as a £400 moment.</p>','🏆🎓','slate')}
         ${paidSection('Momentum Bonus','In days 31-60, appointment support steps back but Momentum can still reward both of you.','<p>Eligible unsupported 3+ service customers can pay Momentum Bonus to the new Partner and to you as the recruiting Partner.</p>','⚡','green')}
       </div>
     </section>
@@ -352,6 +368,11 @@ function detailCell(label,value){
 }
 function rowBadge(label,tone=''){
   return `<span class="row-badge ${tone}">${label}</span>`;
+}
+function bonusPreviewFor(row){
+  return row&&state.bonusPreview&&state.bonusPreview.id===row.id
+    ?`<span class="bonus-preview">${state.bonusPreview.icon} +${money(state.bonusPreview.amount).slice(1)}</span>`
+    :'';
 }
 function tableMoney(value,extraClass=''){
   return `<strong class="table-money ${extraClass}">${money(value)}</strong>`;
@@ -370,7 +391,7 @@ function renderMentorRows(customers,rowsById,offset=0,lockedFuture=false){
     const cls=['customer-icon',isFirstPeriod?'period-first':'period-next',row?'filled':future?'future-window':''].filter(Boolean).join(' ');
     const partnerAwarded=row&&number===3&&state.mentorPartnerBadgeApplied;
     const badges=[
-      support>0?rowBadge('🤝 Support',''):'',
+      support>0?rowBadge('🤝 Supporting',''):'',
       momentum>0?rowBadge('🎓⚡ Momentum','momentum'):'',
       partnerAwarded?rowBadge('🏅 Partner','partner'):'',
     ].filter(Boolean).join('');
@@ -380,14 +401,14 @@ function renderMentorRows(customers,rowsById,offset=0,lockedFuture=false){
       ${row?`<button class="customer-summary-row" onclick="toggleCustomerDetails('${row.id}')" aria-expanded="${expanded?'true':'false'}">
         <div class="customer-row-id"><div class="${cls}">${homeIcon()}</div><strong>${number}</strong></div>
         <div class="row-badges">${badges}</div>
-        ${tableMoney(total,'table-row-total')}
+        <div class="table-total-stack">${bonusPreviewFor(row)}${tableMoney(total,'table-row-total')}</div>
       </button>`:`<div class="customer-summary-row empty">
         <div class="customer-row-id"><div class="${cls}">+</div><strong>${number}</strong></div>
         <div class="row-badges"></div>
-        ${tableMoney(0,'table-row-total')}
+        <div class="table-total-stack">${tableMoney(0,'table-row-total')}</div>
       </div>`}
       ${expanded?`<div class="customer-row-detail ${isFirstPeriod?'customer-row-detail-compact':''}">
-        ${detailCell('🤝 Support',support)}
+        ${detailCell('🤝 Supporting',support)}
         ${!isFirstPeriod?detailCell('🎓⚡ Momentum',momentum):''}
         ${detailCell('💷 Their earnings',row.customerBonusGatheringPartner+row.highActivityBonus+row.momentumGatheringPartner)}
       </div>`:''}
@@ -416,7 +437,7 @@ function mentorColumn({title,count,total,max,rows,tone,locked=false,note='',bonu
     <div class="customer-earnings-table">
       <div class="customer-table-head">
         <span>Customer</span>
-        <span>Mentor pay</span>
+        <span>Bonus</span>
         <span>Total</span>
       </div>
       ${rows}
@@ -426,9 +447,10 @@ function mentorColumn({title,count,total,max,rows,tone,locked=false,note='',bonu
   </section>`;
 }
 function fastStartStepButton(done,label,step,number){
+  const icon=step==='own'?'🔗':'🏅';
   return `<button class="step-button ${done?'done':''}" ${done||state.mentorBonusRevealInProgress?'disabled':''} onclick="completeFastStartStep('${step}')">
     <span>${done?'Done':`Step ${number}`}</span>
-    <strong>${label}</strong>
+    <strong><span class="step-main-icon">${icon}</span>${label}</strong>
     <span class="step-check" aria-hidden="true">${done?'✓':''}</span>
   </button>`;
 }
@@ -438,7 +460,7 @@ function mentorFastStartFlash(){
   const active=state.mentorBonusApplied;
   const pulse=state.mentorBonusFlashPulse;
   return `<div class="fast-start-flash mentor-fast-start-flash ${active?'active':'ghost'} ${pulse?'pulse':''}" aria-live="polite">
-    <span class="flash-icon">📈</span>
+    <span class="flash-icon">🏆🎓</span>
     <span><strong>£400 Fast</strong><br>Start Mentor</span>
     ${active?'':'<small>Ready to unlock</small>'}
   </div>`;
@@ -455,9 +477,10 @@ function celebrationGlitter(){
 }
 function noticeMarkup(result,split){
   const registerButton=`<a class="button blue register-link tall-action" target="_blank" rel="noopener" href="${registerUrl}"><span>🎯 Ready to earn? Register here!</span><small>(new tab)</small></a>`;
-  const chatButton=`<a class="button secondary register-link tall-action" target="_blank" rel="noopener" href="${CONTACT.calendarUrl}"><span>🗓️ Got questions? Book a chat</span><small>(new tab)</small></a>`;
+  const chatButton=`<a class="button secondary register-link tall-action" target="_blank" rel="noopener" href="${CONTACT.calendarUrl}"><span><span class="calendar-glyph" aria-hidden="true"></span> Got questions? Book a chat</span><small>(new tab)</small></a>`;
   const needsFastStartSteps=state.customers.length>=5&&!fastStartStepsComplete()&&!state.mentorBonusRevealInProgress;
   const pendingMomentum=state.customers.length>=6&&!state.momentumIntroDismissed&&result.customers.some(row=>row.customerNumber===6&&row.momentumRecruiter>0);
+  const hasPendingMomentum=result.customers.some(row=>row.momentumRecruiter>0&&!state.momentumAppliedIds.includes(row.id));
   const needsMonth1Hab=state.customers.length===4&&!state.habIntroDismissed;
   const needsMonth2Hab=state.customers.length>=9&&!state.month2HabIntroDismissed;
   const complete=state.customers.length>=10&&!state.finalDismissed;
@@ -485,13 +508,13 @@ function noticeMarkup(result,split){
   if(state.mentorBonusApplied&&!state.mentorAwardDismissed&&!state.mentorBonusRevealInProgress)return `<div class="notice-backdrop">
     <section class="notice-popup notice-green notice-celebration" onclick="event.stopPropagation()">
       ${celebrationGlitter()}
-      <div class="notice-emoji">🏅</div>
+      <div class="notice-emoji">🏆🎓</div>
       <h2>£400 Fast Start Mentor Bonus Awarded!</h2>
       <p class="muted">You helped your new Partner qualify. They have also earned their own £500 Fast Start bonus.</p>
       <button class="button green" onclick="dismissMentorAward()">Choose your next step</button>
     </section>
   </div>`;
-  if(state.mentorBonusApplied&&state.mentorAwardDismissed&&!state.mentorNextIntroDismissed)return `<div class="notice-backdrop">
+  if(state.mentorBonusApplied&&state.mentorAwardDismissed&&!state.mentorNextIntroDismissed&&!state.mentorBonusRevealInProgress)return `<div class="notice-backdrop">
     <section class="notice-popup notice-green notice-celebration" onclick="event.stopPropagation()">
       <div class="notice-emoji">🧭</div>
       <div class="eyebrow">What next?</div>
@@ -515,7 +538,7 @@ function noticeMarkup(result,split){
       <button class="button green" onclick="startMomentumReveal()">Apply Mentor Momentum</button>
     </section>
   </div>`;
-  if(needsMonth2Hab)return `<div class="notice-backdrop">
+  if(needsMonth2Hab&&!state.momentumRevealInProgress&&!hasPendingMomentum)return `<div class="notice-backdrop">
     <section class="notice-popup notice-green notice-celebration" onclick="event.stopPropagation()">
       <div class="notice-emoji">🔥</div>
       <div class="eyebrow milestone-heading">Their High Activity Bonus again</div>
@@ -535,12 +558,14 @@ function noticeMarkup(result,split){
       <p class="muted"><strong>That's just one Partner.</strong> What if you mentored two while continuing to gather your own customers?</p>
       <div class="mentor-total-strip">
         <div class="mentor-total-chip"><span>🤝 Supporting</span><strong>${money(split.supportTotal)}</strong></div>
-        <div class="mentor-total-chip"><span>🎓 Fast Start Mentor</span><strong>${money(split.mentorFastStart)}</strong></div>
+        <div class="mentor-total-chip"><span>🏆🎓 Fast Start Mentor</span><strong>${money(split.mentorFastStart)}</strong></div>
         <div class="mentor-total-chip"><span>🎓⚡ Mentor Momentum</span><strong>${money(split.momentumTotal)}</strong></div>
       </div>
-      <div class="notice-actions">
+      <div class="notice-actions notice-actions-stacked">
         ${registerButton}
         ${chatButton}
+        <div class="or-divider">OR</div>
+        <button class="button secondary tall-action" onclick="dismissFinal()"><span>🔍 Continue to explore</span></button>
       </div>
     </section>
   </div>`;
@@ -579,7 +604,7 @@ function renderStarted(){
   document.getElementById('app').innerHTML=`
     ${contactMarkup()}
     <header class="topbar">
-      <div><div class="eyebrow">Utility Warehouse Mentor Earnings Explorer</div><div class="title-row"><h1>${independentStage?'Mentor days 31-60':'Mentor first 30 days'}</h1>${mentorTitleOwnAccountBadge()}</div></div>
+      <div><div class="eyebrow">Utility Warehouse Mentor Earnings Explorer</div><div class="title-row"><h1>${independentStage?'Mentor days 31-60':'Mentor first 30 days'}</h1></div></div>
     </header>
     <section class="hero ${independentStage?'hero-independent':'hero-tracker-first'}">
       <div class="mentor-hero-grid">
@@ -587,9 +612,15 @@ function renderStarted(){
           <div class="eyebrow" style="color:rgba(255,255,255,.76)">Your mentor income</div>
           <div class="hero-number">${money(split.total)}</div>
         </div>
-        <div class="mentor-side-stat">
-          <span>Their demo</span>
-          <strong>${money(split.partnerTotal)}</strong>
+        <div class="mentor-hero-right">
+          <div class="mentor-side-stat">
+            <span>Your new Partner earns</span>
+            <strong>${money(split.partnerTotal)}</strong>
+          </div>
+          <div class="hero-meta-stack">
+            <div class="hero-meta-pill"><span class="hero-house">${homeIcon()}</span><span>${DEMO_SERVICES} service homeowners</span></div>
+            ${mentorTitleOwnAccountBadge()}
+          </div>
         </div>
       </div>
       <div style="margin-top:.75rem" class="progress"><span style="width:${Math.min(100,split.total/maxMentorTotal*100)}%"></span></div>
@@ -605,15 +636,15 @@ function renderStarted(){
     </section>
     <section class="mentor-context-card">
       <div>
-        <span>Support</span>
+        <span>🤝 Supporting</span>
         <strong>${money(split.supportTotal)}</strong>
       </div>
       <div>
-        <span>Fast Start Mentor</span>
+        <span>🏆🎓 Fast Start Mentor</span>
         <strong>${money(split.mentorFastStart)}</strong>
       </div>
       <div>
-        <span>Mentor Momentum</span>
+        <span>🎓⚡ Mentor Momentum</span>
         <strong>${money(split.momentumTotal)}</strong>
       </div>
     </section>

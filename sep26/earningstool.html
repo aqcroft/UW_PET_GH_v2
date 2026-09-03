@@ -32,8 +32,8 @@ const CONTACT={
 };
 const DEMO_TYPE='homeowner';
 const DEMO_SERVICES=3;
-const FAST_START_BADGE_CUSTOMER_NUMBER=2;
-const state={started:false,month1:[],month2:[],ownAccountLinked:false,customerPartnerUpgraded:false,fastStartRevealComplete:false,fastStartRevealInProgress:false,fastStartRevealToken:0,fastStartPulseId:null,fastStartAccountPulse:false,fastStartFlashPulse:false,fastStartPartnerBadgeApplied:false,fastStartAccountBadgeApplied:false,fastStartAwardDismissed:false,habIntroDismissed:false,month2HabIntroDismissed:false,month1HabAppliedIds:[],month2HabAppliedIds:[],month1HabRevealComplete:false,month2HabRevealComplete:false,habRevealInProgress:false,habRevealToken:0,habPulseId:null,momentumIntroDismissed:false,momentumAppliedIds:[],momentumRevealComplete:false,momentumRevealInProgress:false,momentumRevealToken:0,momentumPulseId:null,nextIntroDismissed:false,endIntroDismissed:false,expandedCustomerId:null,contactOpen:false,sayHiOpen:false,howPaidOpen:false};
+const FAST_START_BADGE_CUSTOMER_NUMBER=3;
+const state={started:false,month1:[],month2:[],ownAccountLinked:false,customerPartnerUpgraded:false,fastStartRevealComplete:false,fastStartRevealInProgress:false,fastStartRevealToken:0,fastStartPulseId:null,fastStartAccountPulse:false,fastStartFlashPulse:false,fastStartPartnerBadgeApplied:false,fastStartAccountBadgeApplied:false,fastStartAwardDismissed:false,habIntroDismissed:false,month2HabIntroDismissed:false,month1HabAppliedIds:[],month2HabAppliedIds:[],month1HabRevealComplete:false,month2HabRevealComplete:false,habRevealInProgress:false,habRevealToken:0,habPulseId:null,momentumIntroDismissed:false,momentumAppliedIds:[],momentumRevealComplete:false,momentumRevealInProgress:false,momentumRevealToken:0,momentumPulseId:null,bonusPreview:null,nextIntroDismissed:false,endIntroDismissed:false,expandedCustomerId:null,contactOpen:false,sayHiOpen:false,howPaidOpen:false};
 
 function makeCustomer(number,type=DEMO_TYPE,services=DEMO_SERVICES){
   return {id:`c${number}`,type,services,supported:number<=5};
@@ -50,9 +50,9 @@ function visibleHabRow(row,month){
   return {...row,highActivityBonus:complete||ids.includes(row.id)?row.highActivityBonus:0};
 }
 function visibleMomentumRow(row){
-  const isFirstMomentum=row.customerNumber===6&&row.momentumGatheringPartner>0;
-  const shown=state.momentumRevealComplete||state.momentumAppliedIds.includes(row.id);
-  return isFirstMomentum&&!shown?{...row,momentumGatheringPartner:0}:row;
+  const hasMomentum=row.momentumGatheringPartner>0;
+  const shown=state.momentumAppliedIds.includes(row.id);
+  return hasMomentum&&!shown?{...row,momentumGatheringPartner:0}:row;
 }
 function buildContext(month1=state.month1,month2=state.month2,ownAccountLinked=state.fastStartRevealComplete,customerPartnerUpgraded=state.fastStartRevealComplete){
   const customers=[...month1.map((c,i)=>({...c,dateGathered:R.addDays(startDate,i+1),supported:true})),
@@ -120,9 +120,12 @@ function addCustomer(){
   if(state.month1.length<5)state.month1.push(customer);
   else state.month2.push(customer);
   render();
+  if(customer.id!=='c6'&&customer.id.startsWith('c')&&Number(customer.id.slice(1))>6){
+    window.setTimeout(()=>startMomentumRevealForId(customer.id),220);
+  }
 }
 function resetExplorer(){
-  state.month1=[];state.month2=[];state.ownAccountLinked=false;state.customerPartnerUpgraded=false;state.fastStartRevealComplete=false;state.fastStartRevealInProgress=false;state.fastStartRevealToken+=1;state.fastStartPulseId=null;state.fastStartAccountPulse=false;state.fastStartFlashPulse=false;state.fastStartPartnerBadgeApplied=false;state.fastStartAccountBadgeApplied=false;state.fastStartAwardDismissed=false;state.habIntroDismissed=false;state.month2HabIntroDismissed=false;state.month1HabAppliedIds=[];state.month2HabAppliedIds=[];state.month1HabRevealComplete=false;state.month2HabRevealComplete=false;state.habRevealInProgress=false;state.habRevealToken+=1;state.habPulseId=null;state.momentumIntroDismissed=false;state.momentumAppliedIds=[];state.momentumRevealComplete=false;state.momentumRevealInProgress=false;state.momentumRevealToken+=1;state.momentumPulseId=null;state.nextIntroDismissed=false;state.endIntroDismissed=false;state.expandedCustomerId=null;render();
+  state.month1=[];state.month2=[];state.ownAccountLinked=false;state.customerPartnerUpgraded=false;state.fastStartRevealComplete=false;state.fastStartRevealInProgress=false;state.fastStartRevealToken+=1;state.fastStartPulseId=null;state.fastStartAccountPulse=false;state.fastStartFlashPulse=false;state.fastStartPartnerBadgeApplied=false;state.fastStartAccountBadgeApplied=false;state.fastStartAwardDismissed=false;state.habIntroDismissed=false;state.month2HabIntroDismissed=false;state.month1HabAppliedIds=[];state.month2HabAppliedIds=[];state.month1HabRevealComplete=false;state.month2HabRevealComplete=false;state.habRevealInProgress=false;state.habRevealToken+=1;state.habPulseId=null;state.momentumIntroDismissed=false;state.momentumAppliedIds=[];state.momentumRevealComplete=false;state.momentumRevealInProgress=false;state.momentumRevealToken+=1;state.momentumPulseId=null;state.bonusPreview=null;state.nextIntroDismissed=false;state.endIntroDismissed=false;state.expandedCustomerId=null;render();
 }
 function completeFirst30Step(step){
   if(state.fastStartRevealInProgress||state.fastStartRevealComplete)return;
@@ -148,7 +151,7 @@ function startFastStartReveal(){
     for(let i=0;i<2;i++){
       if(!isCurrent())return false;
       clearPulses();
-      if(type==='customer'||type==='partner')state.fastStartPulseId=`c${FAST_START_BADGE_CUSTOMER_NUMBER}`;
+      if(type==='partner')state.fastStartPulseId=`c${FAST_START_BADGE_CUSTOMER_NUMBER}`;
       if(type==='account')state.fastStartAccountPulse=true;
       if(type==='flash')state.fastStartFlashPulse=true;
       render();
@@ -202,10 +205,16 @@ function startHabReveal(month){
       return;
     }
     const id=targetIds[index];
+    state.bonusPreview={id,amount:R.HAB_PER_QUALIFYING_CUSTOMER,icon:'🔥'};
+    render();
+    window.setTimeout(()=>{
+      if(token!==state.habRevealToken)return;
+      state.bonusPreview=null;
     if(!applied.includes(id))applied.push(id);
     state.habPulseId=id;
     render();
     window.setTimeout(()=>applyNext(index+1),1500);
+    },900);
   };
   render();
   window.setTimeout(()=>applyNext(0),450);
@@ -218,6 +227,10 @@ function startMomentumReveal(){
   if(state.habRevealInProgress||state.momentumRevealInProgress)return;
   const id=momentumRevealId();
   state.momentumIntroDismissed=true;
+  startMomentumRevealForId(id);
+}
+function startMomentumRevealForId(id){
+  if(state.habRevealInProgress||state.momentumRevealInProgress)return;
   if(!id){
     state.momentumRevealComplete=true;
     render();
@@ -229,6 +242,11 @@ function startMomentumReveal(){
   render();
   window.setTimeout(()=>{
     if(token!==state.momentumRevealToken)return;
+    state.bonusPreview={id,amount:R.MOMENTUM_GATHERING_PARTNER_AMOUNT,icon:'⚡'};
+    render();
+    window.setTimeout(()=>{
+      if(token!==state.momentumRevealToken)return;
+      state.bonusPreview=null;
     if(!state.momentumAppliedIds.includes(id))state.momentumAppliedIds.push(id);
     state.momentumPulseId=id;
     render();
@@ -239,6 +257,7 @@ function startMomentumReveal(){
       state.momentumRevealComplete=true;
       render();
     },1500);
+    },900);
   },450);
 }
 function dismissNextIntro(){state.nextIntroDismissed=true;render();}
@@ -276,6 +295,11 @@ function rowBadge(label,tone=''){
 function detailCell(label,value){
   return `<div class="detail-cell"><span>${label}</span><strong>${money(value)}</strong></div>`;
 }
+function bonusPreviewFor(row){
+  return row&&state.bonusPreview&&state.bonusPreview.id===row.id
+    ?`<span class="bonus-preview">${state.bonusPreview.icon} +${money(state.bonusPreview.amount).slice(1)}</span>`
+    :'';
+}
 function renderCustomerRows(customers,rowsById,offset=0,lockedFuture=false,fastStartTotal=0){
   return Array.from({length:5},(_,i)=>{
     const c=customers[i];
@@ -298,7 +322,7 @@ function renderCustomerRows(customers,rowsById,offset=0,lockedFuture=false,fastS
     const badges=[
       high>0?rowBadge('🔥 High Activity','activity'):'',
       thirdValue>0&&!isFirstPeriod?rowBadge('⚡ Momentum','momentum'):'',
-      partnerAwarded?rowBadge('Partner','partner'):'',
+      partnerAwarded?rowBadge('🏅 Partner','partner'):'',
       accountLinked?rowBadge('Account','account'):'',
     ].filter(Boolean).join('');
     const expanded=row&&state.expandedCustomerId===row.id;
@@ -307,7 +331,7 @@ function renderCustomerRows(customers,rowsById,offset=0,lockedFuture=false,fastS
         <strong>${number}</strong>
       </div>
       <div class="row-badges">${badges}</div>
-      ${tableMoney(row?total:0,'table-row-total')}`;
+      <div class="table-total-stack">${bonusPreviewFor(row)}${tableMoney(row?total:0,'table-row-total')}</div>`;
     return `<div class="customer-table-row ${future?'customer-tile-future':''} ${partnerAwarded||accountLinked?'customer-tile-awarded':''} ${row&&state.habPulseId===row.id?'customer-row-hab-pulse':''} ${row&&state.momentumPulseId===row.id?'customer-row-momentum-pulse':''} ${row&&state.fastStartPulseId===row.id?'customer-row-faststart-pulse':''}" aria-label="${ordinal(number)} customer">
       ${row?`<button class="customer-summary-row" onclick="toggleCustomerDetails('${row.id}')" aria-expanded="${expanded?'true':'false'}">${rowMain}</button>`:`<div class="customer-summary-row empty">${rowMain}</div>`}
       ${expanded?`<div class="customer-row-detail ${isFirstPeriod?'customer-row-detail-compact':''}">
@@ -393,7 +417,7 @@ function howPaidMarkup(){
         ${paidSection('Customer Bonus','An upfront payment when a homeowner customer joins with core services.','<div class="paid-grid"><span>1 service</span><strong>£50</strong><span>2 services</span><strong>£100</strong><span>3 services</span><strong>£250</strong><span>4 services</span><strong>£300</strong></div>','💷','blue')}
         ${paidSection('High Activity Bonus','Extra income when enough qualifying homeowners join in the same calendar month.','<p>Here, the 4th qualifying homeowner unlocks an extra £100 for each qualifying customer in that month.</p>','🔥','amber')}
         ${paidSection('Residual Income','Ongoing income starts differently for tenants and homeowners.','<p>Tenants can create residual from month 1. Homeowner residual is delayed depending on service count, usually from 24 to 60 months.</p>','🔁','blue')}
-        ${paidSection('Promotion & Fast Starter Bonus','The first big milestone in the first 30 days.','<p>Link your own UW customer account and upgrade one customer to Partner. When both happen, the £500 Fast Start + promotion bonus is added.</p>','📈','green')}
+        ${paidSection('Promotion & Fast Starter Bonus','The first big milestone in the first 30 days.','<p>Link your own UW customer account and upgrade one customer to Partner. When both happen, the £500 Fast Start + promotion bonus is added.</p>','🏆','green')}
         ${paidSection('Supporting Customer Bonus','Income shared when an experienced Partner supports an eligible appointment.','<p>It helps newer Partners get going while recognising the support that helped the customer join.</p>','🤝','purple')}
         ${paidSection('Mentor Bonus','Income when a Partner you introduce reaches QD* in their first 30 days.','<p>The mentor journey shows this as a £400 Fast Start Mentor moment.</p>','🎓','slate')}
         ${paidSection('Momentum Bonus','The second 30 days becomes more independent.','<p>Solo 3+ service customers in the right window can add Momentum Bonus, while support moves to lighter-touch guidance.</p>','⚡','green')}
@@ -405,9 +429,10 @@ function breakdownLine([label,value]){
   return `<div class="mini-line"><span>${label}</span><strong>${money(value)}</strong></div>`;
 }
 function first30StepButton(done,label,step,number){
+  const icon=step==='own'?'🔗':'🏅';
   return `<button class="step-button fast-start-step-button ${done?'done':''}" ${done||state.fastStartRevealInProgress?'disabled':''} onclick="completeFirst30Step('${step}')">
     <span>${done?'Done':`Step ${number}`}</span>
-    <strong>${label}</strong>
+    <strong><span class="step-main-icon">${icon}</span>${label}</strong>
     <span class="step-check" aria-hidden="true">${done?'✓':''}</span>
   </button>`;
 }
@@ -417,7 +442,7 @@ function fastStartFlash(){
   const active=state.fastStartRevealComplete;
   const pulse=state.fastStartFlashPulse;
   return `<div class="fast-start-flash ${active?'active':'ghost'} ${pulse?'pulse':''}" aria-live="polite">
-    <span class="flash-icon">📈</span>
+    <span class="flash-icon">🏆</span>
     <span><strong>£500 Fast</strong><br>Start Bonus</span>
     ${active?'':'<small>Ready to unlock</small>'}
   </div>`;
@@ -462,8 +487,9 @@ function renderStarted(){
   const journeyComplete=allCount>=10;
   const revealInProgress=state.habRevealInProgress||state.momentumRevealInProgress||state.fastStartRevealInProgress;
   const hasPendingMomentumIntro=!state.momentumIntroDismissed&&result.customers.some(row=>row.customerNumber===6&&row.momentumGatheringPartner>0);
+  const hasPendingMomentum=result.customers.some(row=>row.momentumGatheringPartner>0&&!state.momentumAppliedIds.includes(row.id));
   const pageHeading=independentStage&&state.nextIntroDismissed?'Days 31-60':'First 30 days';
-  const coachLine=state.habRevealInProgress?'Watch the £100 High Activity Bonus apply to each qualifying customer.':state.fastStartRevealInProgress?'Applying Fast Start bonus criteria.':state.momentumRevealInProgress?'Watch the first Momentum Bonus apply to your 6th customer.':allCount===0?'Add your first five customers and watch the first-30-day bonuses appear.':state.month1.length<4?'Build your first five customers and keep the journey simple.':state.month1.length===4?'High Activity Bonus is now part of your first month.':needsUpgrade?`${milestoneStepsDone}/2 steps complete. Finish both to unlock your Fast Start moment.`:independentStage&&state.month2.length===0?'Your launch month is complete. Now see what a more independent second 30 days can add.':state.month2.length===4?'Another High Activity Bonus is now added on top of Momentum.':state.month2.length<5?'You are now exploring more independent customer gathering, with Momentum in play.':'Your first 60 days are mapped.';
+  const coachLine=state.habRevealInProgress?'Watch the £100 High Activity Bonus apply to each qualifying customer.':state.fastStartRevealInProgress?'Applying Fast Start bonus criteria.':state.momentumRevealInProgress?'Watch the Momentum Bonus apply as an extra £125.':allCount===0?'Add your first five customers and watch the first-30-day bonuses appear.':state.month1.length<4?'Build your first five customers and keep the journey simple.':state.month1.length===4?'You have qualified for £100 High Activity Bonus for all 3-service homeowners.':needsUpgrade?`${milestoneStepsDone}/2 steps complete. Finish both to unlock your Fast Start moment.`:independentStage&&state.month2.length===0?'Your launch month is complete. Now see what a more independent second 30 days can add.':state.month2.length===4?'Another High Activity Bonus is now added on top of Momentum.':state.month2.length<5?'You are now exploring more independent customer gathering, with Momentum in play.':'Your first 60 days are mapped.';
   const builderPrimaryClass=independentStage?'button green':'button';
   const addCustomerAction=!needsUpgrade&&!journeyComplete&&!state.fastStartRevealInProgress
     ?`<button class="${builderPrimaryClass} add-customer-main" ${revealInProgress?'disabled':''} onclick="addCustomer()">${state.habRevealInProgress?applyingBonusLabel('High Activity Bonus','🔥'):state.momentumRevealInProgress?applyingBonusLabel('Momentum Bonus','⚡'):addLabel(nextNumber)}</button>`
@@ -477,13 +503,12 @@ function renderStarted(){
     :'';
   const builderControls='';
   const registerButton=`<a class="button blue register-link tall-action" target="_blank" rel="noopener" href="${registerUrl}"><span>🎯 Ready to earn? Register here!</span><small>(new tab)</small></a>`;
-  const chatButton=`<a class="button secondary register-link tall-action" target="_blank" rel="noopener" href="${CONTACT.calendarUrl}"><span>🗓️ Got questions? Book a chat</span><small>(new tab)</small></a>`;
+  const chatButton=`<a class="button secondary register-link tall-action" target="_blank" rel="noopener" href="${CONTACT.calendarUrl}"><span><span class="calendar-glyph" aria-hidden="true"></span> Got questions? Book a chat</span><small>(new tab)</small></a>`;
   const mentorButton=`<a class="button secondary register-link mentor-link-button tall-action" href="${mentorUrl}"><span>Explore Mentor Journey</span></a>`;
   const noticeMarkup=!state.habIntroDismissed&&state.month1.length===4?`<div class="notice-backdrop">
       <section class="notice-popup notice-blue notice-celebration" onclick="event.stopPropagation()">
         <div class="notice-emoji">🔥</div>
-        <div class="eyebrow">High Activity Bonus unlocked</div>
-        <h2>High Activity Bonus is ready.</h2>
+        <div class="eyebrow milestone-heading">High Activity Bonus unlocked</div>
         <p class="muted">Four or more <strong>3-service homeowners</strong> in one calendar month qualify you for High Activity Bonus on every 3-service homeowner in that month.</p>
         <p class="watch-line"><strong>Watch as each customer has the £100 High Activity Bonus applied.</strong></p>
         <button class="button blue" onclick="startHabReveal(1)">Apply High Activity Bonus</button>
@@ -502,16 +527,16 @@ function renderStarted(){
     </div>`:independentStage&&!state.fastStartAwardDismissed&&!state.fastStartRevealInProgress?`<div class="notice-backdrop">
       <section class="notice-popup notice-green notice-celebration">
         ${celebrationGlitter()}
-        <div class="notice-emoji">🎉</div>
+        <div class="notice-emoji">🏆</div>
         <h2>£500 Fast Start Bonus Awarded!</h2>
         <div class="award-strip award-strip-ticked">
           <span><strong>✓ 🏅 1 Partner introduced</strong></span>
-          <span><strong>✓ 💷 6 customers</strong></span>
+          <span><strong>✓ 🏡 6 homeowners</strong></span>
         </div>
         <p class="muted">A big first milestone: your Fast Start bonus is in place.</p>
         <button class="button green" onclick="dismissFastStartAward()">Choose your next step</button>
       </section>
-    </div>`:independentStage&&!state.nextIntroDismissed?`<div class="notice-backdrop">
+    </div>`:independentStage&&state.fastStartAwardDismissed&&!state.nextIntroDismissed&&!state.fastStartRevealInProgress?`<div class="notice-backdrop">
       <section class="notice-popup notice-green notice-celebration" onclick="event.stopPropagation()">
         <div class="notice-emoji">🧭</div>
         <div class="eyebrow">What next?</div>
@@ -534,7 +559,7 @@ function renderStarted(){
         <p class="watch-line"><strong>Watch it lift this customer from £250 to £375.</strong></p>
         <button class="button green" onclick="startMomentumReveal()">Apply Momentum Bonus</button>
       </section>
-    </div>`:!state.month2HabIntroDismissed&&state.month2.length>=4?`<div class="notice-backdrop">
+    </div>`:!state.month2HabIntroDismissed&&state.month2.length>=4&&!state.momentumRevealInProgress&&!hasPendingMomentum?`<div class="notice-backdrop">
       <section class="notice-popup notice-green notice-celebration" onclick="event.stopPropagation()">
         <div class="notice-emoji">🔥</div>
         <div class="eyebrow milestone-heading">High Activity Bonus unlocked again</div>
