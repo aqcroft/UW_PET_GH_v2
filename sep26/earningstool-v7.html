@@ -24,7 +24,7 @@
 .customer-column-head{align-items:center}
 .customer-summary-row{min-height:2.55rem}
 .column-count{white-space:nowrap}
-.row-badge{white-space:nowrap;font-size:.47rem}
+.row-badge{white-space:nowrap}
 .column-head-left{display:grid;gap:.14rem;justify-items:start}
 .column-head-left .column-count{margin:0}
 .column-total-blob{display:inline-block;font-size:1.18rem;font-weight:950;padding:.28rem .74rem;border-radius:999px;line-height:1.1;white-space:nowrap}
@@ -239,20 +239,12 @@ function startHabReveal(month){
     const teach=index===0;
     const apply=()=>{
       if(token!==state.habRevealToken)return;
-      state.bonusPreview=null;
       if(!applied.includes(id))applied.push(id);
       state.habPulseId=id;
       render();
-      window.setTimeout(()=>applyNext(index+1),teach?1450:1200);
+      window.setTimeout(()=>applyNext(index+1),teach?1700:1200);
     };
-    if(teach){
-      state.bonusPreview={id,amount:R.HAB_PER_QUALIFYING_CUSTOMER,tone:'hab'};
-      state.habPulseId=null;
-      render();
-      window.setTimeout(apply,1050);
-    }else{
-      apply();
-    }
+    window.setTimeout(apply,teach?350:0);
   };
   render();
   window.setTimeout(()=>applyNext(0),450);
@@ -281,7 +273,6 @@ function startMomentumRevealForId(id){
   render();
   const apply=()=>{
     if(token!==state.momentumRevealToken)return;
-    state.bonusPreview=null;
     if(!state.momentumAppliedIds.includes(id))state.momentumAppliedIds.push(id);
     state.momentumPulseId=id;
     state.momentumTaughtOnce=true;
@@ -292,18 +283,9 @@ function startMomentumRevealForId(id){
       state.momentumPulseId=null;
       state.momentumRevealComplete=true;
       render();
-    },1000);
+    },teach?1500:900);
   };
-  if(teach){
-    window.setTimeout(()=>{
-      if(token!==state.momentumRevealToken)return;
-      state.bonusPreview={id,amount:R.MOMENTUM_GATHERING_PARTNER_AMOUNT,tone:'momentum'};
-      render();
-      window.setTimeout(apply,1050);
-    },450);
-  }else{
-    window.setTimeout(apply,220);
-  }
+  window.setTimeout(apply,teach?500:220);
 }
 function dismissNextIntro(){state.nextIntroDismissed=true;render();}
 function dismissFastStartAward(){state.fastStartAwardDismissed=true;render();}
@@ -365,9 +347,9 @@ function renderCustomerRows(customers,rowsById,offset=0,lockedFuture=false,fastS
     const partnerAwarded=fastStartBadgeTarget&&state.fastStartPartnerBadgeApplied;
     const accountLinked=false;
     const badges=[
-      high>0?rowBadge('🔥 High Activity','activity'):'',
-      thirdValue>0&&!isFirstPeriod?rowBadge('⚡ Momentum','momentum'):'',
-      partnerAwarded?rowBadge('🏅 Partner','partner'):'',
+      high>0?rowBadge('🔥 +'+money(high),'activity'):'',
+      thirdValue>0&&!isFirstPeriod?rowBadge('⚡ +'+money(thirdValue),'momentum'):'',
+      partnerAwarded?rowBadge('🏅','partner'):'',
       accountLinked?rowBadge('Account','account'):'',
     ].filter(Boolean).join('');
     const expanded=row&&state.expandedCustomerId===row.id;
@@ -376,7 +358,7 @@ function renderCustomerRows(customers,rowsById,offset=0,lockedFuture=false,fastS
         <strong>${number}</strong>
       </div>
       <div class="row-badges">${badges}</div>
-      <div class="table-total-stack">${bonusPreviewFor(row)}${tableMoney(row?total:0,'table-row-total')}</div>`;
+      <div class="table-total-stack">${tableMoney(row?total:0,'table-row-total')}</div>`;
     return `<div class="customer-table-row ${future?'customer-tile-future':''} ${partnerAwarded||accountLinked?'customer-tile-awarded':''} ${row&&state.habPulseId===row.id?'customer-row-hab-pulse':''} ${row&&state.momentumPulseId===row.id?'customer-row-momentum-pulse':''} ${row&&state.fastStartPulseId===row.id?'customer-row-faststart-pulse':''}" aria-label="${ordinal(number)} customer">
       ${row?`<button class="customer-summary-row" onclick="toggleCustomerDetails('${row.id}')" aria-expanded="${expanded?'true':'false'}">${rowMain}</button>`:`<div class="customer-summary-row empty">${rowMain}</div>`}
       ${expanded?`<div class="customer-row-detail ${isFirstPeriod?'customer-row-detail-compact':''}">
