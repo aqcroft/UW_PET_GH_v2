@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The First 60 Days - Self Serve</title>
+<link rel="stylesheet" href="uw-toolkit-theme.css">
+<style>
+  .self-serve-shell{padding-top:1rem}
+  .self-serve-profile{position:fixed;top:.55rem;right:.7rem;z-index:240}
+  .self-serve-profile .profile-photo-btn{display:grid;text-decoration:none}
+  .launch-error{display:none;margin:.8rem 0 0;padding:.7rem;border-radius:.65rem;background:#fff5e9;color:#7b4a00;font-size:.84rem;font-weight:800;line-height:1.35}
+  .launch-error.show{display:block}
+</style>
+</head>
+<body>
+<div class="app">
+  <a class="self-serve-profile" href="https://wa.me/447787400800?text=Hi%20Adrian%2C%20I%27ve%20just%20used%20your%20earnings%20explorer%20and%20I%27d%20like%20to%20know%20more" target="_blank" rel="noopener" aria-label="Message Adrian on WhatsApp">
+    <span class="profile-photo-btn">
+      <img src="https://raw.githubusercontent.com/aqcroft/UW_PET_GH_v2/main/Adrian_Croft.jpg" alt="Adrian Croft">
+    </span>
+  </a>
+
+  <main class="shell self-serve-shell" id="app">
+    <section class="splash-card" style="margin-top:10vh">
+      <div class="splash-top">
+        <div class="splash-wave">👋</div>
+        <h1>Welcome to the Utility Warehouse interactive earnings explorer</h1>
+      </div>
+      <div class="splash-body">
+        <div class="splash-highlight">Take a look to better understand your potential earnings as an Authorised Partner in your first 30 and 60 days.</div>
+        <p>Authorised Partners help people save on essential household services they already use:</p>
+        <div class="service-cloud">
+          <span>⚡ energy</span>
+          <span>🛜 broadband</span>
+          <span>📲 mobile</span>
+          <span>☔ insurance</span>
+        </div>
+        <p><strong>Bundles build benefits - for customers and Partners.</strong></p>
+        <p><strong>When customers win, Partners win. 🏆</strong></p>
+        <p class="splash-small">Add customers to better understand the bonuses new Partners are paid.</p>
+        <button class="button splash-start" id="startButton" onclick="launchExplorer()">Let's go!</button>
+        <a class="sneaky-mentor-shortcut" href="uw-mentor-earnings-explorer.html">Already built your first 10? Skip to the mentor story</a>
+        <div class="launch-error" id="launchError">The explorer could not be loaded automatically. <a href="earningstool-v14.html">Open The First 60 Days directly.</a></div>
+      </div>
+    </section>
+  </main>
+</div>
+<script>
+async function launchExplorer(){
+  const button=document.getElementById('startButton');
+  const error=document.getElementById('launchError');
+  button.disabled=true;
+  button.textContent='Opening...';
+  error.classList.remove('show');
+  try{
+    const response=await fetch('earningstool-v14.html',{cache:'no-store'});
+    if(!response.ok)throw new Error(`HTTP ${response.status}`);
+    const html=await response.text();
+    document.open('text/html','replace');
+    document.write(html);
+    document.close();
+  }catch(err){
+    console.error('Could not load earningstool-v14.html',err);
+    button.disabled=false;
+    button.textContent="Let's go!";
+    error.classList.add('show');
+  }
+}
+</script>
+</body>
+</html>
