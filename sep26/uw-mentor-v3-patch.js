@@ -67,6 +67,7 @@
       render();
       await wait(1200);
       state.mentorBonusPulse=false;
+      render();
     }else{
       state.qdModalFaded=false;
       render();
@@ -132,7 +133,7 @@
 
   function markV3(){
     const top=document.querySelector('.topbar .eyebrow span');
-    if(top)top.textContent='v3';
+    if(top && top.textContent!=='v3')top.textContent='v3';
   }
   const app=document.getElementById('app');
   if(app)new MutationObserver(markV3).observe(app,{childList:true,subtree:true});
