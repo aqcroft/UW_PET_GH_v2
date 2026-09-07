@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Utility Warehouse Mentor Earnings Explorer v3</title>
+<style>
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07101f}
+iframe{display:block;width:100%;height:100%;border:0}
+</style>
+</head>
+<body>
+<iframe id="mentorTool" src="uw-mentor-earnings-explorer-v2.html" title="Utility Warehouse Mentor Earnings Explorer v3"></iframe>
+<script>
+const frame=document.getElementById('mentorTool');
+frame.addEventListener('load',()=>{
+  const doc=frame.contentDocument;
+  if(!doc)return;
+  const patch=doc.createElement('script');
+  patch.src='uw-mentor-v3-patch.js';
+  patch.onload=()=>{ try{ doc.title='Utility Warehouse Mentor Earnings Explorer v3'; }catch(e){} };
+  doc.body.appendChild(patch);
+});
+</script>
+</body>
+</html>
