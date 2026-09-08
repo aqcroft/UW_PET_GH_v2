@@ -62,6 +62,27 @@
       line-height:1.08;
       opacity:.82;
     }
+
+    /* Refined full-width paper confetti for the £400 Mentor award. */
+    .mentor-confetti-screen span{
+      width:7px!important;
+      height:13px!important;
+      border-radius:2px!important;
+      font-size:0!important;
+      background:#7a42c8!important;
+      opacity:0;
+      animation:mentorPaperConfetti 1.35s cubic-bezier(.2,.68,.25,1) var(--d) both!important;
+      transform:translateX(-50%) rotate(var(--r)) scale(var(--s));
+    }
+    .mentor-confetti-screen span:nth-child(4n+2){background:#26164f!important}
+    .mentor-confetti-screen span:nth-child(4n+3){background:#1d4f91!important}
+    .mentor-confetti-screen span:nth-child(4n){background:#147a4a!important}
+    @keyframes mentorPaperConfetti{
+      0%{opacity:0;top:-5vh;transform:translateX(-50%) rotate(var(--r)) scale(var(--s))}
+      12%{opacity:.95}
+      82%{opacity:.9}
+      100%{opacity:0;top:103vh;transform:translateX(calc(-50% + var(--drift))) rotate(calc(var(--r) + 300deg)) scale(var(--s))}
+    }
   `;
   document.head.appendChild(style);
 
