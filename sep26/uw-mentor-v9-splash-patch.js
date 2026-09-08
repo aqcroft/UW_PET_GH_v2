@@ -70,12 +70,7 @@
     document.getElementById('app').innerHTML=`${contactMarkup()}<section class="splash-card splash-v9" style="margin-top:10vh"><div class="splash-top"><h1>What happens when you support a new Partner?</h1></div><div class="splash-body"><p>Let's look at the three mentor Bonuses:</p><div class="income-chip-grid"><div class="income-chip"><span class="bonus-name">🤝Supporting bonuses</span><span class="bonus-gap"></span><span class="bonus-meta">Days 1-30</span></div><div class="income-chip"><span class="bonus-name">🎓30 Day Fast Start Mentor</span><span class="bonus-gap"></span><span class="bonus-meta">£400</span></div><div class="income-chip"><span class="bonus-name">🎓⚡Mentor Momentum</span><span class="bonus-gap"></span><span class="bonus-meta">Days 31-60</span></div></div><button class="splash-mantra-button" onclick="start()">Support - Momentum - Success🏆</button></div></section>${howPaidMarkup()}`;
   };
 
-  function markV9(){
-    const top=document.querySelector('.topbar .eyebrow span');
-    if(top&&top.textContent!=='v9')top.textContent='v9';
-  }
-  const app=document.getElementById('app');
-  if(app)new MutationObserver(markV9).observe(app,{childList:true,subtree:true});
-  markV9();
+  // Deliberately no MutationObserver here. The v6 behaviour layer already owns
+  // the topbar version marker; a second observer caused an infinite v6/v9 rewrite loop.
   if(!state.started)render();
 })();
