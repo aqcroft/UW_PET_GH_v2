@@ -1,6 +1,11 @@
 (function(){
   const style=document.createElement('style');
   style.textContent=`
+    .splash-card.splash-v9{
+      width:min(100%,30rem);
+      margin-left:auto!important;
+      margin-right:auto!important;
+    }
     .splash-card.splash-v9 .splash-body{padding:1rem 1.05rem 1.05rem}
     .splash-card.splash-v9 .splash-body>p{margin:.65rem 0}
     .splash-card.splash-v9 .income-chip-grid{margin:.7rem 0;gap:.5rem}
@@ -38,6 +43,24 @@
       font-size:.96rem;
       cursor:pointer;
       box-shadow:0 8px 22px rgba(29,79,145,.22);
+    }
+    .add-customer-solo .add-label-main,
+    .add-customer-solo .add-label-sub{display:none!important}
+    .add-customer-solo .add-label-text::before{
+      content:'Support their first five';
+      display:block;
+      font-size:.92rem;
+      font-weight:950;
+      line-height:1.08;
+    }
+    .add-customer-solo .add-label-text::after{
+      content:'homeowners';
+      display:block;
+      margin-top:.08rem;
+      font-size:.72rem;
+      font-weight:800;
+      line-height:1.08;
+      opacity:.82;
     }
   `;
   document.head.appendChild(style);
