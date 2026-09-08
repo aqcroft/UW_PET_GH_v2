@@ -7,7 +7,9 @@
 <link rel="stylesheet" href="uw-toolkit-theme.css">
 <style>
   .final-splash-note{margin:.15rem 0 0}
-  .splash-start{white-space:normal;line-height:1.25;padding:.85rem 1rem}
+  .splash-start{white-space:normal;line-height:1.18;padding:.82rem 1rem}
+  .splash-start .remember-line{display:block;font-size:.78rem;font-weight:800;opacity:.9;margin-bottom:.18rem}
+  .splash-start .win-line{display:block;font-size:1rem;font-weight:950}
   .load-error{max-width:38rem;margin:12vh auto;padding:1.25rem;border-radius:1rem;background:#fff;border:1px solid rgba(0,0,0,.12);text-align:center}
 </style>
 </head>
@@ -28,7 +30,10 @@
           <span>☔ insurance</span>
         </div>
         <p class="final-splash-note"><strong>Bundles build benefits for customers and Partners.</strong></p>
-        <button class="button splash-start" id="startButton" type="button">Remember: When customers win, Partners win. 🏆</button>
+        <button class="button splash-start" id="startButton" type="button">
+          <span class="remember-line">Remember:</span>
+          <span class="win-line">🏆 Customers win, Partners win 🏆</span>
+        </button>
       </div>
     </section>
   </main>
@@ -43,33 +48,56 @@ const sourcePromise=fetch(SOURCE_URL,{cache:'force-cache'}).then(response=>{
 async function launchExplorer(){
   const button=document.getElementById('startButton');
   button.disabled=true;
-  const originalText=button.textContent;
+  const originalHtml=button.innerHTML;
   button.textContent='Loading the first 60 days…';
   try{
     const source=await sourcePromise;
     const onboardingStyle=`<style>
-.onboarding-backdrop{z-index:9999;opacity:1;transition:opacity .5s ease}
-.onboarding-backdrop.fade-out{opacity:0;pointer-events:none}
-.onboarding-popup{max-width:20rem;text-align:center;padding:1.35rem 1.45rem}
-.onboarding-popup .notice-emoji{font-size:2rem;line-height:1}
-.onboarding-message{margin:.55rem 0 0;font-weight:900;line-height:1.35;color:var(--ink)}
+.initial-onboarding-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:2147483647;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:1rem;
+  background:rgba(30,37,54,.46);
+  opacity:1;
+  transition:opacity .55s ease;
+}
+.initial-onboarding-backdrop.fade-out{opacity:0;pointer-events:none}
+.initial-onboarding-popup{
+  width:min(20rem,calc(100vw - 2rem));
+  background:#eef6ff;
+  border:1px solid #b8d4f2;
+  border-radius:1.1rem;
+  box-shadow:0 18px 50px rgba(21,38,68,.22);
+  text-align:center;
+  padding:1.35rem 1.45rem;
+}
+.initial-onboarding-wave{font-size:2rem;line-height:1;margin-bottom:.5rem}
+.initial-onboarding-message{margin:0;font-weight:900;line-height:1.35;color:#14233b;font-size:1rem}
 </style>`;
-    const onboardingScript=`<script>
-(function(){
-  function showOnboarding(){
-    const overlay=document.createElement('div');
-    overlay.className='notice-backdrop onboarding-backdrop';
-    overlay.innerHTML='<section class="notice-popup notice-blue onboarding-popup"><div class="notice-emoji">👋</div><p class="onboarding-message">Tap \'Add 1st customer\' to see bonuses build in a Partner\'s first 60 days</p></section>';
-    document.body.appendChild(overlay);
-    window.setTimeout(()=>overlay.classList.add('fade-out'),4000);
-    window.setTimeout(()=>overlay.remove(),4550);
-  }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',showOnboarding,{once:true});
-  else showOnboarding();
-})();
-<\/script>`;
+
+    const onboardingCode=`
+function showInitialOnboarding(){
+  const overlay=document.createElement('div');
+  overlay.className='initial-onboarding-backdrop';
+  overlay.setAttribute('role','status');
+  overlay.setAttribute('aria-live','polite');
+  overlay.innerHTML='<section class="initial-onboarding-popup"><div class="initial-onboarding-wave">👋</div><p class="initial-onboarding-message">Tap \'Add 1st customer\' to see bonuses build in a Partner\'s first 60 days</p></section>';
+  document.body.appendChild(overlay);
+  window.setTimeout(()=>overlay.classList.add('fade-out'),4500);
+  window.setTimeout(()=>overlay.remove(),5100);
+}
+`;
+
     let patched=source.replace('</head>',onboardingStyle+'\n</head>');
-    patched=patched.replace('</body>',onboardingScript+'\n</body>');
+    const finalRender='function render(){state.started?renderStarted():renderWelcome();}\nrender();';
+    const finalRenderWithOnboarding=`function render(){state.started?renderStarted():renderWelcome();}\n${onboardingCode}\nrender();\nwindow.setTimeout(showInitialOnboarding,150);`;
+    if(!patched.includes(finalRender))throw new Error('Could not attach onboarding modal to explorer startup');
+    patched=patched.replace(finalRender,finalRenderWithOnboarding);
+
     document.open();
     document.write(patched);
     document.close();
@@ -77,7 +105,7 @@ async function launchExplorer(){
     console.error(error);
     document.getElementById('app').innerHTML=`<div class="load-error"><h2>Sorry - the explorer could not load.</h2><p>Please refresh the page and try again.</p></div>`;
     button.disabled=false;
-    button.textContent=originalText;
+    button.innerHTML=originalHtml;
   }
 }
 
