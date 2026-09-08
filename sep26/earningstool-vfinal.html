@@ -100,7 +100,7 @@
 </head>
 <body>
 
-<iframe id="explorerFrame" src="earningstool-v9.html" title="The First 60 Days earnings explorer"></iframe>
+<iframe id="explorerFrame" src="earningstool-v9.html?final=20260908c" title="The First 60 Days earnings explorer"></iframe>
 
 <div id="splashLayer">
   <div class="app">
@@ -134,6 +134,27 @@ const splash=document.getElementById('splashLayer');
 const frame=document.getElementById('explorerFrame');
 const startButton=document.getElementById('startButton');
 let launched=false;
+
+function installExplorerCriteriaFade(){
+  try{
+    const doc=frame.contentDocument;
+    if(!doc||!doc.documentElement||!doc.body)return;
+    const marker=doc.documentElement.dataset.explorerCriteriaFadePatch;
+    if(marker==='loading'||marker==='v10')return;
+
+    doc.documentElement.dataset.explorerCriteriaFadePatch='loading';
+    const script=doc.createElement('script');
+    script.src='uw-explorer-v10-criteria-fade-patch.js?20260908a';
+    script.onload=()=>{doc.documentElement.dataset.explorerCriteriaFadePatch='v10';};
+    script.onerror=()=>{delete doc.documentElement.dataset.explorerCriteriaFadePatch;};
+    doc.body.appendChild(script);
+  }catch(error){
+    console.error('Explorer criteria fade patch failed to load:',error);
+  }
+}
+
+frame.addEventListener('load',installExplorerCriteriaFade);
+if(frame.contentDocument&&frame.contentDocument.readyState==='complete')installExplorerCriteriaFade();
 
 function showInitialOnboarding(){
   const overlay=document.createElement('div');
