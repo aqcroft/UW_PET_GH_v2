@@ -70,10 +70,10 @@
       return;
     }
 
-    /* First criterion only: bring the modal back with the same 1.8s rhythm. */
-    render();
+    /* First criterion only: bring the same modal smoothly back for criterion two. */
     const el=currentQdBackdropV12();
     if(el){
+      el.classList.remove('coaching-gone','coaching-fade');
       el.style.opacity='0';
       el.style.transition='opacity 1.8s cubic-bezier(.4,0,.2,1)';
       el.style.pointerEvents='none';
