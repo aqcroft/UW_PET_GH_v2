@@ -35,7 +35,7 @@ html.boot-failed .app{display:none}
 </div>
 <script>
 (async function bootMentorExplorer(){
-  const bust='mentor-v11-20260908a';
+  const bust='mentor-v12-20260908b';
   const getText=async(url)=>{
     const response=await fetch(url,{cache:'no-store'});
     if(!response.ok)throw new Error(`${url} returned ${response.status}`);
@@ -43,11 +43,12 @@ html.boot-failed .app{display:none}
   };
 
   try{
-    const [baseHtml,rulesJs,v6Js,v9Js]=await Promise.all([
+    const [baseHtml,rulesJs,v6Js,v9Js,v12Js]=await Promise.all([
       getText(`uw-mentor-earnings-explorer-v2.html?${bust}`),
       getText(`uw-earnings-rules.js?${bust}`),
       getText(`uw-mentor-v6-patch.js?${bust}`),
-      getText(`uw-mentor-v9-splash-patch.js?${bust}`)
+      getText(`uw-mentor-v9-splash-patch.js?${bust}`),
+      getText(`uw-mentor-v12-criteria-fade-patch.js?${bust}`)
     ]);
 
     const parsed=new DOMParser().parseFromString(baseHtml,'text/html');
@@ -68,9 +69,9 @@ html.boot-failed .app{display:none}
     if(!baseScript)throw new Error('Could not find the Mentor Explorer base script');
 
     /* Execute everything in one global evaluation. The base may render its old
-       welcome markup internally, but v6 and v9 replace it before the browser gets
-       a paint opportunity, so there is no old-splash flash. */
-    const combined=[rulesJs,baseScript,v6Js,v9Js].join('\n;\n');
+       welcome markup internally, but v6, v9 and v12 replace it before the browser
+       gets a paint opportunity, so there is no old-splash flash. */
+    const combined=[rulesJs,baseScript,v6Js,v9Js,v12Js].join('\n;\n');
     (0,eval)(combined);
 
     document.documentElement.classList.add('ready');
