@@ -6,110 +6,166 @@
 <title>The First 60 Days</title>
 <link rel="stylesheet" href="uw-toolkit-theme.css">
 <style>
+  html,body{margin:0;min-height:100%;background:#f6f3fb}
+
+  #explorerFrame{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    border:0;
+    background:#f6f3fb;
+    opacity:0;
+    visibility:hidden;
+    transition:opacity .2s ease;
+    z-index:1;
+  }
+  #explorerFrame.active{
+    opacity:1;
+    visibility:visible;
+  }
+
+  #splashLayer{
+    position:fixed;
+    inset:0;
+    z-index:1000;
+    overflow:auto;
+    background:#f6f3fb;
+    opacity:1;
+    transition:opacity .3s ease;
+  }
+  #splashLayer.fade-out{
+    opacity:0;
+    pointer-events:none;
+  }
+  #splashLayer.hidden{display:none}
+
   .final-splash-note{margin:.15rem 0 0}
-  .splash-start{white-space:normal;line-height:1.18;padding:.82rem 1rem}
-  .splash-start .remember-line{display:block;font-size:.78rem;font-weight:800;opacity:.9;margin-bottom:.18rem}
-  .splash-start .win-line{display:block;font-size:1rem;font-weight:950}
-  .load-error{max-width:38rem;margin:12vh auto;padding:1.25rem;border-radius:1rem;background:#fff;border:1px solid rgba(0,0,0,.12);text-align:center}
+  .splash-start{
+    white-space:normal;
+    line-height:1.18;
+    padding:.82rem 1rem;
+  }
+  .splash-start .remember-line{
+    display:block;
+    font-size:.78rem;
+    font-weight:800;
+    opacity:.9;
+    margin-bottom:.18rem;
+  }
+  .splash-start .win-line{
+    display:block;
+    font-size:1rem;
+    font-weight:950;
+  }
+
+  .initial-onboarding-backdrop{
+    position:fixed;
+    inset:0;
+    z-index:2000;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:1rem;
+    background:rgba(30,37,54,.46);
+    opacity:1;
+    transition:opacity .5s ease;
+  }
+  .initial-onboarding-backdrop.fade-out{
+    opacity:0;
+    pointer-events:none;
+  }
+  .initial-onboarding-popup{
+    width:min(20rem,calc(100vw - 2rem));
+    background:#eef6ff;
+    border:1px solid #b8d4f2;
+    border-radius:1.1rem;
+    box-shadow:0 18px 50px rgba(21,38,68,.22);
+    text-align:center;
+    padding:1.35rem 1.45rem;
+  }
+  .initial-onboarding-wave{
+    font-size:2rem;
+    line-height:1;
+    margin-bottom:.5rem;
+  }
+  .initial-onboarding-message{
+    margin:0;
+    font-weight:900;
+    line-height:1.35;
+    color:#14233b;
+    font-size:1rem;
+  }
 </style>
 </head>
 <body>
-<div class="app">
-  <main class="shell" id="app">
-    <section class="splash-card" style="margin-top:10vh">
-      <div class="splash-top">
-        <div class="splash-wave">👋</div>
-        <h1>What could the first 60 days as a Utility Warehouse Authorised Partner look like?</h1>
-      </div>
-      <div class="splash-body">
-        <p>We help people save on <strong>essential home services</strong> they already use:</p>
-        <div class="service-cloud">
-          <span>⚡ energy</span>
-          <span>🛜 broadband</span>
-          <span>📲 mobile</span>
-          <span>☔ insurance</span>
+
+<iframe id="explorerFrame" src="earningstool-v9.html" title="The First 60 Days earnings explorer"></iframe>
+
+<div id="splashLayer">
+  <div class="app">
+    <main class="shell">
+      <section class="splash-card" style="margin-top:10vh">
+        <div class="splash-top">
+          <div class="splash-wave">👋</div>
+          <h1>What could the first 60 days as a Utility Warehouse Authorised Partner look like?</h1>
         </div>
-        <p class="final-splash-note"><strong>Bundles build benefits for customers and Partners.</strong></p>
-        <button class="button splash-start" id="startButton" type="button">
-          <span class="remember-line">Remember:</span>
-          <span class="win-line">🏆 Customers win, Partners win 🏆</span>
-        </button>
-      </div>
-    </section>
-  </main>
+        <div class="splash-body">
+          <p>We help people save on <strong>essential home services</strong> they already use:</p>
+          <div class="service-cloud">
+            <span>⚡ energy</span>
+            <span>🛜 broadband</span>
+            <span>📲 mobile</span>
+            <span>☔ insurance</span>
+          </div>
+          <p class="final-splash-note"><strong>Bundles build benefits for customers and Partners.</strong></p>
+          <button class="button splash-start" id="startButton" type="button">
+            <span class="remember-line">Remember:</span>
+            <span class="win-line">🏆 Customers win, partners win 🏆</span>
+          </button>
+        </div>
+      </section>
+    </main>
+  </div>
 </div>
+
 <script>
-const SOURCE_URL='https://raw.githubusercontent.com/aqcroft/UW_PET_GH_v2/6a49f838ed57a9b0a51adf0d5d1d69e7119bd860/sep26/earningstool-v9.html';
-const sourcePromise=fetch(SOURCE_URL,{cache:'force-cache'}).then(response=>{
-  if(!response.ok)throw new Error(`Unable to load explorer source (${response.status})`);
-  return response.text();
-});
+const splash=document.getElementById('splashLayer');
+const frame=document.getElementById('explorerFrame');
+const startButton=document.getElementById('startButton');
+let launched=false;
 
-async function launchExplorer(){
-  const button=document.getElementById('startButton');
-  button.disabled=true;
-  const originalHtml=button.innerHTML;
-  button.textContent='Loading the first 60 days…';
-  try{
-    const source=await sourcePromise;
-    const onboardingStyle=`<style>
-.initial-onboarding-backdrop{
-  position:fixed;
-  inset:0;
-  z-index:2147483647;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:1rem;
-  background:rgba(30,37,54,.46);
-  opacity:1;
-  transition:opacity .55s ease;
-}
-.initial-onboarding-backdrop.fade-out{opacity:0;pointer-events:none}
-.initial-onboarding-popup{
-  width:min(20rem,calc(100vw - 2rem));
-  background:#eef6ff;
-  border:1px solid #b8d4f2;
-  border-radius:1.1rem;
-  box-shadow:0 18px 50px rgba(21,38,68,.22);
-  text-align:center;
-  padding:1.35rem 1.45rem;
-}
-.initial-onboarding-wave{font-size:2rem;line-height:1;margin-bottom:.5rem}
-.initial-onboarding-message{margin:0;font-weight:900;line-height:1.35;color:#14233b;font-size:1rem}
-</style>`;
-
-    const onboardingCode=`
 function showInitialOnboarding(){
   const overlay=document.createElement('div');
   overlay.className='initial-onboarding-backdrop';
   overlay.setAttribute('role','status');
   overlay.setAttribute('aria-live','polite');
-  overlay.innerHTML='<section class="initial-onboarding-popup"><div class="initial-onboarding-wave">👋</div><p class="initial-onboarding-message">Tap \'Add 1st customer\' to see bonuses build in a Partner\'s first 60 days</p></section>';
+  overlay.innerHTML=`
+    <section class="initial-onboarding-popup">
+      <div class="initial-onboarding-wave">👋</div>
+      <p class="initial-onboarding-message">Tap 'Add 1st customer' to see bonuses build in a Partner's first 60 days</p>
+    </section>`;
   document.body.appendChild(overlay);
+
   window.setTimeout(()=>overlay.classList.add('fade-out'),4500);
-  window.setTimeout(()=>overlay.remove(),5100);
-}
-`;
-
-    let patched=source.replace('</head>',onboardingStyle+'\n</head>');
-    const finalRender='function render(){state.started?renderStarted():renderWelcome();}\nrender();';
-    const finalRenderWithOnboarding=`function render(){state.started?renderStarted():renderWelcome();}\n${onboardingCode}\nrender();\nwindow.setTimeout(showInitialOnboarding,150);`;
-    if(!patched.includes(finalRender))throw new Error('Could not attach onboarding modal to explorer startup');
-    patched=patched.replace(finalRender,finalRenderWithOnboarding);
-
-    document.open();
-    document.write(patched);
-    document.close();
-  }catch(error){
-    console.error(error);
-    document.getElementById('app').innerHTML=`<div class="load-error"><h2>Sorry - the explorer could not load.</h2><p>Please refresh the page and try again.</p></div>`;
-    button.disabled=false;
-    button.innerHTML=originalHtml;
-  }
+  window.setTimeout(()=>overlay.remove(),5050);
 }
 
-document.getElementById('startButton').addEventListener('click',launchExplorer);
+function launchExplorer(){
+  if(launched)return;
+  launched=true;
+  startButton.disabled=true;
+
+  frame.classList.add('active');
+  splash.classList.add('fade-out');
+
+  window.setTimeout(()=>{
+    splash.classList.add('hidden');
+    showInitialOnboarding();
+  },320);
+}
+
+startButton.addEventListener('click',launchExplorer);
 </script>
 </body>
 </html>
