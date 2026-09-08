@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The First 60 Days</title>
+<link rel="stylesheet" href="uw-toolkit-theme.css">
+<style>
+  .final-splash-note{margin:.15rem 0 0}
+  .splash-start{white-space:normal;line-height:1.25;padding:.85rem 1rem}
+  .load-error{max-width:38rem;margin:12vh auto;padding:1.25rem;border-radius:1rem;background:#fff;border:1px solid rgba(0,0,0,.12);text-align:center}
+</style>
+</head>
+<body>
+<div class="app">
+  <main class="shell" id="app">
+    <section class="splash-card" style="margin-top:10vh">
+      <div class="splash-top">
+        <div class="splash-wave">👋</div>
+        <h1>What could the first 60 days as a Utility Warehouse Authorised Partner look like?</h1>
+      </div>
+      <div class="splash-body">
+        <p>We help people save on <strong>essential home services</strong> they already use:</p>
+        <div class="service-cloud">
+          <span>⚡ energy</span>
+          <span>🛜 broadband</span>
+          <span>📲 mobile</span>
+          <span>☔ insurance</span>
+        </div>
+        <p class="final-splash-note"><strong>Bundles build benefits for customers and Partners.</strong></p>
+        <button class="button splash-start" id="startButton" type="button">Remember: When customers win, Partners win. 🏆</button>
+      </div>
+    </section>
+  </main>
+</div>
+<script>
+const SOURCE_URL='https://raw.githubusercontent.com/aqcroft/UW_PET_GH_v2/6a49f838ed57a9b0a51adf0d5d1d69e7119bd860/sep26/earningstool-v9.html';
+const sourcePromise=fetch(SOURCE_URL,{cache:'force-cache'}).then(response=>{
+  if(!response.ok)throw new Error(`Unable to load explorer source (${response.status})`);
+  return response.text();
+});
+
+async function launchExplorer(){
+  const button=document.getElementById('startButton');
+  button.disabled=true;
+  const originalText=button.textContent;
+  button.textContent='Loading the first 60 days…';
+  try{
+    const source=await sourcePromise;
+    const onboardingStyle=`<style>
+.onboarding-backdrop{z-index:9999;opacity:1;transition:opacity .5s ease}
+.onboarding-backdrop.fade-out{opacity:0;pointer-events:none}
+.onboarding-popup{max-width:20rem;text-align:center;padding:1.35rem 1.45rem}
+.onboarding-popup .notice-emoji{font-size:2rem;line-height:1}
+.onboarding-message{margin:.55rem 0 0;font-weight:900;line-height:1.35;color:var(--ink)}
+</style>`;
+    const onboardingScript=`<script>
+(function(){
+  function showOnboarding(){
+    const overlay=document.createElement('div');
+    overlay.className='notice-backdrop onboarding-backdrop';
+    overlay.innerHTML='<section class="notice-popup notice-blue onboarding-popup"><div class="notice-emoji">👋</div><p class="onboarding-message">Tap \'Add 1st customer\' to see bonuses build in a Partner\'s first 60 days</p></section>';
+    document.body.appendChild(overlay);
+    window.setTimeout(()=>overlay.classList.add('fade-out'),4000);
+    window.setTimeout(()=>overlay.remove(),4550);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',showOnboarding,{once:true});
+  else showOnboarding();
+})();
+<\/script>`;
+    let patched=source.replace('</head>',onboardingStyle+'\n</head>');
+    patched=patched.replace('</body>',onboardingScript+'\n</body>');
+    document.open();
+    document.write(patched);
+    document.close();
+  }catch(error){
+    console.error(error);
+    document.getElementById('app').innerHTML=`<div class="load-error"><h2>Sorry - the explorer could not load.</h2><p>Please refresh the page and try again.</p></div>`;
+    button.disabled=false;
+    button.textContent=originalText;
+  }
+}
+
+document.getElementById('startButton').addEventListener('click',launchExplorer);
+</script>
+</body>
+</html>
