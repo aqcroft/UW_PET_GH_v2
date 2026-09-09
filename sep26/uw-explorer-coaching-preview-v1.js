@@ -88,6 +88,18 @@
   function columns(){return Array.from(document.querySelectorAll('.customer-column'));}
   function bonusBadges(){return Array.from(document.querySelectorAll('.bonus-badge'));}
 
+  function labelHabMonths(){
+    const habs=bonusBadges().filter(el=>el.classList.contains('bonus-hab'));
+    habs.forEach((badge,index)=>{
+      const word=badge.querySelector('.bonus-word');
+      if(!word||word.querySelector('.coach-calendar-label'))return;
+      const label=document.createElement('span');
+      label.className='bonus-range coach-calendar-label';
+      label.textContent=`calendar month ${index+1}`;
+      word.appendChild(label);
+    });
+  }
+
   function showWhisper(html,duration=3300){
     const old=document.querySelector('.coach-whisper');
     if(old)old.remove();
@@ -191,6 +203,7 @@
   }
 
   function enhance(){
+    labelHabMonths();
     rewriteFirstHabModal();
     rewriteFastStartModal();
     replaceSecondHabModal();
