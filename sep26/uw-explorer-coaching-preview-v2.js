@@ -5,7 +5,7 @@
   const reducedMotion=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const sleep=(ms)=>new Promise(resolve=>window.setTimeout(resolve,ms));
   const AUTO_COACH_HOLD=4500;
-  const AUTO_COACH_FADE=420;
+  const AUTO_COACH_FADE=450;
   const MILESTONE_DELAY=5000;
   const ui={
     firstActionPulsed:false,
