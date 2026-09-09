@@ -28,10 +28,7 @@
       animation:coachStepWhole 1.25s ease-in-out 1 both!important;
       transform-origin:center!important;
     }
-    .coach-step-done{
-      opacity:1!important;
-      filter:none!important;
-    }
+    .coach-step-done{opacity:1!important;filter:none!important}
     .step-button.done.coach-step-done{
       opacity:1!important;
       background:linear-gradient(145deg,#173c78,var(--blue))!important;
@@ -40,16 +37,11 @@
     }
     .bonus-faststart.coach-fast-stage{
       animation:coachFastStage 1.25s ease-in-out 1 both!important;
-      background:#e3efff!important;
-      border-color:rgba(29,79,145,.48)!important;
+      background:#dbeaff!important;
+      border-color:rgba(29,79,145,.58)!important;
+      opacity:1!important;
     }
-    .fast-start-flash.active.coach-fast-stage{
-      animation:coachFastStage 1.25s ease-in-out 1 both!important;
-    }
-    .coach-whisper{
-      bottom:auto!important;
-      margin:0!important;
-    }
+    .coach-whisper{bottom:auto!important;margin:0!important}
     @media(prefers-reduced-motion:reduce){
       .coach-step-current.coach-step-opacity-pulse,.coach-fast-stage{animation:none!important}
     }
@@ -63,12 +55,7 @@
     const button=addButton();
     const rect=button?.getBoundingClientRect();
     const height=el.offsetHeight||90;
-    let top;
-    if(rect){
-      top=rect.top-height-14;
-    }else{
-      top=window.innerHeight-height-150;
-    }
+    let top=rect?rect.top-height-14:window.innerHeight-height-150;
     top=Math.max(110,Math.min(top,window.innerHeight-height-76));
     el.style.top=`${Math.round(top)}px`;
     el.style.bottom='auto';
@@ -88,8 +75,8 @@
     const paras=popup.querySelectorAll('p.muted');
     if(paras[0]&&!paras[0].dataset.v3Momentum){
       paras[0].dataset.v3Momentum='1';
-      paras[0].innerHTML='<strong>Unsupported 3+ service customers</strong><br>earn an <strong>extra £125</strong> in days 31-60.';
-      if(paras[1])paras[1].innerHTML='Applies to tenants and homeowners.';
+      paras[0].innerHTML='This rewards unsupported<br><strong>3+ service homeowner customer sign-ups</strong><br>with an <strong>extra £125</strong><br>in days 31-60.';
+      if(paras[1])paras[1].style.display='none';
     }
   }
 
@@ -135,18 +122,12 @@
 
     const shouldDelayHab=state.month1.length===4 && !state.habIntroDismissed &&
       !state.month1HabRevealComplete && !state.habRevealInProgress && !ui3.firstHabDelayDone;
-    if(shouldDelayHab){
-      suppressedHab=true;
-      state.habIntroDismissed=true;
-    }
+    if(shouldDelayHab){suppressedHab=true;state.habIntroDismissed=true;}
 
     const shouldDelayFastSetup=state.month1.length>=5 && !state.fastStartRevealComplete &&
       !state.fastStartRevealInProgress && !state.customerPartnerUpgraded && !state.ownAccountLinked &&
       !ui3.fastSetupDelayDone;
-    if(shouldDelayFastSetup){
-      suppressedFastSetup=true;
-      state.fastStartRevealInProgress=true;
-    }
+    if(shouldDelayFastSetup){suppressedFastSetup=true;state.fastStartRevealInProgress=true;}
 
     renderV2();
 
@@ -154,9 +135,7 @@
       state.habIntroDismissed=false;
       if(!ui3.firstHabDelayTimer){
         ui3.firstHabDelayTimer=window.setTimeout(()=>{
-          ui3.firstHabDelayTimer=null;
-          ui3.firstHabDelayDone=true;
-          render();
+          ui3.firstHabDelayTimer=null;ui3.firstHabDelayDone=true;render();
         },SHORT_MILESTONE_PAUSE);
       }
     }
@@ -165,9 +144,7 @@
       state.fastStartRevealInProgress=false;
       if(!ui3.fastSetupDelayTimer){
         ui3.fastSetupDelayTimer=window.setTimeout(()=>{
-          ui3.fastSetupDelayTimer=null;
-          ui3.fastSetupDelayDone=true;
-          render();
+          ui3.fastSetupDelayTimer=null;ui3.fastSetupDelayDone=true;render();
         },SHORT_MILESTONE_PAUSE);
       }
     }
@@ -201,14 +178,11 @@
 
   function pulseFastStage(){
     const tile=document.querySelector('.bonus-faststart');
-    const flash=document.querySelector('.fast-start-flash.active');
-    [tile,flash].forEach(el=>{
-      if(!el)return;
-      el.classList.remove('coach-fast-stage');
-      void el.offsetWidth;
-      el.classList.add('coach-fast-stage');
-      window.setTimeout(()=>el.classList.remove('coach-fast-stage'),1400);
-    });
+    if(!tile)return;
+    tile.classList.remove('coach-fast-stage');
+    void tile.offsetWidth;
+    tile.classList.add('coach-fast-stage');
+    window.setTimeout(()=>tile.classList.remove('coach-fast-stage'),1400);
   }
 
   completeFirst30Step=async function(step){
@@ -240,7 +214,7 @@
     state.fastStartAccountPulse=false;
 
     if(secondStep){
-      /* Stage 3: visibly apply and pulse the £500 Fast Start banner before any reward modal. */
+      /* Stage 3: the £500 Fast Start tile itself is the third taught result. */
       state.fastStartRevealComplete=true;
       state.fastStartRevealInProgress=true;
       state.nextIntroDismissed=false;
@@ -254,7 +228,7 @@
       render();
       keepFastStartBackdropHidden();
 
-      /* Keep the main tool bright and readable before the reward explanation arrives. */
+      /* Five seconds of the bright tool before the reward explanation appears. */
       await sleep(FAST_START_REWARD_PAUSE);
 
       state.fastStartRevealInProgress=false;
@@ -275,41 +249,13 @@
     render();
   };
 
-  if(typeof dismissNextIntro==='function'){
-    const dismissV2=dismissNextIntro;
-    dismissNextIntro=function(){
-      /* v2 fires its section cue almost immediately. Suppress that cue, then re-run it after a pause. */
-      const oldPulse=window.CoachingPreview?.pulseFirstAction;
-      dismissV2();
-      if(ui3.days3160DelayApplied)return;
-      ui3.days3160DelayApplied=true;
-      window.setTimeout(()=>{
-        const cols=Array.from(document.querySelectorAll('.customer-column'));
-        const target=cols[1];
-        if(target){
-          target.style.transition='opacity .45s ease, filter .45s ease, box-shadow .45s ease';
-          const current=parseFloat(getComputedStyle(target).opacity)||.4;
-          target.style.opacity=String(Math.min(1,current+.30));
-          target.style.boxShadow='0 0 0 .42rem rgba(43,130,79,.13)';
-          window.setTimeout(()=>{
-            if(!target.isConnected)return;
-            target.style.opacity='';
-            target.style.boxShadow='';
-          },1450);
-        }
-      },1400);
-    };
-  }
-
   if(typeof resetExplorer==='function'){
     const resetV2=resetExplorer;
     resetExplorer=function(){
       if(ui3.firstHabDelayTimer)clearTimeout(ui3.firstHabDelayTimer);
       if(ui3.fastSetupDelayTimer)clearTimeout(ui3.fastSetupDelayTimer);
-      ui3.firstHabDelayDone=false;
-      ui3.firstHabDelayTimer=null;
-      ui3.fastSetupDelayDone=false;
-      ui3.fastSetupDelayTimer=null;
+      ui3.firstHabDelayDone=false;ui3.firstHabDelayTimer=null;
+      ui3.fastSetupDelayDone=false;ui3.fastSetupDelayTimer=null;
       ui3.days3160DelayApplied=false;
       resetV2();
     };
