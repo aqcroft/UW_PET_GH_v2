@@ -148,7 +148,7 @@ async function installExplorerPatches(){
     const doc=frame.contentDocument;
     if(!doc||!doc.documentElement||!doc.body)return;
     await loadPatch(doc,'uw-explorer-v10-criteria-fade-patch.js?20260908a','explorerCriteriaFadePatch','v10');
-    await loadPatch(doc,'uw-explorer-coaching-preview-v1.js?20260909a','coachingPreviewPatchLoader','v1');
+    await loadPatch(doc,'uw-explorer-coaching-preview-v1.js?20260909b','coachingPreviewPatchLoader','v1');
   }catch(error){
     console.error('Coaching preview patch failed to load:',error);
   }
