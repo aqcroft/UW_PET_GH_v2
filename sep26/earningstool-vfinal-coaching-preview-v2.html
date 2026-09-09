@@ -74,7 +74,7 @@
     background:transparent;
     opacity:1;
     pointer-events:none;
-    transition:opacity .55s ease,transform .55s ease;
+    transition:opacity .45s ease,transform .45s ease;
   }
   .initial-onboarding-backdrop.fade-out{opacity:0;transform:translateY(.35rem)}
   .initial-onboarding-popup{
@@ -149,7 +149,7 @@ const splash=document.getElementById('splashLayer');
 const frame=document.getElementById('explorerFrame');
 const startButton=document.getElementById('startButton');
 const AUTO_COACH_HOLD=4500;
-const AUTO_COACH_FADE=580;
+const AUTO_COACH_FADE=450;
 let launched=false;
 
 function loadPatch(doc,src,markerKey,markerValue){
@@ -168,7 +168,7 @@ async function installExplorerPatches(){
     const doc=frame.contentDocument;
     if(!doc||!doc.documentElement||!doc.body)return;
     await loadPatch(doc,'uw-explorer-v10-criteria-fade-patch.js?20260908a','explorerCriteriaFadePatch','v10');
-    await loadPatch(doc,'uw-explorer-coaching-preview-v2.js?20260909c','coachingPreviewPatchLoader','v2');
+    await loadPatch(doc,'uw-explorer-coaching-preview-v2.js?20260909d','coachingPreviewPatchLoader','v2');
   }catch(error){
     console.error('Coaching preview patch failed to load:',error);
   }
