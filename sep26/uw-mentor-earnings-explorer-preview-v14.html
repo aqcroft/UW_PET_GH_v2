@@ -25,7 +25,7 @@ html.boot-failed .app{display:none}
 <div id="boot-error"><strong>The Mentor Explorer preview did not load.</strong><p>Please refresh the page and try again.</p><div id="boot-error-detail"></div></div>
 <script>
 (async function bootMentorExplorerPreview(){
-  const bust='mentor-v14-20260910a';
+  const bust='mentor-v14-20260910b';
   const getText=async(url)=>{
     const response=await fetch(url,{cache:'no-store'});
     if(!response.ok)throw new Error(`${url} returned ${response.status}`);
