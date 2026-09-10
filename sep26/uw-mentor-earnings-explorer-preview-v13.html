@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Utility Warehouse Mentor Earnings Explorer - Chapter 2 Preview v13</title>
+<link rel="stylesheet" href="uw-toolkit-theme.css">
+<style>
+html,body{margin:0;min-height:100%;background:#fffbe3}
+body{visibility:hidden}
+html.ready body{visibility:visible}
+#boot-error{display:none;max-width:32rem;margin:12vh auto;padding:1rem 1.1rem;border:1px solid #d9dce3;border-radius:.9rem;background:#fff;font-family:system-ui,sans-serif;color:#1f2937}
+html.boot-failed body{visibility:visible}
+html.boot-failed #boot-error{display:block}
+html.boot-failed .app{display:none}
+.mentor-confetti-screen span{
+  font-size:0!important;
+  width:8px!important;
+  height:14px!important;
+  border-radius:2px!important;
+  background:#7a42c8!important;
+  box-shadow:none!important;
+}
+.mentor-confetti-screen span:nth-child(3n){background:#26164f!important}
+.mentor-confetti-screen span:nth-child(3n+1){background:#1d4f91!important}
+.mentor-confetti-screen span:nth-child(3n+2){background:#c98e20!important}
+</style>
+</head>
+<body class="mentor-journey">
+<div class="app"><main class="shell" id="app"></main></div>
+<div id="boot-error">
+  <strong>The Mentor Explorer preview did not load.</strong>
+  <p>Please refresh the page and try again.</p>
+</div>
+<script>
+(async function bootMentorExplorerPreview(){
+  const bust='mentor-v13-20260910a';
+  const getText=async(url)=>{
+    const response=await fetch(url,{cache:'no-store'});
+    if(!response.ok)throw new Error(`${url} returned ${response.status}`);
+    return response.text();
+  };
+
+  try{
+    const [baseHtml,rulesJs,v6Js,v9Js,v12Js,v13Js]=await Promise.all([
+      getText(`uw-mentor-earnings-explorer-v2.html?${bust}`),
+      getText(`uw-earnings-rules.js?${bust}`),
+      getText(`uw-mentor-v6-patch.js?${bust}`),
+      getText(`uw-mentor-v9-splash-patch.js?${bust}`),
+      getText(`uw-mentor-v12-criteria-fade-patch.js?${bust}`),
+      getText(`uw-mentor-v13-chapter2-coaching-patch.js?${bust}`)
+    ]);
+
+    const parsed=new DOMParser().parseFromString(baseHtml,'text/html');
+    const baseStyles=[...parsed.querySelectorAll('head style')]
+      .map(node=>node.textContent)
+      .join('\n');
+    if(baseStyles){
+      const style=document.createElement('style');
+      style.textContent=baseStyles;
+      document.head.appendChild(style);
+    }
+
+    const baseScript=[...parsed.querySelectorAll('script:not([src])')]
+      .map(node=>node.textContent)
+      .find(text=>text.includes('const R=window.UWEarningsRules'));
+
+    if(!baseScript)throw new Error('Could not find the Mentor Explorer base script');
+
+    const combined=[rulesJs,baseScript,v6Js,v9Js,v12Js,v13Js].join('\n;\n');
+    (0,eval)(combined);
+
+    document.documentElement.classList.add('ready');
+  }catch(error){
+    console.error('Mentor Explorer preview boot failed:',error);
+    document.documentElement.classList.add('boot-failed');
+  }
+})();
+</script>
+</body>
+</html>
