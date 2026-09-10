@@ -10,6 +10,7 @@ html,body{margin:0;min-height:100%;background:#fffbe3}
 body{visibility:hidden}
 html.ready body{visibility:visible}
 #boot-error{display:none;max-width:32rem;margin:12vh auto;padding:1rem 1.1rem;border:1px solid #d9dce3;border-radius:.9rem;background:#fff;font-family:system-ui,sans-serif;color:#1f2937}
+#boot-error-detail{margin-top:.6rem;font-size:.82rem;line-height:1.35;color:#667085;word-break:break-word}
 html.boot-failed body{visibility:visible}
 html.boot-failed #boot-error{display:block}
 html.boot-failed .app{display:none}
@@ -31,10 +32,11 @@ html.boot-failed .app{display:none}
 <div id="boot-error">
   <strong>The Mentor Explorer preview did not load.</strong>
   <p>Please refresh the page and try again.</p>
+  <div id="boot-error-detail"></div>
 </div>
 <script>
 (async function bootMentorExplorerPreview(){
-  const bust='mentor-v13-20260910a';
+  const bust='mentor-v13-20260910b';
   const getText=async(url)=>{
     const response=await fetch(url,{cache:'no-store'});
     if(!response.ok)throw new Error(`${url} returned ${response.status}`);
@@ -48,7 +50,7 @@ html.boot-failed .app{display:none}
       getText(`uw-mentor-v6-patch.js?${bust}`),
       getText(`uw-mentor-v9-splash-patch.js?${bust}`),
       getText(`uw-mentor-v12-criteria-fade-patch.js?${bust}`),
-      getText(`uw-mentor-v13-chapter2-coaching-patch.js?${bust}`)
+      getText(`https://raw.githubusercontent.com/aqcroft/UW_PET_GH_v2/main/sep26/uw-mentor-v13-chapter2-coaching-patch.js?${bust}`)
     ]);
 
     const parsed=new DOMParser().parseFromString(baseHtml,'text/html');
@@ -73,6 +75,8 @@ html.boot-failed .app{display:none}
     document.documentElement.classList.add('ready');
   }catch(error){
     console.error('Mentor Explorer preview boot failed:',error);
+    const detail=document.getElementById('boot-error-detail');
+    if(detail)detail.textContent=error && error.message ? error.message : String(error);
     document.documentElement.classList.add('boot-failed');
   }
 })();
