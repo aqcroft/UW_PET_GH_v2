@@ -24,6 +24,7 @@
     .qd-popup.notice-faststart-setup .step-button strong{display:flex;align-items:center;gap:.45rem;line-height:1.2}
     .qd-popup.notice-faststart-setup .step-main-icon{font-size:1.15rem}
     .qd-popup.notice-faststart-setup .step-check{font-size:1.12rem;font-weight:950;min-width:1rem;text-align:center;color:#147a4a}
+    .mentor-momentum-copy{margin:.28rem 0;line-height:1.34}
     @media (prefers-reduced-motion:reduce){.mentor-coach-in,.mentor-coach-out{animation:none!important}}
   `;
   document.head.appendChild(style);
@@ -138,7 +139,7 @@
 
   momentumIntroModal=function(){
     if(!state.qdComplete||!state.momentumReady||state.momentumIntroDismissed)return '';
-    return `<div class="notice-backdrop gentle-modal-in"><section class="notice-popup notice-green notice-celebration" onclick="event.stopPropagation()"><div class="notice-emoji">🎓⚡</div><div class="eyebrow milestone-heading">Mentor Momentum begins</div><p class="compact-copy">They're now becoming more independent.</p><p class="key-line">Each eligible 3+ service customer now creates <strong>£125 Momentum for them</strong> and <strong>£125 Mentor Momentum for you.</strong></p><button class="button green" onclick="buildMomentumFour()">See Momentum in action</button></section></div>`;
+    return `<div class="notice-backdrop gentle-modal-in"><section class="notice-popup notice-green notice-celebration" onclick="event.stopPropagation()"><div class="notice-emoji">🎓⚡</div><div class="eyebrow milestone-heading">Mentor Momentum begins</div><p class="mentor-momentum-copy"><strong>Your new Partner is becoming more confident.</strong></p><p class="mentor-momentum-copy">For each 3+ service customer<br>they gather <strong>without your support</strong>,<br>you are <strong>both rewarded</strong> for their independence.</p><button class="button green" onclick="buildMomentumFour()">See Momentum in action</button></section></div>`;
   };
 
   finalModal=function(split){
