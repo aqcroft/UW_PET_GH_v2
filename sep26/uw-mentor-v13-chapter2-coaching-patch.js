@@ -212,7 +212,7 @@
       state.mentorBonusPulse=false;
       render();
 
-      await showMentorCoach('🎓 Fast Start - double win','You've earned <strong>£400</strong> - and helped them earn another <strong>£500</strong> too.','gold',2850);
+      await showMentorCoach('🎓 Fast Start - double win',"You've earned <strong>£400</strong> - and helped them earn another <strong>£500</strong> too.",'gold',2850);
       await wait(250);
 
       state.momentumReady=true;
