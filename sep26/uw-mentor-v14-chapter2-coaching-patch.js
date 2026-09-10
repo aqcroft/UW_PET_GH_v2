@@ -18,12 +18,15 @@
     .mentor-final-maths-total{border-top:1px solid rgba(38,22,79,.16);padding-top:.5rem;margin-top:.05rem;font-size:1.05rem;font-weight:950;color:#26164f}
     .mentor-final-note{margin:.45rem 0 0;font-size:.72rem;line-height:1.3;color:#667085}
     .mentor-hero-grid>.mentor-side-stat{justify-self:start!important;text-align:left!important;margin-top:.42rem}
-    .qd-popup.notice-faststart-setup .qd-step-status{gap:.62rem}
-    .qd-popup.notice-faststart-setup .step-button{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:.7rem;text-align:left;padding:.72rem .8rem}
+
+    /* Match Chapter 1 Fast Start layout: two side-by-side criterion cards. */
+    .qd-popup.notice-faststart-setup .qd-step-status{display:grid;grid-template-columns:1fr 1fr;gap:.55rem}
+    .qd-popup.notice-faststart-setup .step-button{min-height:4.35rem;display:grid;grid-template-columns:1fr auto;align-items:center;gap:.52rem;text-align:left;padding:.65rem .68rem}
     .qd-popup.notice-faststart-setup .step-button>span:first-child{font-size:.7rem;font-weight:950;text-transform:uppercase;letter-spacing:.035em;color:#667085;white-space:nowrap}
-    .qd-popup.notice-faststart-setup .step-button strong{display:flex;align-items:center;gap:.45rem;line-height:1.2}
-    .qd-popup.notice-faststart-setup .step-main-icon{font-size:1.15rem}
-    .qd-popup.notice-faststart-setup .step-check{font-size:1.12rem;font-weight:950;min-width:1rem;text-align:center;color:#147a4a}
+    .qd-popup.notice-faststart-setup .step-button strong{grid-row:2;line-height:1.12;display:block}
+    .qd-popup.notice-faststart-setup .step-main-icon{display:inline-block;margin-right:.3rem;font-size:1rem!important;vertical-align:.02rem}
+    .qd-popup.notice-faststart-setup .step-check{grid-column:2;grid-row:1 / span 2;align-self:center;font-size:1.12rem;font-weight:950;min-width:1rem;text-align:center;color:#147a4a}
+
     .mentor-momentum-copy{margin:.28rem 0;line-height:1.34}
     @media (prefers-reduced-motion:reduce){.mentor-coach-in,.mentor-coach-out{animation:none!important}}
   `;
