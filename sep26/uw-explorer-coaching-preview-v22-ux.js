@@ -147,6 +147,20 @@
     }
   }
 
+  function simplifyFastStartSetup(){
+    const popup=document.querySelector('.notice-faststart-setup');
+    if(!popup||state.fastStartRevealComplete)return;
+
+    const h2=popup.querySelector('h2');
+    if(h2&&h2.textContent!=='In your first 30 days')h2.textContent='In your first 30 days';
+
+    const copy=popup.querySelector('.faststart-copy');
+    if(copy){
+      const desired='<strong>6 customers + 1 Partner unlocks £500</strong><br><br>Complete these two steps:';
+      if(copy.innerHTML!==desired)copy.innerHTML=desired;
+    }
+  }
+
   function refineHabModal(){
     const popup=document.querySelector('.notice-popup.notice-hab');
     if(!popup)return;
@@ -247,6 +261,7 @@
     removeBack();
     ensureFirstCue();
     refineHabModal();
+    simplifyFastStartSetup();
     suppressActionDuringHabResult();
     refineAddButton();
   }
