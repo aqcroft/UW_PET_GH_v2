@@ -257,6 +257,16 @@
     }
   }
 
+  function removeFourthCustomerCoachPointer(){
+    if(count()!==3)return;
+    document.querySelectorAll('.v9-coach').forEach(coach=>{
+      const text=(coach.textContent||'').replace(/\s+/g,' ').trim();
+      if(/One more 3-service homeowner|add (?:a |the )?4th|fourth customer/i.test(text)){
+        coach.querySelectorAll('.v12-pointer').forEach(pointer=>pointer.remove());
+      }
+    });
+  }
+
   function refineHabModal(){
     const popup=document.querySelector('.notice-popup.notice-hab');
     if(!popup)return;
@@ -357,6 +367,7 @@
     removeBack();
     refineInitialColumn();
     ensureFirstCue();
+    removeFourthCustomerCoachPointer();
     refineHabModal();
     simplifyFastStartSetup();
     simplifyFastStartEarned();
