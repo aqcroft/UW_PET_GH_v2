@@ -66,6 +66,10 @@
     .add-customer-solo-row.v22-row-suppressed{
       visibility:hidden!important;pointer-events:none!important
     }
+    .customer-column-first.v22-initial-column-passive{
+      opacity:.4!important;filter:saturate(.55)!important;pointer-events:none!important;
+      transition:opacity .55s ease,filter .55s ease!important
+    }
 
     .v22-auto-note{
       margin:.25rem auto .48rem;
@@ -117,6 +121,12 @@
         ensureFirstCue();
       },1400);
     }
+  }
+
+  function refineInitialColumn(){
+    const column=document.querySelector('.customer-column-first');
+    if(!column)return;
+    column.classList.toggle('v22-initial-column-passive',count()===0&&!firstCueAllowed);
   }
 
   function removeBack(){
@@ -259,6 +269,7 @@
   function refineAll(){
     installFirstCueGate();
     removeBack();
+    refineInitialColumn();
     ensureFirstCue();
     refineHabModal();
     simplifyFastStartSetup();
