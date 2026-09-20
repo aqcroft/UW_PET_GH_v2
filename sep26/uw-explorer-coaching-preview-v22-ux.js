@@ -80,6 +80,35 @@
       pointer-events:none!important;cursor:default!important
     }
 
+    .notice-faststart-setup.v22-fast-earned-clean h2{
+      margin:.28rem 0 0!important;
+      font-size:1.42rem!important;
+      line-height:1.14!important;
+      font-weight:950!important
+    }
+    .notice-faststart-setup.v22-fast-earned-clean .v9-unlock-copy{
+      margin:1.3rem 0 1.05rem!important;
+      line-height:1.35!important
+    }
+    .notice-faststart-setup.v22-fast-earned-clean .v22-momentum-unlocked{
+      display:block;
+      font-size:1.04rem;
+      line-height:1.3;
+      font-weight:900;
+      text-align:center
+    }
+    .notice-faststart-setup.v22-fast-earned-clean .whats-next-title{
+      display:none!important
+    }
+    .notice-faststart-setup.v22-fast-earned-clean .whats-next-block{
+      margin-top:.45rem!important
+    }
+    .notice-faststart-setup.v22-fast-earned-clean .or-divider{
+      margin:.72rem 0 .62rem!important;
+      text-transform:none!important;
+      letter-spacing:0!important
+    }
+
     .v22-auto-note{
       margin:.25rem auto .48rem;
       width:fit-content;max-width:calc(100% - 1rem);
@@ -189,6 +218,45 @@
     }
   }
 
+  function simplifyFastStartEarned(){
+    const popup=document.querySelector('.notice-faststart-setup');
+    if(!popup||!state.fastStartRevealComplete)return;
+
+    popup.classList.add('v22-fast-earned-clean');
+
+    const h2=popup.querySelector('h2');
+    if(h2&&h2.textContent!=='£500 earned!')h2.textContent='£500 earned!';
+
+    const stepActions=popup.querySelector('.step-actions');
+    if(stepActions)stepActions.style.display='none';
+
+    let block=popup.querySelector('.v9-unlock-copy');
+    if(!block){
+      block=document.createElement('div');
+      block.className='v9-unlock-copy';
+      const whatsNext=popup.querySelector('.whats-next-block');
+      popup.insertBefore(block,whatsNext||null);
+    }
+    const desired='<span class="v22-momentum-unlocked">⚡ <strong>Momentum Bonus unlocked</strong></span>';
+    if(block.innerHTML!==desired)block.innerHTML=desired;
+
+    const whatsNextTitle=popup.querySelector('.whats-next-title');
+    if(whatsNextTitle)whatsNextTitle.style.display='none';
+
+    const divider=popup.querySelector('.or-divider');
+    if(divider&&divider.textContent!=='or keep exploring')divider.textContent='or keep exploring';
+
+    const explore=Array.from(popup.querySelectorAll('button')).find(b=>/Explore days 31-60|Supporting Bonuses/i.test(b.textContent));
+    if(explore){
+      let main=explore.querySelector('span');
+      if(!main){main=document.createElement('span');explore.prepend(main);}
+      if(main.textContent!=='🔍 Explore days 31-60')main.textContent='🔍 Explore days 31-60';
+      let small=explore.querySelector('small');
+      if(!small){small=document.createElement('small');explore.appendChild(small);}
+      if(small.textContent!=='See Momentum Bonus in action')small.textContent='See Momentum Bonus in action';
+    }
+  }
+
   function refineHabModal(){
     const popup=document.querySelector('.notice-popup.notice-hab');
     if(!popup)return;
@@ -291,6 +359,7 @@
     ensureFirstCue();
     refineHabModal();
     simplifyFastStartSetup();
+    simplifyFastStartEarned();
     suppressActionDuringHabResult();
     refineAddButton();
   }
