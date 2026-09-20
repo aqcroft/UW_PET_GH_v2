@@ -122,6 +122,12 @@
     .notice-hab .v22-auto-note{background:#fff8ee;border-color:rgba(214,142,32,.24);color:#704716}
     .add-customer-main .add-label-sub.v22-watch{font-weight:850!important;opacity:.95!important}
     .add-customer-main.v22-auto-running{pointer-events:none!important;cursor:default!important}
+    .add-customer-main.v22-phase2-ready{
+      pointer-events:auto!important;
+      opacity:1!important;
+      filter:none!important;
+      cursor:pointer!important
+    }
     .v22-phase2-coach .v22-bridge-icon{
       display:block;font-size:2rem;line-height:1;margin-bottom:.55rem
     }
@@ -246,8 +252,8 @@
       const whatsNext=popup.querySelector('.whats-next-block');
       popup.insertBefore(block,whatsNext||null);
     }
-    const desired='<span class="v22-momentum-unlocked">⚡ <strong>Momentum Bonus unlocked</strong></span>';
-    if(block.innerHTML!==desired)block.innerHTML=desired;
+    if(block.innerHTML!=='')block.innerHTML='';
+    block.style.display='none';
 
     const whatsNextTitle=popup.querySelector('.whats-next-title');
     if(whatsNextTitle)whatsNextTitle.style.display='none';
@@ -308,6 +314,16 @@
       const desired='<span class="v22-bridge-icon">⚡</span><strong>Momentum Bonus rewards independence</strong><span class="v22-bridge-line">Add your 6th customer<br>to see it in action</span>';
       if(coach.innerHTML!==desired)coach.innerHTML=desired;
     });
+  }
+
+  function ensurePhase2Ready(){
+    const btn=document.querySelector('.add-customer-main');
+    if(!btn)return;
+    const ready=count()===5&&state.fastStartRevealComplete&&state.nextIntroDismissed
+      &&!document.querySelector('.v9-coach')
+      &&!document.querySelector('.notice-backdrop:not(.howpaid-overlay)')
+      &&!state.habRevealInProgress&&!state.momentumRevealInProgress&&!state.fastStartRevealInProgress;
+    btn.classList.toggle('v22-phase2-ready',ready);
   }
 
   function refineAddButton(){
@@ -402,6 +418,7 @@
     refinePhase2Coach();
     suppressActionDuringHabResult();
     refineAddButton();
+    ensurePhase2Ready();
   }
 
   const previousDismissNextIntroV22=dismissNextIntro;
@@ -411,6 +428,15 @@
 
   const existingAddCustomerV22=addCustomer;
   addCustomer=function(...args){
+    if(count()===5&&state.fastStartRevealComplete&&state.nextIntroDismissed
+      &&!document.querySelector('.v9-coach')
+      &&!document.querySelector('.notice-backdrop:not(.howpaid-overlay)')
+      &&!state.habRevealInProgress&&!state.momentumRevealInProgress&&!state.fastStartRevealInProgress){
+      const customer=makeCustomer(6,DEMO_TYPE,DEMO_SERVICES);
+      state.month2.push(customer);
+      render();
+      return;
+    }
     if(count()===0&&!firstCustomerStageActive){
       setFirstCustomerStage(true);
       if(firstCustomerStageTimer)return;
