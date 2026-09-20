@@ -30,14 +30,14 @@
       if(n===1)delay=2750;
       else if(n===2)delay=2250;
       else if(n===3)delay=2050;
-      else if(n===5)delay=2200;
+      else if(n===5)delay=3400;
       else delay=3100;
     }
     if(coach&&delay===3950){
       if(n===1)delay=3200;
       else if(n===2)delay=2700;
       else if(n===3)delay=2500;
-      else if(n===5)delay=2650;
+      else if(n===5)delay=3850;
       else delay=3550;
     }
 
@@ -284,6 +284,27 @@
     });
   }
 
+  function refineHomeownerCoachLanguage(){
+    document.querySelectorAll('.v9-coach').forEach(coach=>{
+      const text=(coach.textContent||'').replace(/\s+/g,' ').trim();
+
+      if(/First customer added/i.test(text)){
+        coach.innerHTML='<span class="v16-icon">🎉</span><strong>First homeowner added</strong><span class="coach-line">That’s <strong>£250 earned.</strong></span>';
+        return;
+      }
+
+      if(/Great stuff!/i.test(text)&&/second customer/i.test(text)){
+        coach.innerHTML='<span class="v16-icon">👏</span><strong>Great stuff!</strong><span class="coach-line">Another £250 for<br>your second homeowner</span>';
+        return;
+      }
+
+      if(/One more 3-service homeowner/i.test(text)){
+        coach.innerHTML='<strong>One more 3-service homeowner</strong><span class="coach-line">unlocks a new bonus</span>';
+        return;
+      }
+    });
+  }
+
   function refineHabModal(){
     const popup=document.querySelector('.notice-popup.notice-hab');
     if(!popup)return;
@@ -314,20 +335,31 @@
       if(!/Momentum Bonus|new bonus|Add 6th customer/i.test(text))return;
       phase2CoachSeen=true;
       coach.classList.add('v22-phase2-coach');
-      const desired='<span class="v22-bridge-icon">⚡</span><strong>Momentum Bonus rewards independence</strong><span class="v22-bridge-line">Add your 6th customer<br>to see it in action</span>';
+      const desired='<span class="v22-bridge-icon">⚡</span><strong>Momentum Bonus rewards independence</strong><span class="v22-bridge-line">Add your 6th homeowner<br>to see it in action</span>';
       if(coach.innerHTML!==desired)coach.innerHTML=desired;
     });
+  }
+
+  function phase2IsReady(){
+    const transitionSettled=phase2CoachSeen||(phase2EntryAt>0&&Date.now()-phase2EntryAt>=4400);
+    return count()===5&&state.fastStartRevealComplete&&state.nextIntroDismissed&&transitionSettled
+      &&!document.querySelector('.v9-coach')
+      &&!document.querySelector('.notice-backdrop:not(.howpaid-overlay)')
+      &&!state.habRevealInProgress&&!state.momentumRevealInProgress&&!state.fastStartRevealInProgress;
   }
 
   function ensurePhase2Ready(){
     const btn=document.querySelector('.add-customer-main');
     if(!btn)return;
-    const transitionSettled=phase2CoachSeen||(phase2EntryAt>0&&Date.now()-phase2EntryAt>=3200);
-    const ready=count()===5&&state.fastStartRevealComplete&&state.nextIntroDismissed&&transitionSettled
-      &&!document.querySelector('.v9-coach')
-      &&!document.querySelector('.notice-backdrop:not(.howpaid-overlay)')
-      &&!state.habRevealInProgress&&!state.momentumRevealInProgress&&!state.fastStartRevealInProgress;
+    const ready=phase2IsReady();
     btn.classList.toggle('v22-phase2-ready',ready);
+    if(ready){
+      btn.classList.remove('v9-gated-add','v9-gated-dim','v12-forced-passive','v16-hold-action','v16-batch-processing','v22-auto-running');
+      btn.removeAttribute('disabled');
+      btn.style.pointerEvents='auto';
+      btn.style.opacity='1';
+      btn.style.filter='none';
+    }
   }
 
   function refineAddButton(){
@@ -353,7 +385,7 @@
     }
 
     if(btn.classList.contains('v16-batch-processing')||/Adding customers/i.test(text)){
-      setButtonCopy(btn,'Adding customers automatically…','Just watch 👀','');
+      setButtonCopy(btn,'Adding homeowners automatically…','Just watch 👀','');
       btn.classList.add('v22-auto-running');
       return;
     }
@@ -372,7 +404,7 @@
     }
 
     if(/Add a few/i.test(text)||n===6&&state.momentumAppliedIds?.includes('c6')){
-      setButtonCopy(btn,'Add a few customers','Tap once - next few are automatic','👥');
+      setButtonCopy(btn,'Add a few homeowners','Tap once - next few are automatic','👥');
       let row=btn.closest('.add-customer-solo-row');
       if(row&&!row.previousElementSibling?.classList.contains('v22-auto-note')){
         const note=document.createElement('div');
@@ -388,9 +420,9 @@
     if(prev?.classList.contains('v22-auto-note'))prev.remove();
 
     if(n===0){
-      setButtonCopy(btn,'Add 1st','customer','🏡');
+      setButtonCopy(btn,'Add 1st','homeowner','🏡');
     }else if(n<10){
-      setButtonCopy(btn,'Add next customer','','🏡');
+      setButtonCopy(btn,'Add next homeowner','','🏡');
     }
   }
 
@@ -416,6 +448,7 @@
     refineInitialColumn();
     ensureFirstCue();
     removeFourthCustomerCoachPointer();
+    refineHomeownerCoachLanguage();
     refineHabModal();
     simplifyFastStartSetup();
     simplifyFastStartEarned();
@@ -429,20 +462,22 @@
   dismissNextIntro=function(...args){
     phase2EntryAt=Date.now();
     phase2CoachSeen=false;
-    previousSetTimeout(()=>refineAll(),3250);
+    previousSetTimeout(()=>refineAll(),4450);
     return previousDismissNextIntroV22.apply(this,args);
   };
 
+  function addSixthHomeownerDirect(){
+    if(count()!==5)return false;
+    const customer=makeCustomer(6,DEMO_TYPE,DEMO_SERVICES);
+    state.month2.push(customer);
+    render();
+    return true;
+  }
+
   const existingAddCustomerV22=addCustomer;
   addCustomer=function(...args){
-    if(count()===5&&state.fastStartRevealComplete&&state.nextIntroDismissed
-      &&(phase2CoachSeen||(phase2EntryAt>0&&Date.now()-phase2EntryAt>=3200))
-      &&!document.querySelector('.v9-coach')
-      &&!document.querySelector('.notice-backdrop:not(.howpaid-overlay)')
-      &&!state.habRevealInProgress&&!state.momentumRevealInProgress&&!state.fastStartRevealInProgress){
-      const customer=makeCustomer(6,DEMO_TYPE,DEMO_SERVICES);
-      state.month2.push(customer);
-      render();
+    if(phase2IsReady()){
+      addSixthHomeownerDirect();
       return;
     }
     if(count()===0&&!firstCustomerStageActive){
@@ -468,6 +503,15 @@
     existingRender();
     refineAll();
   };
+
+  document.addEventListener('click',event=>{
+    if(!phase2IsReady())return;
+    const row=event.target.closest?.('.add-customer-solo-row');
+    if(!row)return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    addSixthHomeownerDirect();
+  },true);
 
   document.addEventListener('click',event=>{
     const add=event.target.closest?.('.add-customer-main');
