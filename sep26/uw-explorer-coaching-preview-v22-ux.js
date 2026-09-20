@@ -6,6 +6,8 @@
   const count=()=>state.month1.length+state.month2.length;
   let firstCueTimer=null;
   let firstCueBouncing=false;
+  let firstCueAllowed=false;
+  let habPostCoachRefreshTimer=null;
 
   window.setTimeout=function(fn,delay,...args){
     const n=count();
@@ -93,8 +95,8 @@
 
   function ensureFirstCue(){
     const n=count();
-    document.querySelectorAll('.v22-first-customer-cue').forEach(el=>{if(n>0)el.remove();});
-    if(n!==0)return;
+    document.querySelectorAll('.v22-first-customer-cue').forEach(el=>{if(n>0||!firstCueAllowed)el.remove();});
+    if(n!==0||!firstCueAllowed)return;
 
     const row=document.querySelector('.add-customer-solo-row');
     if(!row)return;
@@ -131,7 +133,18 @@
   function suppressActionDuringHabResult(){
     const row=document.querySelector('.add-customer-solo-row');
     if(!row)return;
-    row.classList.toggle('v22-row-suppressed',habResultCoachVisible());
+    const visible=habResultCoachVisible();
+    row.classList.toggle('v22-row-suppressed',visible);
+
+    if(visible&&!habPostCoachRefreshTimer){
+      // v16 clears its internal HAB hold at 3950ms. Re-run v22 just after that
+      // so the temporary "Getting bonus ready" state can never become sticky.
+      habPostCoachRefreshTimer=previousSetTimeout(()=>{
+        habPostCoachRefreshTimer=null;
+        suppressActionDuringHabResult();
+        refineAddButton();
+      },4100);
+    }
   }
 
   function refineHabModal(){
@@ -213,7 +226,24 @@
     }
   }
 
+  function installFirstCueGate(){
+    const api=window.CoachingPreviewV12;
+    if(!api||api.__v22CueGateInstalled)return;
+    const original=api.activateFirstAction?.bind(api);
+    if(typeof original!=='function')return;
+    api.activateFirstAction=function(){
+      const result=original();
+      firstCueAllowed=true;
+      firstCueBouncing=false;
+      if(firstCueTimer){clearTimeout(firstCueTimer);firstCueTimer=null;}
+      ensureFirstCue();
+      return result;
+    };
+    api.__v22CueGateInstalled=true;
+  }
+
   function refineAll(){
+    installFirstCueGate();
     removeBack();
     ensureFirstCue();
     refineHabModal();
@@ -231,6 +261,7 @@
     const add=event.target.closest?.('.add-customer-main');
     if(add&&count()===0){
       firstCueBouncing=false;
+      firstCueAllowed=false;
       if(firstCueTimer){clearTimeout(firstCueTimer);firstCueTimer=null;}
       document.querySelectorAll('.v22-first-customer-cue').forEach(el=>el.remove());
     }
