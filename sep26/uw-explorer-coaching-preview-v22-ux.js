@@ -10,7 +10,6 @@
   let habPostCoachRefreshTimer=null;
   let firstCustomerStageActive=false;
   let firstCustomerStageTimer=null;
-  let phase2BridgeRunning=false;
 
   window.setTimeout=function(fn,delay,...args){
     const n=count();
@@ -21,6 +20,7 @@
       if(n===1)delay=1150;
       else if(n===2)delay=950;
       else if(n===3)delay=800;
+      else if(n===5)delay=300;
       else delay=1350;
     }
 
@@ -28,12 +28,14 @@
       if(n===1)delay=2750;
       else if(n===2)delay=2250;
       else if(n===3)delay=2050;
+      else if(n===5)delay=2200;
       else delay=3100;
     }
     if(coach&&delay===3950){
       if(n===1)delay=3200;
       else if(n===2)delay=2700;
       else if(n===3)delay=2500;
+      else if(n===5)delay=2650;
       else delay=3550;
     }
 
@@ -120,11 +122,10 @@
     .notice-hab .v22-auto-note{background:#fff8ee;border-color:rgba(214,142,32,.24);color:#704716}
     .add-customer-main .add-label-sub.v22-watch{font-weight:850!important;opacity:.95!important}
     .add-customer-main.v22-auto-running{pointer-events:none!important;cursor:default!important}
-    .add-customer-main.v22-phase2-wait{pointer-events:none!important;opacity:.52!important}
-    .v22-momentum-bridge .v22-bridge-icon{
+    .v22-phase2-coach .v22-bridge-icon{
       display:block;font-size:2rem;line-height:1;margin-bottom:.55rem
     }
-    .v22-momentum-bridge .v22-bridge-line{
+    .v22-phase2-coach .v22-bridge-line{
       display:block;margin-top:.34rem;line-height:1.4
     }
     @media(prefers-reduced-motion:reduce){.v22-first-customer-cue.is-bouncing{animation:none!important}}
@@ -282,7 +283,7 @@
     const copy=popup.querySelector('p.muted');
     const isFirst=heading&&/High Activity Bonus unlocked!/i.test(heading.textContent)&&!/again/i.test(heading.textContent);
     if(isFirst&&copy){
-      const desired='<strong>4+ 3-service homeowners</strong><br>in one calendar month<br><br><strong>+£100 on every qualifying customer</strong>';
+      const desired='<strong>4+ 3-service homeowners</strong><br>in one calendar month<br><br><strong>+£100 per qualifying customer</strong>';
       if(copy.innerHTML!==desired)copy.innerHTML=desired;
     }
 
@@ -298,48 +299,15 @@
     }
   }
 
-  function positionPhase2Coach(coach){
-    const btn=document.querySelector('.add-customer-main');
-    const rect=btn?.getBoundingClientRect();
-    const height=coach.offsetHeight||100;
-    let top=rect?rect.top-height-14:window.innerHeight-height-150;
-    top=Math.max(110,Math.min(top,window.innerHeight-height-76));
-    coach.style.top=`${Math.round(top)}px`;
-  }
-
-  async function runPhase2Bridge(){
-    if(phase2BridgeRunning)return;
-    phase2BridgeRunning=true;
-
-    const backdrop=document.querySelector('.notice-backdrop:not(.howpaid-overlay)');
-    if(backdrop){
-      backdrop.classList.remove('v9-modal-enter');
-      backdrop.classList.add('v9-modal-exit');
-      await new Promise(resolve=>previousSetTimeout(resolve,420));
-    }
-
-    state.nextIntroDismissed=true;
-    render();
-
-    const btn=document.querySelector('.add-customer-main');
-    if(btn)btn.classList.add('v22-phase2-wait');
-
-    const coach=document.createElement('div');
-    coach.className='v9-coach v9-coach-green v22-momentum-bridge';
-    coach.setAttribute('role','status');
-    coach.setAttribute('aria-live','polite');
-    coach.innerHTML='<span class="v22-bridge-icon">⚡</span><strong>Momentum Bonus rewards independence</strong><span class="v22-bridge-line">Add your 6th customer<br>to see it in action</span>';
-    document.body.appendChild(coach);
-    requestAnimationFrame(()=>{positionPhase2Coach(coach);coach.classList.add('show');});
-
-    previousSetTimeout(()=>coach.classList.remove('show'),2250);
-    previousSetTimeout(()=>{
-      coach.remove();
-      phase2BridgeRunning=false;
-      const liveBtn=document.querySelector('.add-customer-main');
-      if(liveBtn)liveBtn.classList.remove('v22-phase2-wait');
-      refineAll();
-    },2650);
+  function refinePhase2Coach(){
+    if(count()!==5||!state.nextIntroDismissed)return;
+    document.querySelectorAll('.v9-coach.v9-coach-green').forEach(coach=>{
+      const text=(coach.textContent||'').replace(/\s+/g,' ').trim();
+      if(!/Momentum Bonus|new bonus|Add 6th customer/i.test(text))return;
+      coach.classList.add('v22-phase2-coach');
+      const desired='<span class="v22-bridge-icon">⚡</span><strong>Momentum Bonus rewards independence</strong><span class="v22-bridge-line">Add your 6th customer<br>to see it in action</span>';
+      if(coach.innerHTML!==desired)coach.innerHTML=desired;
+    });
   }
 
   function refineAddButton(){
@@ -431,13 +399,14 @@
     refineHabModal();
     simplifyFastStartSetup();
     simplifyFastStartEarned();
+    refinePhase2Coach();
     suppressActionDuringHabResult();
     refineAddButton();
   }
 
   const previousDismissNextIntroV22=dismissNextIntro;
-  dismissNextIntro=function(){
-    return runPhase2Bridge();
+  dismissNextIntro=function(...args){
+    return previousDismissNextIntroV22.apply(this,args);
   };
 
   const existingAddCustomerV22=addCustomer;
