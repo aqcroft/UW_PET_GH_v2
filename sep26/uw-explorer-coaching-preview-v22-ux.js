@@ -48,16 +48,21 @@
   style.textContent=`
     .v9-back-step{display:none!important}
 
+    .add-customer-solo-row{position:relative}
     @keyframes v22FirstCueBounce{
-      0%,100%{transform:translateY(0)}
-      50%{transform:translateY(6px)}
+      0%,100%{transform:translateX(-50%) translateY(0)}
+      50%{transform:translateX(-50%) translateY(6px)}
     }
     .v22-first-customer-cue{
-      text-align:center;font-size:2rem;line-height:1;margin:.18rem 0 .34rem;
-      transform:translateY(0)
+      position:absolute;left:50%;top:-2.55rem;z-index:8;
+      text-align:center;font-size:2rem;line-height:1;
+      transform:translateX(-50%);pointer-events:none
     }
     .v22-first-customer-cue.is-bouncing{
       animation:v22FirstCueBounce .9s ease-in-out infinite
+    }
+    .add-customer-solo-row.v22-row-suppressed{
+      visibility:hidden!important;pointer-events:none!important
     }
 
     .v22-auto-note{
@@ -93,13 +98,13 @@
 
     const row=document.querySelector('.add-customer-solo-row');
     if(!row)return;
-    let cue=row.previousElementSibling;
-    if(!cue||!cue.classList.contains('v22-first-customer-cue')){
+    let cue=row.querySelector(':scope > .v22-first-customer-cue');
+    if(!cue){
       cue=document.createElement('div');
       cue.className='v22-first-customer-cue';
       cue.setAttribute('aria-hidden','true');
       cue.textContent='👇';
-      row.parentNode.insertBefore(cue,row);
+      row.appendChild(cue);
     }
     cue.classList.toggle('is-bouncing',firstCueBouncing);
 
@@ -114,6 +119,19 @@
 
   function removeBack(){
     document.querySelectorAll('.v9-back-step').forEach(el=>el.remove());
+  }
+
+  function habResultCoachVisible(){
+    const coach=document.querySelector('.v9-coach');
+    if(!coach)return false;
+    const text=(coach.textContent||'').replace(/\s+/g,' ').trim();
+    return text.includes('High Activity Bonus Applied')&&text.includes('£1,000')&&text.includes('£1,400');
+  }
+
+  function suppressActionDuringHabResult(){
+    const row=document.querySelector('.add-customer-solo-row');
+    if(!row)return;
+    row.classList.toggle('v22-row-suppressed',habResultCoachVisible());
   }
 
   function refineHabModal(){
@@ -134,6 +152,8 @@
   function refineAddButton(){
     const btn=document.querySelector('.add-customer-main');
     if(!btn)return;
+    suppressActionDuringHabResult();
+    if(habResultCoachVisible())return;
     const n=count();
     const text=(btn.textContent||'').replace(/\s+/g,' ').trim();
 
@@ -197,6 +217,7 @@
     removeBack();
     ensureFirstCue();
     refineHabModal();
+    suppressActionDuringHabResult();
     refineAddButton();
   }
 
