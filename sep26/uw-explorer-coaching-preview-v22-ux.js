@@ -130,6 +130,23 @@
       filter:none!important;
       cursor:pointer!important
     }
+    .add-customer-main.v22-sixth-visual .add-label-main,
+    .add-customer-main.v22-sixth-visual .add-label-sub{
+      font-size:0!important
+    }
+    .add-customer-main.v22-sixth-visual .add-label-main::after{
+      content:attr(data-v22-text);
+      font-size:1rem!important;
+      line-height:1.08!important;
+      font-weight:900!important
+    }
+    .add-customer-main.v22-sixth-visual .add-label-sub::after{
+      content:attr(data-v22-text);
+      font-size:.68rem!important;
+      line-height:1.08!important;
+      font-weight:850!important
+    }
+    .add-customer-main.v22-sixth-visual .add-label-icon{display:none!important}
     .v22-phase2-coach .v22-bridge-icon{
       display:block;font-size:2rem;line-height:1;margin-bottom:.55rem
     }
@@ -366,6 +383,45 @@
     }
   }
 
+  function refineSixthButtonVisual(btn){
+    if(!btn)return false;
+    const n=count();
+    const main=btn.querySelector('.add-label-main');
+    const sub=btn.querySelector('.add-label-sub');
+
+    if(n!==6){
+      btn.classList.remove('v22-sixth-visual');
+      if(main)delete main.dataset.v22Text;
+      if(sub)delete sub.dataset.v22Text;
+      return false;
+    }
+
+    btn.classList.add('v22-sixth-visual');
+
+    let mainText='Getting next step ready…';
+    let subText='Just watch 👀';
+
+    if(state.momentumRevealInProgress){
+      mainText='Applying Momentum Bonus…';
+      subText='Automatic - just watch 👀';
+    }else if(state.momentumAppliedIds?.includes('c6')){
+      if(btn.classList.contains('v16-batch-processing')||/Adding customers/i.test(btn.textContent||'')){
+        mainText='Adding homeowners automatically…';
+        subText='Just watch 👀';
+      }else if(btn.classList.contains('v16-hold-action')){
+        mainText='Getting next step ready…';
+        subText='Just watch 👀';
+      }else{
+        mainText='Add a few homeowners';
+        subText='Tap once - next few are automatic';
+      }
+    }
+
+    if(main&&main.dataset.v22Text!==mainText)main.dataset.v22Text=mainText;
+    if(sub&&sub.dataset.v22Text!==subText)sub.dataset.v22Text=subText;
+    return true;
+  }
+
   function refineAddButton(){
     const btn=document.querySelector('.add-customer-main');
     if(!btn)return;
@@ -375,6 +431,7 @@
     const text=(btn.textContent||'').replace(/\s+/g,' ').trim();
 
     btn.classList.remove('v22-auto-running');
+    if(refineSixthButtonVisual(btn))return;
 
     if(state.habRevealInProgress){
       setButtonCopy(btn,'Applying High Activity Bonus…','Automatic - just watch 👀','🔥');
@@ -527,7 +584,15 @@
     }
   },true);
 
-  const observer=new MutationObserver(()=>refineAll());
+  let v22RefineScheduled=false;
+  const observer=new MutationObserver(()=>{
+    if(v22RefineScheduled)return;
+    v22RefineScheduled=true;
+    requestAnimationFrame(()=>{
+      v22RefineScheduled=false;
+      refineAll();
+    });
+  });
   observer.observe(document.body,{childList:true,subtree:true});
 
   refineAll();
