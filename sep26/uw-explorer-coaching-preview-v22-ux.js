@@ -8,6 +8,8 @@
   let firstCueBouncing=false;
   let firstCueAllowed=false;
   let habPostCoachRefreshTimer=null;
+  let firstCustomerStageActive=false;
+  let firstCustomerStageTimer=null;
 
   window.setTimeout=function(fn,delay,...args){
     const n=count();
@@ -70,6 +72,13 @@
       opacity:.4!important;filter:saturate(.55)!important;pointer-events:none!important;
       transition:opacity .55s ease,filter .55s ease!important
     }
+    .hero.v22-first-stage-awake{
+      opacity:1!important;filter:none!important;
+      transition:opacity .55s ease,filter .55s ease!important
+    }
+    .add-customer-main.v22-first-stage-wait{
+      pointer-events:none!important;cursor:default!important
+    }
 
     .v22-auto-note{
       margin:.25rem auto .48rem;
@@ -126,7 +135,16 @@
   function refineInitialColumn(){
     const column=document.querySelector('.customer-column-first');
     if(!column)return;
-    column.classList.toggle('v22-initial-column-passive',count()===0);
+    column.classList.toggle('v22-initial-column-passive',count()===0&&!firstCustomerStageActive);
+  }
+
+  function setFirstCustomerStage(active){
+    firstCustomerStageActive=!!active;
+    const hero=document.querySelector('.hero');
+    if(hero)hero.classList.toggle('v22-first-stage-awake',firstCustomerStageActive);
+    refineInitialColumn();
+    const btn=document.querySelector('.add-customer-main');
+    if(btn)btn.classList.toggle('v22-first-stage-wait',firstCustomerStageActive);
   }
 
   function removeBack(){
@@ -276,6 +294,26 @@
     suppressActionDuringHabResult();
     refineAddButton();
   }
+
+  const existingAddCustomerV22=addCustomer;
+  addCustomer=function(...args){
+    if(count()===0&&!firstCustomerStageActive){
+      setFirstCustomerStage(true);
+      if(firstCustomerStageTimer)return;
+      firstCustomerStageTimer=previousSetTimeout(()=>{
+        firstCustomerStageTimer=null;
+        const result=existingAddCustomerV22.apply(this,args);
+        firstCustomerStageActive=false;
+        const hero=document.querySelector('.hero');
+        if(hero)hero.classList.remove('v22-first-stage-awake');
+        refineAll();
+        return result;
+      },1000);
+      return;
+    }
+    if(firstCustomerStageActive)return;
+    return existingAddCustomerV22.apply(this,args);
+  };
 
   const existingRender=render;
   render=function(){
