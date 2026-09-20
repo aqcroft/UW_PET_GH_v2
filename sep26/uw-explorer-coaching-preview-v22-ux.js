@@ -286,19 +286,23 @@
 
   function refineHomeownerCoachLanguage(){
     document.querySelectorAll('.v9-coach').forEach(coach=>{
+      if(coach.dataset.v22HomeownerRefined==='1')return;
       const text=(coach.textContent||'').replace(/\s+/g,' ').trim();
 
       if(/First customer added/i.test(text)){
+        coach.dataset.v22HomeownerRefined='1';
         coach.innerHTML='<span class="v16-icon">🎉</span><strong>First homeowner added</strong><span class="coach-line">That’s <strong>£250 earned.</strong></span>';
         return;
       }
 
       if(/Great stuff!/i.test(text)&&/second customer/i.test(text)){
+        coach.dataset.v22HomeownerRefined='1';
         coach.innerHTML='<span class="v16-icon">👏</span><strong>Great stuff!</strong><span class="coach-line">Another £250 for<br>your second homeowner</span>';
         return;
       }
 
       if(/One more 3-service homeowner/i.test(text)){
+        coach.dataset.v22HomeownerRefined='1';
         coach.innerHTML='<strong>One more 3-service homeowner</strong><span class="coach-line">unlocks a new bonus</span>';
         return;
       }
