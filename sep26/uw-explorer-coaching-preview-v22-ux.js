@@ -10,6 +10,8 @@
   let habPostCoachRefreshTimer=null;
   let firstCustomerStageActive=false;
   let firstCustomerStageTimer=null;
+  let phase2EntryAt=0;
+  let phase2CoachSeen=false;
 
   window.setTimeout=function(fn,delay,...args){
     const n=count();
@@ -310,6 +312,7 @@
     document.querySelectorAll('.v9-coach.v9-coach-green').forEach(coach=>{
       const text=(coach.textContent||'').replace(/\s+/g,' ').trim();
       if(!/Momentum Bonus|new bonus|Add 6th customer/i.test(text))return;
+      phase2CoachSeen=true;
       coach.classList.add('v22-phase2-coach');
       const desired='<span class="v22-bridge-icon">⚡</span><strong>Momentum Bonus rewards independence</strong><span class="v22-bridge-line">Add your 6th customer<br>to see it in action</span>';
       if(coach.innerHTML!==desired)coach.innerHTML=desired;
@@ -319,7 +322,8 @@
   function ensurePhase2Ready(){
     const btn=document.querySelector('.add-customer-main');
     if(!btn)return;
-    const ready=count()===5&&state.fastStartRevealComplete&&state.nextIntroDismissed
+    const transitionSettled=phase2CoachSeen||(phase2EntryAt>0&&Date.now()-phase2EntryAt>=3200);
+    const ready=count()===5&&state.fastStartRevealComplete&&state.nextIntroDismissed&&transitionSettled
       &&!document.querySelector('.v9-coach')
       &&!document.querySelector('.notice-backdrop:not(.howpaid-overlay)')
       &&!state.habRevealInProgress&&!state.momentumRevealInProgress&&!state.fastStartRevealInProgress;
@@ -423,12 +427,16 @@
 
   const previousDismissNextIntroV22=dismissNextIntro;
   dismissNextIntro=function(...args){
+    phase2EntryAt=Date.now();
+    phase2CoachSeen=false;
+    previousSetTimeout(()=>refineAll(),3250);
     return previousDismissNextIntroV22.apply(this,args);
   };
 
   const existingAddCustomerV22=addCustomer;
   addCustomer=function(...args){
     if(count()===5&&state.fastStartRevealComplete&&state.nextIntroDismissed
+      &&(phase2CoachSeen||(phase2EntryAt>0&&Date.now()-phase2EntryAt>=3200))
       &&!document.querySelector('.v9-coach')
       &&!document.querySelector('.notice-backdrop:not(.howpaid-overlay)')
       &&!state.habRevealInProgress&&!state.momentumRevealInProgress&&!state.fastStartRevealInProgress){
