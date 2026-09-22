@@ -156,7 +156,7 @@ function addCustomer(){
   else state.month2.push(customer);
   render();
   if(customer.id!=='c6'&&customer.id.startsWith('c')&&Number(customer.id.slice(1))>6){
-    window.setTimeout(()=>startMomentumRevealForId(customer.id),220);
+    window.setTimeout(()=>startMomentumRevealForId(customer.id),80);
   }
 }
 function resetExplorer(){
@@ -292,9 +292,9 @@ function startMomentumRevealForId(id){
       state.momentumPulseId=null;
       state.momentumRevealComplete=true;
       render();
-    },teach?1500:900);
+    },teach?1500:240);
   };
-  window.setTimeout(apply,teach?500:220);
+  window.setTimeout(apply,teach?500:80);
 }
 function dismissNextIntro(){state.nextIntroDismissed=true;render();}
 function dismissFastStartAward(){state.fastStartAwardDismissed=true;render();}
