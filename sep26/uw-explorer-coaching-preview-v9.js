@@ -10,7 +10,7 @@
   const MAIN_MODAL_DELAY=1200;
   const MAIN_MODAL_FADE=500;
   const FAST_START_REWARD_PAUSE=1000;
-  const FINAL_PAUSE=5000;
+  const FINAL_PAUSE=3000;
 
   const core={
     render,
