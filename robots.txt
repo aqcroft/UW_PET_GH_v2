@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+Sitemap: https://aqcroft.github.io/UW_PET_GH_v2/sitemap.xml
