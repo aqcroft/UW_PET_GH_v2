@@ -153,6 +153,52 @@
     .v22-phase2-coach .v22-bridge-line{
       display:block;margin-top:.34rem;line-height:1.4
     }
+
+    /* v22 short-screen phone mode: preserve the design, trim vertical space only */
+    @media (max-width:430px) and (max-height:850px){
+      html,body,.app{min-height:100dvh!important}
+      .shell{padding:.45rem .58rem 3.2rem!important;gap:.42rem!important}
+      .tool-name{font-size:.92rem!important;line-height:1.05!important}
+      .tool-subtitle{font-size:.58rem!important;margin-top:.04rem!important}
+      .hero{padding:.68rem .78rem!important;border-radius:.85rem!important}
+      .hero-number{font-size:2.42rem!important;margin:.15rem 0!important}
+      .hero-meta-stack{gap:.18rem!important}
+      .hero-meta-pill{padding:.27rem .48rem!important;font-size:.7rem!important}
+      .hero-house{font-size:.9rem!important}
+      .hero .progress{margin-top:.38rem!important}
+      .hero-progress-caption{font-size:.7rem!important;margin-top:.16rem!important}
+      .card.customer-builder-card{padding:.62rem!important;gap:.38rem!important}
+      .bonuses-row{gap:.38rem!important;margin:0!important}
+      .bonus-group{gap:.22rem!important}
+      .bonus-badge{padding:.26rem .16rem!important;border-radius:.58rem!important}
+      .bonus-ico{font-size:.92rem!important}
+      .bonus-word{font-size:.49rem!important}
+      .bonus-sub{font-size:.71rem!important}
+      .customer-columns{gap:.38rem!important}
+      .customer-column{padding:.36rem!important;gap:.26rem!important;border-radius:.68rem!important}
+      .customer-column-head{gap:.24rem!important}
+      .column-head-left{gap:.08rem!important}
+      .column-phase-title{font-size:.78rem!important;line-height:1.05!important}
+      .column-count{min-height:1.38rem!important;min-width:2.05rem!important;font-size:.64rem!important}
+      .column-total-blob{font-size:1rem!important;padding:.2rem .5rem!important}
+      .customer-earnings-table{gap:.13rem!important}
+      .customer-table-head{padding:0 .1rem!important;font-size:.48rem!important}
+      .customer-summary-row{min-height:2.05rem!important;padding:.18rem .22rem!important}
+      .customer-row-id{gap:.2rem!important}
+      .customer-row-id>.customer-icon{width:1.3rem!important;height:1.3rem!important;border-radius:.35rem!important;font-size:.62rem!important}
+      .customer-row-id>strong{font-size:.8rem!important}
+      .row-badges{gap:.1rem!important;min-height:1.28rem!important}
+      .row-badge{padding:.08rem .18rem!important;font-size:.43rem!important}
+      .table-money{font-size:.71rem!important}
+      .customer-table-footer{margin-top:.06rem!important;padding:.28rem .22rem 0!important}
+      .add-customer-solo{min-height:3.05rem!important}
+      .add-customer-main{min-height:3.05rem!important;padding:0 .78rem!important}
+      .add-label-main{font-size:.9rem!important}
+      .add-label-sub{font-size:.62rem!important}
+      .add-label-icon{font-size:1.18rem!important}
+      .add-customer-solo-row{margin:.02rem 0 0!important}
+    }
+
     @media(prefers-reduced-motion:reduce){.v22-first-customer-cue.is-bouncing{animation:none!important}}
   `;
   document.head.appendChild(style);
