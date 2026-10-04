@@ -229,7 +229,7 @@ function addCustomer(){
   const customer=makeCustomer(allCount+1,DEMO_TYPE,DEMO_SERVICES);
   if(state.month1.length<5)state.month1.push(customer);
   else state.month2.push(customer);
-  hydratePartnerProfile().finally(render);
+  render();
   if(customer.id!=='c6'&&customer.id.startsWith('c')&&Number(customer.id.slice(1))>6){
     window.setTimeout(()=>startMomentumRevealForId(customer.id),80);
   }
@@ -758,7 +758,7 @@ function renderWelcome(){
     ${howPaidMarkup()}`;
 }
 function render(){state.started?renderStarted():renderWelcome();}
-render();
+hydratePartnerProfile().finally(render);
 </script>
 </body>
 </html>
