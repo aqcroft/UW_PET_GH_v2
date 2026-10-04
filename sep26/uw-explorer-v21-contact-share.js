@@ -4,6 +4,7 @@
 
   const hostParams=(()=>{try{return new URL(window.parent.location.href).searchParams;}catch(_){return new URLSearchParams();}})();
   const recipientMode=hostParams.has('shared');
+  const partnerId=(hostParams.get('pid')||'').trim();
   const presenterPrefill=(hostParams.get('pn')||'').trim();
   const firstName=value=>String(value||'').trim().replace(/\s+/g,' ').split(' ')[0].slice(0,40);
   const esc=value=>String(value||'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
@@ -25,7 +26,17 @@
   document.head.appendChild(style);
 
   function hostBase(){
-    try{const u=new URL(window.parent.location.href);u.search='';u.hash='';return u;}catch(_){return new URL('https://aqcroft.github.io/UW_PET_GH_v2/sep26/earningstool-vfinal-coaching-preview-v21.html');}
+    try{
+      const u=new URL(window.parent.location.href);
+      u.search='';
+      u.hash='';
+      if(partnerId)u.searchParams.set('pid',partnerId);
+      return u;
+    }catch(_){
+      const u=new URL('https://aqcroft.github.io/UW_PET_GH_v2/sep26/earningstool-vfinal-coaching-preview-v22.html');
+      if(partnerId)u.searchParams.set('pid',partnerId);
+      return u;
+    }
   }
   function personalisedUrl(name,ctx){const u=hostBase();u.searchParams.set('shared','1');if(name)u.searchParams.set('n',firstName(name));u.searchParams.set('ctx',ctx||'together');return u.href;}
   function friendUrl(){const u=hostBase();u.searchParams.set('shared','friend');return u.href;}
@@ -35,7 +46,12 @@
   function modal(title,body){closeModal();const ov=document.createElement('div');ov.className='v21-overlay';ov.innerHTML=`<section class="v21-modal" role="dialog" aria-modal="true"><button class="v21-modal-close" type="button" aria-label="Close">×</button><h3>${title}</h3>${body}</section>`;ov.addEventListener('click',e=>{if(e.target===ov||e.target.closest('.v21-modal-close'))closeModal();});document.body.appendChild(ov);return ov;}
 
   window.openV21Contact=function(){
-    const ov=modal('Get in touch',`<p>Choose whichever is easiest.</p><div class="v21-contact-grid"><a class="v21-contact-route" href="${whatsappUrl()}" target="_blank" rel="noopener">${WA_ICON}<span>WhatsApp</span></a><a class="v21-contact-route" href="${emailUrl()}">${EMAIL_ICON}<span>Email</span></a><a class="v21-contact-route" href="${phoneUrl()}">${CALL_ICON}<span>Call</span></a></div>`);
+    const routes=[
+      whatsappUrl()?'<a class="v21-contact-route" href="'+whatsappUrl()+'" target="_blank" rel="noopener">'+WA_ICON+'<span>WhatsApp</span></a>':'',
+      emailUrl()?'<a class="v21-contact-route" href="'+emailUrl()+'">'+EMAIL_ICON+'<span>Email</span></a>':'',
+      phoneUrl()?'<a class="v21-contact-route" href="'+phoneUrl()+'">'+CALL_ICON+'<span>Call</span></a>':''
+    ].filter(Boolean).join('');
+    const ov=modal('Get in touch',`<p>${routes?'Choose whichever is easiest.':'Contact details are not available on this Partner profile yet.'}</p>${routes?'<div class="v21-contact-grid">'+routes+'</div>':''}`);
     ov.querySelector('.v21-contact-route')?.focus?.();
   };
 
@@ -55,7 +71,7 @@
   };
 
   window.openV21FriendShare=function(){
-    const ov=modal('Share this with a friend',`<p>Send a fresh recipient copy. No personal details from this link are passed on.</p><label class="v21-field-label" for="v21FriendName">First name <span style="font-weight:600">(optional)</span></label><input class="v21-name-input" id="v21FriendName" placeholder="e.g. Sam" autocomplete="off"><div class="v21-share-actions"><button type="button" id="v21FriendCopy">${SHARE_ICON}<span>Copy link</span></button><button type="button" class="primary" id="v21FriendWa">${WA_ICON}<span>WhatsApp</span></button></div>`);
+    const ov=modal('Share this with a friend',`<p>Send a fresh recipient copy. No recipient details from this link are passed on.</p><label class="v21-field-label" for="v21FriendName">First name <span style="font-weight:600">(optional)</span></label><input class="v21-name-input" id="v21FriendName" placeholder="e.g. Sam" autocomplete="off"><div class="v21-share-actions"><button type="button" id="v21FriendCopy">${SHARE_ICON}<span>Copy link</span></button><button type="button" class="primary" id="v21FriendWa">${WA_ICON}<span>WhatsApp</span></button></div>`);
     const url=friendUrl();
     ov.querySelector('#v21FriendCopy').addEventListener('click',async()=>{try{await copyText(url);toast('Link copied');}catch(_){window.prompt('Copy this link:',url);}});
     ov.querySelector('#v21FriendWa').addEventListener('click',()=>{const name=firstName(ov.querySelector('#v21FriendName').value);const text=`Hi ${name||'there'} 👋 Thought you might find this interesting. It’s a simple interactive look at how the UW Partner earnings can build over the first 60 days.`;window.open(`https://wa.me/?text=${encodeURIComponent(text+'\n\n'+url)}`,'_blank','noopener');});
@@ -70,15 +86,17 @@
 
   window.contactMarkup=function(){
     const extra=state.contactOpen?' v21-open':'';
+    const initials=typeof contactInitials==='function'?contactInitials():'UW';
+    const hasContact=!!(whatsappUrl()||emailUrl()||phoneUrl());
     return `<div class="profile-bubble-wrap${extra}">
       <button class="profile-photo-btn" onclick="toggleContact()" aria-label="${state.contactOpen?'Close contact menu':'Open contact menu'}">
-        <img src="${CONTACT.photoUrl}" alt="${CONTACT.fullName}" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">
-        <span class="initials">AC</span>
+        ${CONTACT.photoUrl?`<img src="${CONTACT.photoUrl}" alt="${CONTACT.fullName}" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">`:''}
+        <span class="initials" style="${CONTACT.photoUrl?'display:none':''}">${initials}</span>
       </button>
       <div class="v21-profile-actions">
-        <a href="${registerUrl}" target="_blank" rel="noopener" class="v21-profile-btn primary"><span class="emoji">✅</span><strong>Get registered</strong></a>
-        <a href="${CONTACT.calendarUrl}" target="_blank" rel="noopener" class="v21-profile-btn"><span class="emoji">🗓️</span><strong>Book a chat</strong></a>
-        <button class="v21-profile-btn" type="button" onclick="openV21Contact()"><span class="emoji">👋</span><strong>Get in touch</strong></button>
+        ${registerUrl?`<a href="${registerUrl}" target="_blank" rel="noopener" class="v21-profile-btn primary"><span class="emoji">✅</span><strong>Get registered</strong></a>`:''}
+        ${CONTACT.calendarUrl?`<a href="${CONTACT.calendarUrl}" target="_blank" rel="noopener" class="v21-profile-btn"><span class="emoji">🗓️</span><strong>Book a chat</strong></a>`:''}
+        ${hasContact?`<button class="v21-profile-btn" type="button" onclick="openV21Contact()"><span class="emoji">👋</span><strong>Get in touch</strong></button>`:''}
         <button class="v21-profile-btn share" type="button" onclick="${recipientMode?'openV21FriendShare()':'openV21Share()'}">${SHARE_ICON}<strong>${recipientMode?'Share this with a friend':'Share this tool'}</strong></button>
       </div>
     </div>`;
