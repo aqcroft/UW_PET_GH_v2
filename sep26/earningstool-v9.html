@@ -51,7 +51,7 @@ const R=window.UWEarningsRules;
 const money=(value)=>`£${Math.round(value||0).toLocaleString()}`;
 const homeIcon=(type)=>type==='tenant'?'🔑':'🏡';
 const startDate='2026-09-01';
-const registerUrl='https://uw.partners/adrian.croft/partner/join';
+let registerUrl='https://uw.partners/adrian.croft/partner/join';
 const mentorUrl=window.location.protocol==='file:'?'UW Mentor Earnings Explorer.html':'uw-mentor-earnings-explorer.html';
 const CONTACT={
   fullName:'Adrian Croft',
@@ -65,6 +65,81 @@ const CONTACT={
   phone:'+447787400800',
   calendarUrl:'https://tidycal.com/aqcroft/uwcost',
 };
+
+const AC_CLOUD_URL='https://script.google.com/macros/s/AKfycbyEEvE7ALdjbRZ540PSYsiX-tkA83ZiEryFQBqA_zSa8W-Xpd_DWL3FG_YFMU6XmE3D/exec';
+
+function hostPartnerId(){
+  try{return String(new URL(window.parent.location.href).searchParams.get('pid')||'').trim();}
+  catch(_){return '';}
+}
+function contactInitials(){
+  const bits=String(CONTACT.fullName||'').trim().split(/\s+/).filter(Boolean);
+  return ((bits[0]?.[0]||'U')+(bits.length>1?(bits[bits.length-1]?.[0]||''):'')).toUpperCase().slice(0,2);
+}
+function whatsappDigits(value){
+  let d=String(value||'').replace(/\D/g,'');
+  if(/^0\d{9,10}$/.test(d))d='44'+d.slice(1);
+  return d;
+}
+function partnerRegistrationUrl(joinUrl){
+  try{
+    const u=new URL(String(joinUrl||''));
+    if(!/^(www\.)?uw\.partners$/i.test(u.hostname))return '';
+    const slug=u.pathname.split('/').filter(Boolean)[0]||'';
+    return slug?'https://uw.partners/'+slug+'/partner/join':'';
+  }catch(_){return '';}
+}
+async function hydratePartnerProfile(){
+  const partnerId=hostPartnerId();
+  if(!partnerId)return;
+
+  // A Partner ID means this tool was launched from Appointment Companion.
+  // Clear Adrian defaults immediately so another Partner can never inherit them
+  // if Cloud is slow or temporarily unavailable.
+  registerUrl='';
+  Object.assign(CONTACT,{
+    fullName:'Your UW Partner',
+    title:'UW Authorised Partner',
+    photoUrl:'',
+    whatsappNumber:'',
+    whatsappMessage:'',
+    email:'',
+    emailSubject:'Your UW earnings explorer',
+    emailBody:'',
+    phone:'',
+    calendarUrl:''
+  });
+
+  try{
+    const response=await fetch(AC_CLOUD_URL,{
+      method:'POST',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify({action:'getPublicPartnerProfile',partner_id:partnerId}),
+      redirect:'follow',
+      cache:'no-store'
+    });
+    const result=await response.json();
+    const p=result&&result.ok===true&&result.partner?result.partner:null;
+    if(!p)return;
+    const first=String(p.name||'').trim().split(/\s+/)[0]||'there';
+    const digits=whatsappDigits(p.mobile);
+    registerUrl=partnerRegistrationUrl(p.join);
+    Object.assign(CONTACT,{
+      fullName:p.name||'Your UW Partner',
+      title:'UW Authorised Partner',
+      photoUrl:p.photo_url||'',
+      whatsappNumber:digits,
+      whatsappMessage:digits?('Hi '+first+", I've just used your earnings explorer and I'd like to know more"):'',
+      email:p.email||'',
+      emailSubject:'Your UW earnings explorer',
+      emailBody:p.email?('Hi '+first+", I've just used your earnings explorer and I'd like to know more"):'',
+      phone:p.mobile||'',
+      calendarUrl:p.booking_url||''
+    });
+  }catch(error){
+    console.warn('Partner profile unavailable in earnings explorer.',error);
+  }
+}
 const DEMO_TYPE='homeowner';
 const DEMO_SERVICES=3;
 const FAST_START_BADGE_CUSTOMER_NUMBER=3;
@@ -154,7 +229,7 @@ function addCustomer(){
   const customer=makeCustomer(allCount+1,DEMO_TYPE,DEMO_SERVICES);
   if(state.month1.length<5)state.month1.push(customer);
   else state.month2.push(customer);
-  render();
+  hydratePartnerProfile().finally(render);
   if(customer.id!=='c6'&&customer.id.startsWith('c')&&Number(customer.id.slice(1))>6){
     window.setTimeout(()=>startMomentumRevealForId(customer.id),80);
   }
@@ -314,9 +389,9 @@ function addLabel(n){
 function applyingBonusLabel(name,icon){
   return `<span class="add-label-text"><span class="add-label-sub">Applying Bonus:</span><span class="add-label-main">${name}</span></span><span class="add-label-icon">${icon}</span>`;
 }
-function whatsappUrl(){return `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(CONTACT.whatsappMessage)}`;}
-function emailUrl(){return `mailto:${CONTACT.email}?subject=${encodeURIComponent(CONTACT.emailSubject)}&body=${encodeURIComponent(CONTACT.emailBody)}`;}
-function phoneUrl(){return `tel:${CONTACT.phone}`;}
+function whatsappUrl(){return CONTACT.whatsappNumber?`https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(CONTACT.whatsappMessage)}`:'';}
+function emailUrl(){return CONTACT.email?`mailto:${CONTACT.email}?subject=${encodeURIComponent(CONTACT.emailSubject)}&body=${encodeURIComponent(CONTACT.emailBody)}`:'';}
+function phoneUrl(){return CONTACT.phone?`tel:${CONTACT.phone}`:'';}
 function toggleContact(){state.contactOpen=!state.contactOpen;if(!state.contactOpen)state.sayHiOpen=false;render();}
 function toggleSayHi(){state.sayHiOpen=!state.sayHiOpen;render();}
 function openHowPaid(){state.howPaidOpen=true;state.contactOpen=false;state.sayHiOpen=false;render();}
@@ -409,21 +484,22 @@ function assumptionsTip(){
   </details>`;
 }
 function contactMarkup(){
+  const wa=whatsappUrl(),em=emailUrl(),ph=phoneUrl(),hasContact=!!(wa||em||ph);
   return `<div class="profile-bubble-wrap">
     <button class="profile-photo-btn" onclick="toggleContact()" aria-label="${state.contactOpen?'Close contact menu':'Open contact menu'}">
-      <img src="${CONTACT.photoUrl}" alt="${CONTACT.fullName}" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">
-      <span class="initials">AC</span>
+      ${CONTACT.photoUrl?`<img src="${CONTACT.photoUrl}" alt="${CONTACT.fullName}" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">`:''}
+      <span class="initials" style="${CONTACT.photoUrl?'display:none':''}">${contactInitials()}</span>
     </button>
     <div class="fab-actions ${state.contactOpen?'open':''}">
-      <a href="${registerUrl}" target="_blank" rel="noopener" class="fab-action-btn fab-btn-jumpin"><span>🔥</span><strong>Jump in</strong></a>
-      <a href="${CONTACT.calendarUrl}" target="_blank" rel="noopener" class="fab-action-btn fab-btn-bookin"><span>🗓️</span><strong>Book in</strong></a>
+      ${registerUrl?`<a href="${registerUrl}" target="_blank" rel="noopener" class="fab-action-btn fab-btn-jumpin"><span>🔥</span><strong>Jump in</strong></a>`:''}
+      ${CONTACT.calendarUrl?`<a href="${CONTACT.calendarUrl}" target="_blank" rel="noopener" class="fab-action-btn fab-btn-bookin"><span>🗓️</span><strong>Book in</strong></a>`:''}
       <button class="fab-action-btn fab-btn-curious" onclick="openHowPaid()"><span>🔍</span><strong>Curious?</strong></button>
-      <button class="fab-action-btn fab-btn-sayhi" onclick="toggleSayHi()"><span>👋</span><strong>Say hi</strong></button>
+      ${hasContact?`<button class="fab-action-btn fab-btn-sayhi" onclick="toggleSayHi()"><span>👋</span><strong>Say hi</strong></button>
       <div class="sayhi-icons-row ${state.sayHiOpen?'open':''}">
-        <a class="fab-icon-circle" href="${whatsappUrl()}" target="_blank" rel="noopener" aria-label="WhatsApp">☎</a>
-        <a class="fab-icon-circle" href="${emailUrl()}" aria-label="Email">✉</a>
-        <a class="fab-icon-circle" href="${phoneUrl()}" aria-label="Call">☏</a>
-      </div>
+        ${wa?`<a class="fab-icon-circle" href="${wa}" target="_blank" rel="noopener" aria-label="WhatsApp">☎</a>`:''}
+        ${em?`<a class="fab-icon-circle" href="${em}" aria-label="Email">✉</a>`:''}
+        ${ph?`<a class="fab-icon-circle" href="${ph}" aria-label="Call">☏</a>`:''}
+      </div>`:''}
     </div>
   </div>`;
 }
@@ -555,8 +631,8 @@ function renderStarted(){
       <div class="bonus-group">${bonusBadge('⚡','Momentum','',bsMom,'momentum',pMom)}${bonusBadge('🔥','High Activity','',bsHab2,'hab',pHab2)}</div>
     </div>`;
   const builderControls='';
-  const registerButton=`<a class="button blue register-link tall-action" target="_blank" rel="noopener" href="${registerUrl}"><span>🎯 Ready to earn? Register here!</span><small>(new tab)</small></a>`;
-  const chatButton=`<a class="button secondary register-link tall-action" target="_blank" rel="noopener" href="${CONTACT.calendarUrl}"><span><span class="calendar-glyph" aria-hidden="true"></span> Got questions? Book a chat</span><small>(new tab)</small></a>`;
+  const registerButton=registerUrl?`<a class="button blue register-link tall-action" target="_blank" rel="noopener" href="${registerUrl}"><span>🎯 Ready to earn? Register here!</span><small>(new tab)</small></a>`:'';
+  const chatButton=CONTACT.calendarUrl?`<a class="button secondary register-link tall-action" target="_blank" rel="noopener" href="${CONTACT.calendarUrl}"><span><span class="calendar-glyph" aria-hidden="true"></span> Got questions? Book a chat</span><small>(new tab)</small></a>`:'';
   const mentorButton=`<a class="button secondary register-link mentor-link-button tall-action" href="${mentorUrl}"><span>🔍 Explore Mentor Journey</span></a>`;
   const noticeMarkup=!state.habIntroDismissed&&state.month1.length===4?`<div class="notice-backdrop">
       <section class="notice-popup notice-hab notice-celebration" onclick="event.stopPropagation()">
