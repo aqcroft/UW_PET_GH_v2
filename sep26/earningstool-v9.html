@@ -89,13 +89,11 @@ function partnerRegistrationUrl(joinUrl){
     return slug?'https://uw.partners/'+slug+'/partner/join':'';
   }catch(_){return '';}
 }
-async function hydratePartnerProfile(){
-  const partnerId=hostPartnerId();
-  if(!partnerId)return;
-
-  // A Partner ID means this tool was launched from Appointment Companion.
-  // Clear Adrian defaults immediately so another Partner can never inherit them
-  // if Cloud is slow or temporarily unavailable.
+function companionLaunch(){
+  try{return String(new URL(window.parent.location.href).searchParams.get('src')||'').toLowerCase()==='companion';}
+  catch(_){return false;}
+}
+function clearPartnerDefaults(){
   registerUrl='';
   Object.assign(CONTACT,{
     fullName:'Your UW Partner',
@@ -109,6 +107,20 @@ async function hydratePartnerProfile(){
     phone:'',
     calendarUrl:''
   });
+}
+async function hydratePartnerProfile(){
+  const partnerId=hostPartnerId();
+
+  /* Standalone links intentionally keep Adrian's legacy defaults. A launch
+     explicitly coming from Appointment Companion must never inherit them:
+     either resolve the authenticated Partner by pid or fail closed with
+     generic/no contact actions. */
+  if(!partnerId){
+    if(companionLaunch())clearPartnerDefaults();
+    return;
+  }
+
+  clearPartnerDefaults();
 
   try{
     const response=await fetch(AC_CLOUD_URL,{
