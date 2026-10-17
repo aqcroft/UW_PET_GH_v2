@@ -6,6 +6,24 @@
   const recipientMode=hostParams.has('shared');
   const partnerId=(hostParams.get('pid')||'').trim();
   const presenterPrefill=(hostParams.get('pn')||'').trim();
+  const CLOUD_URL='https://script.google.com/macros/s/AKfycbyEEvE7ALdjbRZ540PSYsiX-tkA83ZiEryFQBqA_zSa8W-Xpd_DWL3FG_YFMU6XmE3D/exec';
+  async function verifyShareOwner(){
+    if(!partnerId || /^p_[0-9a-f]{10,}$/i.test(partnerId))
+      throw new Error('This link has no valid UW Partner ID. Reopen Partner Earnings through your signed-in Appointment Companion before sharing.');
+    let data;
+    try {
+      const response=await fetch(CLOUD_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'getPublicPartnerProfile',partner_id:partnerId}),cache:'no-store',redirect:'follow'});
+      data=await response.json();
+    } catch (_) {throw new Error('The Partner profile could not be checked. Check your internet connection and try again.');}
+    const partner=data&&data.partner;
+    if(data.ok!==true || !partner || String(partner.partner_id||'').trim().toLowerCase()!==partnerId.toLowerCase() || !String(partner.name||'').trim())
+      throw new Error('The UW Partner profile in this link is unavailable. Reopen Earnings from Appointment Companion after checking your Cloud login.');
+    return partner;
+  }
+  async function canShareWithPartner(){
+    try {await verifyShareOwner();return true;}
+    catch(error) {modal('Partner profile unavailable','<p>'+esc((error&&error.message)||'Unable to verify the UW Partner. No link was shared.')+'</p>');return false;}
+  }
   const firstName=value=>String(value||'').trim().replace(/\s+/g,' ').split(' ')[0].slice(0,40);
   const esc=value=>String(value||'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 
@@ -61,7 +79,8 @@
     first:{label:'First look at Partner earnings',wa:name=>`Hi ${name||'there'} 👋 Thought this might be useful - it’s a simple interactive way to see how the UW Partner earnings can build over the first 60 days. You can use the options in the tool to get registered, book a chat, or get in touch with any questions.`}
   };
 
-  window.openV21Share=function(){
+  window.openV21Share=async function(){
+    if(!(await canShareWithPartner()))return;
     const pre=firstName(presenterPrefill);
     const ov=modal('Share this tool',`<p>Create a personalised recipient link. The name is editable.</p><label class="v21-field-label" for="v21ShareName">First name</label><input class="v21-name-input" id="v21ShareName" value="${esc(pre)}" placeholder="e.g. Sab" autocomplete="off"><label class="v21-field-label">Context</label><div class="v21-contexts">${Object.entries(contextCopy).map(([key,item],i)=>`<label class="v21-context"><input type="radio" name="v21ctx" value="${key}" ${i===0?'checked':''}><span>${item.label}</span></label>`).join('')}</div><div class="v21-share-actions"><button type="button" id="v21CopyShare">${SHARE_ICON}<span>Copy link</span></button><button type="button" class="primary" id="v21WhatsAppShare">${WA_ICON}<span>WhatsApp</span></button></div>`);
     const get=()=>{const name=firstName(ov.querySelector('#v21ShareName').value),ctx=ov.querySelector('input[name="v21ctx"]:checked')?.value||'together';return{name,ctx,url:personalisedUrl(name,ctx)};};
@@ -70,7 +89,8 @@
     setTimeout(()=>ov.querySelector('#v21ShareName')?.focus(),0);
   };
 
-  window.openV21FriendShare=function(){
+  window.openV21FriendShare=async function(){
+    if(!(await canShareWithPartner()))return;
     const ov=modal('Share this with a friend',`<p>Send a fresh recipient copy. No recipient details from this link are passed on.</p><label class="v21-field-label" for="v21FriendName">First name <span style="font-weight:600">(optional)</span></label><input class="v21-name-input" id="v21FriendName" placeholder="e.g. Sam" autocomplete="off"><div class="v21-share-actions"><button type="button" id="v21FriendCopy">${SHARE_ICON}<span>Copy link</span></button><button type="button" class="primary" id="v21FriendWa">${WA_ICON}<span>WhatsApp</span></button></div>`);
     const url=friendUrl();
     ov.querySelector('#v21FriendCopy').addEventListener('click',async()=>{try{await copyText(url);toast('Link copied');}catch(_){window.prompt('Copy this link:',url);}});
