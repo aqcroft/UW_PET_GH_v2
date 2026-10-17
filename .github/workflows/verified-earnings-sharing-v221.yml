@@ -1,0 +1,20 @@
+name: Verified Earnings share identity v22.1
+on:
+  push:
+    branches:
+      - main
+      - fix/verified-uw-partner-share-20261017
+  pull_request:
+    paths:
+      - 'sep26/**'
+      - '.github/workflows/verified-earnings-sharing-v221.yml'
+jobs:
+  verified-earnings-share:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Test Earnings Partner identity
+        run: node --test sep26/tests/verified-share-owner-v22.1.test.cjs
