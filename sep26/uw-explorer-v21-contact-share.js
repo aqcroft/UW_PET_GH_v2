@@ -79,20 +79,22 @@
     first:{label:'First look at Partner earnings',wa:name=>`Hi ${name||'there'} 👋 Thought this might be useful - it’s a simple interactive way to see how the UW Partner earnings can build over the first 60 days. You can use the options in the tool to get registered, book a chat, or get in touch with any questions.`}
   };
 
-  window.openV21Share=function(){
+  window.openV21Share=async function(){
+    if(!(await canShareWithPartner()))return;
     const pre=firstName(presenterPrefill);
     const ov=modal('Share this tool',`<p>Create a personalised recipient link. The name is editable.</p><label class="v21-field-label" for="v21ShareName">First name</label><input class="v21-name-input" id="v21ShareName" value="${esc(pre)}" placeholder="e.g. Sab" autocomplete="off"><label class="v21-field-label">Context</label><div class="v21-contexts">${Object.entries(contextCopy).map(([key,item],i)=>`<label class="v21-context"><input type="radio" name="v21ctx" value="${key}" ${i===0?'checked':''}><span>${item.label}</span></label>`).join('')}</div><div class="v21-share-actions"><button type="button" id="v21CopyShare">${SHARE_ICON}<span>Copy link</span></button><button type="button" class="primary" id="v21WhatsAppShare">${WA_ICON}<span>WhatsApp</span></button></div>`);
     const get=()=>{const name=firstName(ov.querySelector('#v21ShareName').value),ctx=ov.querySelector('input[name="v21ctx"]:checked')?.value||'together';return{name,ctx,url:personalisedUrl(name,ctx)};};
-    ov.querySelector('#v21CopyShare').addEventListener('click',async()=>{if(!(await canShareWithPartner()))return;const x=get();try{await copyText(x.url);toast('Personalised link copied');}catch(_){window.prompt('Copy this link:',x.url);}});
-    ov.querySelector('#v21WhatsAppShare').addEventListener('click',async()=>{if(!(await canShareWithPartner()))return;const x=get(),text=contextCopy[x.ctx].wa(x.name);window.open(`https://wa.me/?text=${encodeURIComponent(text+'\n\n'+x.url)}`,'_blank','noopener');});
+    ov.querySelector('#v21CopyShare').addEventListener('click',async()=>{const x=get();try{await copyText(x.url);toast('Personalised link copied');}catch(_){window.prompt('Copy this link:',x.url);}});
+    ov.querySelector('#v21WhatsAppShare').addEventListener('click',()=>{const x=get(),text=contextCopy[x.ctx].wa(x.name);window.open(`https://wa.me/?text=${encodeURIComponent(text+'\n\n'+x.url)}`,'_blank','noopener');});
     setTimeout(()=>ov.querySelector('#v21ShareName')?.focus(),0);
   };
 
-  window.openV21FriendShare=function(){
+  window.openV21FriendShare=async function(){
+    if(!(await canShareWithPartner()))return;
     const ov=modal('Share this with a friend',`<p>Send a fresh recipient copy. No recipient details from this link are passed on.</p><label class="v21-field-label" for="v21FriendName">First name <span style="font-weight:600">(optional)</span></label><input class="v21-name-input" id="v21FriendName" placeholder="e.g. Sam" autocomplete="off"><div class="v21-share-actions"><button type="button" id="v21FriendCopy">${SHARE_ICON}<span>Copy link</span></button><button type="button" class="primary" id="v21FriendWa">${WA_ICON}<span>WhatsApp</span></button></div>`);
     const url=friendUrl();
-    ov.querySelector('#v21FriendCopy').addEventListener('click',async()=>{if(!(await canShareWithPartner()))return;try{await copyText(url);toast('Link copied');}catch(_){window.prompt('Copy this link:',url);}});
-    ov.querySelector('#v21FriendWa').addEventListener('click',async()=>{if(!(await canShareWithPartner()))return;const name=firstName(ov.querySelector('#v21FriendName').value);const text=`Hi ${name||'there'} 👋 Thought you might find this interesting. It’s a simple interactive look at how the UW Partner earnings can build over the first 60 days.`;window.open(`https://wa.me/?text=${encodeURIComponent(text+'\n\n'+url)}`,'_blank','noopener');});
+    ov.querySelector('#v21FriendCopy').addEventListener('click',async()=>{try{await copyText(url);toast('Link copied');}catch(_){window.prompt('Copy this link:',url);}});
+    ov.querySelector('#v21FriendWa').addEventListener('click',()=>{const name=firstName(ov.querySelector('#v21FriendName').value);const text=`Hi ${name||'there'} 👋 Thought you might find this interesting. It’s a simple interactive look at how the UW Partner earnings can build over the first 60 days.`;window.open(`https://wa.me/?text=${encodeURIComponent(text+'\n\n'+url)}`,'_blank','noopener');});
   };
 
   const originalToggle=window.toggleContact;
